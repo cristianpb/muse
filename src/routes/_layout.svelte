@@ -12,6 +12,7 @@
 		max-width: 56em;
 		background-color: white;
 		padding: 2em;
+    padding-bottom: 60px; 
 		margin: 0 auto;
 		box-sizing: border-box;
 	}
@@ -20,7 +21,7 @@
 <Nav {segment}/>
 
 <main>
-	<slot></slot>
+  <slot></slot>
   <SnapClients/>
 </main>
 
