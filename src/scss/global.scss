@@ -1,0 +1,36 @@
+@charset "utf-8";
+
+main { padding-top: 40px; }
+
+// Set your brand colors
+$brown: #723122; 
+$brown-light: #DA9C20;
+$beige-light: #D0D1CD;
+$beige-lighter: #EFF0EB;
+
+// Update Bulma's global variables
+$primary: $brown;
+$link: $brown-light;
+
+// Update some of Bulma's component variables
+//$body-background-color: $beige-lighter;
+$control-border-width: 2px;
+$input-border-color: transparent;
+$input-background-color: $brown;
+$input-shadow: none;
+
+// Import only what you need from Bulma
+@import "./node_modules/bulma/sass/utilities/_all.sass";
+@import "./node_modules/bulma/sass/base/_all.sass";
+@import "./node_modules/bulma/sass/elements/button.sass";
+@import "./node_modules/bulma/sass/elements/container.sass";
+@import "./node_modules/bulma/sass/elements/title.sass";
+@import "./node_modules/bulma/sass/form/_all.sass";
+@import "./node_modules/bulma/sass/components/navbar.sass";
+@import "./node_modules/bulma/sass/components/card.sass";
+@import "./node_modules/bulma/sass/components/level.sass";
+@import "./node_modules/bulma/sass/layout/footer.sass";
+@import "./node_modules/bulma/sass/layout/section.sass";
+@import "./node_modules/bulma/sass/grid/columns.sass";
+@import "./node_modules/bulma/sass/elements/table.sass";
+@import "./node_modules/bulma/sass/elements/progress.sass";

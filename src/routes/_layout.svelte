@@ -1,5 +1,7 @@
 <script>
 	import Nav from '../components/Nav.svelte';
+  import NavBottom from '../components/NavBottom.svelte';
+  import SnapClients from '../components/SnapClients.svelte';
 
 	export let segment;
 </script>
@@ -19,4 +21,7 @@
 
 <main>
 	<slot></slot>
+  <SnapClients/>
 </main>
+
+<NavBottom/>
