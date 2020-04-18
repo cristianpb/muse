@@ -51,7 +51,7 @@
 <nav>
 	<ul>
 		<li><a aria-current='{segment === undefined ? "page" : undefined}' href='.'>Now playing</a></li>
-		<li><a aria-current='{segment === "about" ? "page" : undefined}' href='about'>Search</a></li>
+		<li><a aria-current='{segment === "search" ? "page" : undefined}' href='search'>Search</a></li>
 		<li><a aria-current='{segment === "playlists" ? "page" : undefined}' href='playlists'>Playlists</a></li>
 	</ul>
 </nav>
