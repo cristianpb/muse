@@ -54,7 +54,7 @@
   onMount(async () => {
     $mopidy = await connectWS()
     $playlists = await getPlaylists()
-    console.log("PLAYLIS", $playlists);
+    console.log("Playlists", $playlists);
   })
 
   function togglePlaylistOptions(visibility, idx) {

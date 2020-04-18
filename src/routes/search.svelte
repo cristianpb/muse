@@ -7,11 +7,11 @@
 
 <div class="columns is-mobile">
   <div class="column">
-    <input class="input is-rounded" type="text" placeholder="Rounded input" bind:value={searchTerm}>
+    <input class="input is-rounded" type="text" placeholder="Rounded input" on:input|preventDefault={handleSearch} bind:value={searchTerm}>
   </div>
   <div class="column is-narrow">
     <button on:click={handleSearch} class="button">
-      Go
+      <FontAwesomeIcon icon={faSearch} class="icon"/>
     </button>
   </div>
 </div>
@@ -34,6 +34,10 @@
   import { connectWS } from '../tools/mopidyTools';
   import { mopidy } from '../tools/stores';
   import { onMount } from 'svelte';
+  import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
+  import {
+    faSearch,
+  } from '@fortawesome/free-solid-svg-icons';
 
   let searchTerm = "maluma"
   let promise

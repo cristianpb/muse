@@ -6,7 +6,11 @@
           {client.name}
         </div>
         <div class="column is-narrow" on:click={muteGroup(client.group,client.muted)}>
-          {client.muted ? 'Mut' : 'Ply' }
+          {#if client.muted}
+            <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
+          {:else}
+            <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
+          {/if}
         </div>
         <div class="column">
           <input 
@@ -24,50 +28,17 @@
 
 <script charset="utf-8">
   import { onMount } from 'svelte';
-  import { clients, snapClientsVisibility } from '../tools/stores';
+  import { clients, snapClientsVisibility, snapcast } from '../tools/stores';
+  import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
+  import {
+    faVolumeUp,
+    faVolumeMute
+  } from '@fortawesome/free-solid-svg-icons';
+  import { connectSnapcast } from '../tools/snapcast';
 
-  let ws;
   onMount(async () => {
-    try {
-      ws = new WebSocket('ws://10.3.141.129:1780/jsonrpc');
-
-    } catch (exception) {
-      console.error(exception);
-    }
-
-    /* Error Event Handler */
-    ws.onerror = (e) => {
-      // need to get both the statusCode and the reason phrase
-      console.log('[Snapcast]: error:', e);
-    };
-
-    ws.onopen = () => {
-      console.log('[Snapcast]: Connected')
-      let message = {
-        jsonrpc: '2.0',
-        id: 8,
-        method: 'Server.GetStatus',
-      }
-      ws.send(JSON.stringify(message));
-    };
-
-    ws.onmessage = (message) => {
-      handleMessage(message);
-    };
-
+    $snapcast = await connectSnapcast()
   })
-
-  function handleMessage (message) {
-    console.log('[Snapcast]: ', message)
-    let { result } = JSON.parse(message.data)
-    if (result && result.server && result.server.groups) {
-      let clientsRaw = result.server.groups //.map((x) => x.clients.pop())
-      console.log(clientsRaw);
-      $clients = clientsRaw.map(group => {
-        return {id: group.clients[0].id, name: group.clients[0].host.name, volume: group.clients[0].config.volume.percent, muted: group.clients[0].config.volume.muted, group: group.id}
-      })
-    }
-  }
 
   function volumeSetSnapcast(name, volumeLevel) {
     let id = $clients.find((x)=> x.name == name) ? $clients.find((x)=> x.name == name).id : null
@@ -81,7 +52,7 @@
           volume:{"muted":false,"percent":volumeLevel}
         }
       }
-      ws.send(JSON.stringify(message));
+      $snapcast.send(JSON.stringify(message));
       console.log(`[Handler snapcast]: volumen set to ${name}`);
     } else {
       console.log("[Snapcast]: No client with this name");
@@ -102,7 +73,7 @@
         }
       }
     }
-    ws.send(JSON.stringify(message));
+    $snapcast.send(JSON.stringify(message));
   }
 
   function muteGroup(groupId, muted) {
@@ -117,7 +88,7 @@
         mute: !muted
       }
     }
-    ws.send(JSON.stringify(message));
+    $snapcast.send(JSON.stringify(message));
     $clients = $clients.map(group => {
       if (group.group === groupId) {
         group.muted = !muted

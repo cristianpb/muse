@@ -2,6 +2,8 @@ import { writable } from 'svelte/store';
 
 export const mopidy = writable(null);
 
+export const snapcast = writable(null);
+
 export const clients = writable([]);
 
 export const currentTrack = writable({});
@@ -13,6 +15,8 @@ export const currentState = writable(null);
 export const currentVolume = writable(null);
 
 export const currentMute = writable(false);
+
+export const currentRandom = writable(false);
 
 export const totalPlaytime = writable(0);
 
