@@ -1,9 +1,12 @@
 import Mopidy from "mopidy";
-import { mopidy } from '../tools/stores';
+import { mopidy, playlists } from '../tools/stores';
 
 let mopidyWS;
+let playlistsLocal;
 
 let c = mopidy.subscribe((value) => { mopidyWS = value });
+
+let l = playlists.subscribe((value) => { playlistsLocal = value });
 
 export function convertSencondsToString(ms) {
   let minutes = ~~(ms / 60000)
@@ -37,4 +40,22 @@ export function connectWS() {
     }
 
   });
+}
+
+export async function getPlaylists() {
+  const playlistsRaw = await mopidyWS.playlists.asList()
+  playlistsLocal = playlistsRaw.map(playlistRaw => {
+    playlistRaw.slug = playlistRaw.name
+    return playlistRaw
+  })
+  return playlistsLocal
+}
+
+export async function getPlaylistTracks(uri) {
+  const playlistsTracks = await mopidyWS.playlists.lookup([uri]) 
+  if (playlistsTracks) {
+    return playlistsTracks
+  } else {
+    throw new Error("ii")
+  }
 }
