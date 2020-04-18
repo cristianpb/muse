@@ -2,7 +2,15 @@
 
 <div class="list is-hoverable">
   {#each playlists as playlist}
-    <a class="list-item" href="{null}">{playlist.name}</a>
+    <a class="list-item" href="{null}">{playlist.name} -
+      {#await getPlaylistTracks(playlist.uri)}
+        ....
+      {:then playlistInfo}
+        {playlistInfo.tracks ? playlistInfo.tracks.length : '0'}
+      {:catch error}
+        <p style="color: red">{error.message}</p>
+      {/await}
+    </a>
   {:else}
     <p>loading playlits</p>
   {/each}
@@ -23,8 +31,15 @@
 
   async function getPlaylists() {
     playlists = await $mopidy.playlists.asList()
-    console.log(playlists);
   }
 
-  
+  async function getPlaylistTracks(uri) {
+    const playlistsTracks = await $mopidy.playlists.lookup([uri]) 
+    if (playlistsTracks) {
+      return playlistsTracks
+    } else {
+      throw new Error("ii")
+    }
+  }
+
 </script>
