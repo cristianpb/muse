@@ -14,7 +14,7 @@
       Next
     </a>
     <div class="navbar-item">
-      {$currentTrack.name ? $currentTrack.name : "-:-"}
+      {$currentTrack ? $currentTrack.name : "-:-"}
     </div>
     <a href="{null}" 
        class:is-active={burgerState}
@@ -51,7 +51,13 @@
             {defineMute($currentMute)}
           </a>
           <div class="column">
-            <progress class="progress" value="{$currentVolume}" max="100">{$currentVolume}%</progress>
+            <input 
+              type="range"
+              min="0" 
+              max="100" 
+              bind:value="{$currentVolume}" 
+              on:change="{$mopidy.mixer.setVolume([$currentVolume])}"
+              class="slider">
           </div>
           <div class="column is-narrow">
             Random
@@ -84,20 +90,14 @@
 <script>
   import { onMount } from 'svelte';
   import { clients, snapClientsVisibility, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState, currentVolume, currentMute, mopidy } from '../tools/stores';
-  import { convertSencondsToString, normalizeTime } from '../tools/mopidyTools';
-  import Mopidy from "mopidy";
+  import { convertSencondsToString, normalizeTime, connectWS } from '../tools/mopidyTools';
 
   let burgerState = false;
   let interval
 
-  //let mopidy
-
   onMount(async () => {
 
-    $mopidy = new Mopidy({
-      webSocketUrl: "ws://10.3.141.129:6680/mopidy/ws/",
-      //webSocketUrl: "ws://localhost:6680/mopidy/ws/",
-    });
+    $mopidy = await connectWS()
 
     $mopidy.on("state", console.log);
     $mopidy.on("event", console.log);
@@ -141,15 +141,17 @@
       $currentState = await $mopidy.playback.getState()
       $currentVolume = await $mopidy.mixer.getVolume()
       $currentMute = await $mopidy.mixer.getMute()
-      $totalPlaytime = $currentTrack.length
-      if ($currentState === 'playing') {
-        interval = setInterval(() => {
-          if ($currentPlaytime > $totalPlaytime) clearInterval(interval)
-          $currentPlaytime = $currentPlaytime + 1000
-        }, 1000);
-      }
-      console.log($currentTrack);
       console.log($currentVolume);
+      if ($currentTrack) {
+        console.log($currentTrack);
+        $totalPlaytime = $currentTrack.length
+        if ($currentState === 'playing') {
+          interval = setInterval(() => {
+            if ($currentPlaytime > $totalPlaytime) clearInterval(interval)
+            $currentPlaytime = $currentPlaytime + 1000
+          }, 1000);
+        }
+      }
       //let res = await fetch(`https://ws.audioscrobbler.com/2.0/?format=json&method=album.getInfo&album=${$currentTrack.album.name}&artist=${$currentTrack.artists[0].name}&api_key=4320a3ef51c9b3d69de552ac083c55e3`)
       ////res = await mopidy.library.getImages([currentTrack.uri])
       //let lastfm = await res.json()
@@ -204,3 +206,36 @@
   }
 
 </script>
+
+<style>
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 5px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 10%; 
+    background: #DA9C20;
+    cursor: pointer;
+  }
+
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #DA9C20;
+    cursor: pointer;
+  }
+
+</style>

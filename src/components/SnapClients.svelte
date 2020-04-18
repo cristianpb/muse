@@ -9,15 +9,13 @@
           {client.muted ? 'Mut' : 'Ply' }
         </div>
         <div class="column">
-          <div class="slidecontainer">
-            <input 
-              type="range"
-              min="0" 
-              max="100" 
-              bind:value="{client.volume}" 
-              on:change="{changeHandler(client.id, client.volume)}"
-              class="slider">
-          </div>
+          <input 
+            type="range"
+            min="0" 
+            max="100" 
+            bind:value="{client.volume}" 
+            on:change="{changeHandler(client.id, client.volume)}"
+            class="slider">
         </div>
       </div>
     {/each}
@@ -133,44 +131,42 @@
 </script>
 
 <style type="text/css" media="screen">
+  .notification {
+    bottom: 5rem;
+    right: 1rem;
+    position: fixed;
+    width: 300px;
+    background: #EFF0EB;
+    padding: 1rem;
+  }
 
-.notification {
-  bottom: 5rem;
-  right: 1rem;
-  position: fixed;
-  width: 300px;
-  background: #EFF0EB;
-  padding: 1rem;
-}
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 5px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
 
-.slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 5px;
-  border-radius: 5px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
-}
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 10%; 
+    background: #DA9C20;
+    cursor: pointer;
+  }
 
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 25px;
-  height: 25px;
-  border-radius: 10%; 
-  background: #DA9C20;
-  cursor: pointer;
-}
-
-.slider::-moz-range-thumb {
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  background: #DA9C20;
-  cursor: pointer;
-}
-  
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #DA9C20;
+    cursor: pointer;
+  }
 </style>

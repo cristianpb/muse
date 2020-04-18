@@ -31,21 +31,25 @@
 {/if}
 
 <script>
+  import { connectWS } from '../tools/mopidyTools';
   import { mopidy } from '../tools/stores';
+  import { onMount } from 'svelte';
 
   let searchTerm = "maluma"
   let promise
 
+  onMount(async () => {
+    $mopidy = await connectWS()
+  })
+
   async function searchFunction() {
-    if ($mopidy) {
-      const res = await $mopidy.library.search({'query': {'any': [searchTerm]}, 'uris': ['local:']})
-      let text = res.pop().tracks
-      console.log(text);
-      if (res) {
-        return text;
-      } else {
-        throw new Error(text);
-      }
+    const res = await $mopidy.library.search({'query': {'any': [searchTerm]}, 'uris': ['local:']})
+    let text = res.pop().tracks
+    console.log(text);
+    if (res) {
+      return text;
+    } else {
+      throw new Error(text);
     }
   }
 
