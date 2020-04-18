@@ -1,10 +1,12 @@
 <h1 class="title">{slug.replace('-',' ')}</h1>
 
+<div class="list is-hoverable">
 {#each playlistsTracks as song}
-  <p> {song.name} </p>
+  <a class="list-item" href="{null}">{song.name}</a>
 {:else}
-  <p>loading songs</p>
+  <a class="list-item" href="{null}">loading songs</a>
 {/each}
+</div>
 
 <script>
   import { stores } from "@sapper/app";
@@ -22,7 +24,7 @@
     $playlists = await getPlaylists()
     const selectedPlaylist = $playlists.find(playlist => playlist.name === slug)
     const playlistsTracksRaw  = await getPlaylistTracks(selectedPlaylist.uri)
-    playlistsTracks = playlistsTracksRaw.tracks
+    playlistsTracks = playlistsTracksRaw.tracks ? playlistsTracksRaw.tracks : []
   })
 
 </script>

@@ -46,6 +46,7 @@ export async function getPlaylists() {
   const playlistsRaw = await mopidyWS.playlists.asList()
   playlistsLocal = playlistsRaw.map(playlistRaw => {
     playlistRaw.slug = playlistRaw.name
+    playlistRaw.visibility = false
     return playlistRaw
   })
   return playlistsLocal
