@@ -35,3 +35,14 @@ jobs:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           publish_branch: gh-pages
           publish_dir: ./__sapper__/export/apollo
+      - name: Build python package
+        run: |
+          cp  -r ./__sapper__/export/apollo mopidy_apollo/static
+          python3 -m pip install  --upgrade setuptools wheel
+          python3 setup.py sdist bdist_wheel
+      - name: Publish package 📦 to Test PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.test_pypi_password }}
+          repository_url: https://test.pypi.org/legacy/
