@@ -37,11 +37,14 @@ jobs:
           publish_dir: ./__sapper__/export/apollo
       - name: Build python package
         run: |
+          export APP_VERSION=$(git describe --tags )
+          sed -i -E "s/version = (.*)/version = ${APP_VERSION:1}/"  setup.cfg
           cp  -r ./__sapper__/export/apollo mopidy_apollo/static
           python3 -m pip install  --upgrade setuptools wheel
           python3 setup.py sdist bdist_wheel
       - name: Publish package 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@master
+        if: steps.extract_branch.outputs.branch == 'master' && startsWith(github.event.ref, 'refs/tags')
         with:
           user: __token__
           password: ${{ secrets.test_pypi_password }}
