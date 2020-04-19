@@ -1,3 +1,5 @@
+"""Mopidy script to add extension """
+
 import logging
 import pathlib
 
