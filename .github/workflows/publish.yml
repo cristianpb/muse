@@ -45,7 +45,7 @@ jobs:
         run: |
           export APP_VERSION=$(git describe --tags )
           sed -i -E "s/version = (.*)/version = ${APP_VERSION:1}/"  setup.cfg
-          cp  -r ./__sapper__/export/apollo mopidy_apollo/static
+          cp  -r ./__sapper__/export/apollo/* mopidy_apollo/static
           python3 -m pip install  --upgrade setuptools wheel
           python3 setup.py sdist bdist_wheel
       - name: Publish package 📦 to Test PyPI
