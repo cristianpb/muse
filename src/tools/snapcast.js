@@ -9,7 +9,7 @@ export function connectSnapcast() {
     if (snapcastWS) {
       resolve(snapcastWS)
     } else {
-      snapcastWS = new WebSocket('ws://10.3.141.129:1780/jsonrpc');
+      snapcastWS = new WebSocket(`ws://${window.location.hostname}:1780/jsonrpc`);
 
       /* Error Event Handler */
       snapcastWS.onerror = (e) => {

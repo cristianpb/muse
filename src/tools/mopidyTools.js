@@ -38,8 +38,7 @@ export function connectWS() {
       resolve(mopidyWS)
     } else {
       mopidyWS = new Mopidy({
-        webSocketUrl: "ws://10.3.141.129:6680/mopidy/ws/",
-        //webSocketUrl: "ws://localhost:6680/mopidy/ws/",
+        webSocketUrl: `ws://${window.location.hostname}:6680/mopidy/ws/`,
       });
       mopidyWS.on("state:online", async () => {
         console.log('CONECTED');
