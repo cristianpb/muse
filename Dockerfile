@@ -26,6 +26,8 @@ COPY mopidy_apollo/mopidy.conf /root/.config/mopidy.conf
 COPY setup.py ./
 COPY setup.cfg ./
 COPY LICENSE ./
+COPY MANIFEST.in ./
+COPY README.md ./
 COPY pyproject.toml ./
 ADD ./mopidy_apollo ./mopidy_apollo
 RUN pip3 install -e .

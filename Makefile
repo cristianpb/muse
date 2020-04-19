@@ -1,6 +1,5 @@
 export APP=mopidy-apollo
-export APP_VERSION=0.0.1
-#export APP_VERSION	:= $(shell git describe --tags --always )
+export APP_VERSION	:= $(shell git describe --tags --always)
 
 export DOCKER_USERNAME=cristianpb
 

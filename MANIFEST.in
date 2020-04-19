@@ -1,0 +1,6 @@
+recursive-include mopidy_apollo/static *
+recursive-include mopidy_apollo *.py
+include mopidy_apollo/ext.conf
+include pyproject.toml
+include LICENSE
+include MANIFEST.in
