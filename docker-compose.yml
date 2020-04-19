@@ -1,0 +1,37 @@
+version: '3.4'
+services:
+  #snapclient:
+  #  image: ivdata/snapclient
+  #  environment:
+  #    HOST: snapserver
+  #  devices:
+  #    - /dev/snd/
+  #  command: /bin/bash -c /usr/bin/snapclient -h snapserver -s 1
+  snapserver:
+    image: jaedb/snapserver
+    container_name: apollo-snapserver
+    ports:
+      - 1704:1704
+      - 1705:1705
+      - 1780:1780
+    volumes:
+      - ${HOST_SNAPCAST_TEMP}:/tmp
+      #- ./snapcast/snapserver.conf:/etc/default/snapserver.conf
+  mopidy:
+    image: ${DOCKER_USERNAME}/${APP}:${APP_VERSION}
+    container_name: ${APP}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: apollo
+      args:
+        app_path: /${APP}
+    depends_on:
+      - snapserver
+    ports:
+      - 6680:6680
+    volumes:
+      - ./__sapper__/export/apollo:/${APP}/mopidy_apollo/static
+      - ./mopidy_apollo/mopidy.conf:/root/.config/mopidy/mopidy.conf
+      - ${HOST_MUSIC_DIRECTORY}:/var/lib/mopidy/media
+      - ${HOST_SNAPCAST_TEMP}:/tmp
