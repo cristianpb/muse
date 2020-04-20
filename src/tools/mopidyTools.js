@@ -10,6 +10,7 @@ let totalPlaytimeLocal;
 //let currentVolumeLocal;
 //let currentMuteLocal;
 let interval;
+let currentTrackLocal
 
 const c = mopidy.subscribe((value) => { mopidyWS = value });
 const l = playlists.subscribe((value) => { playlistsLocal = value });
@@ -44,16 +45,18 @@ export function connectWS() {
         console.log('CONECTED');
 
         const currentTrackTL = await mopidyWS.playback.getCurrentTrack()
-        const currentTrackRaw = await mopidyWS.library.lookup([[currentTrackTL.uri]])
-        const currentTrackLocal = Object.values(currentTrackRaw)[0][0]
-        //const currentPlaytimeLocal = await mopidyWS.playback.getTimePosition()
+        if (currentTrackTL) {
+          const currentTrackRaw = await mopidyWS.library.lookup([[currentTrackTL.uri]])
+          currentTrackLocal = Object.values(currentTrackRaw)[0][0]
+          currentTrack.set(currentTrackLocal);
+        }
+
         currentPlaytimeLocal = await mopidyWS.playback.getTimePosition()
         const currentStateLocal = await mopidyWS.playback.getState()
         const currentVolumeLocal = await mopidyWS.mixer.getVolume()
         const currentMuteLocal = await mopidyWS.mixer.getMute()
         const currentRandomLocal = await mopidyWS.tracklist.getRandom()
 
-        currentTrack.set(currentTrackLocal);
         currentPlaytime.set(currentPlaytimeLocal);
         currentState.set(currentStateLocal);
         currentVolume.set(currentVolumeLocal);
