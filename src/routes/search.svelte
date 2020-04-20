@@ -1,5 +1,5 @@
 <svelte:head>
-	<title>Search</title>
+  <title>Search</title>
   <style src="../scss/global.scss"></style>
 </svelte:head>
 

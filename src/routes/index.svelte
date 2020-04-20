@@ -1,6 +1,6 @@
 <svelte:head>
   <style src="../scss/global.scss"></style>
-	<title>Now Playing</title>
+  <title>Now Playing</title>
 </svelte:head>
 
 <h1 class="title">Now playing</h1>
