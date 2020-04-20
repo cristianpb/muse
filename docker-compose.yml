@@ -9,7 +9,7 @@ services:
   #  command: /bin/bash -c /usr/bin/snapclient -h snapserver -s 1
   snapserver:
     image: jaedb/snapserver
-    container_name: apollo-snapserver
+    container_name: ${APP}-snapserver
     ports:
       - 1704:1704
       - 1705:1705
