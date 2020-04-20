@@ -6,3 +6,4 @@ yarn-error.log
 /__sapper__/
 *.egg-info
 dist
+build
