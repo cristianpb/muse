@@ -1,6 +1,6 @@
 {
-  "name": "TODO",
-  "description": "TODO",
+  "name": "Mopidy-Apollo",
+  "description": "Mopidy web interface with snapcast support",
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",
