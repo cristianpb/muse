@@ -58,7 +58,6 @@
   })
 
   function togglePlaylistOptions(visibility, idx) {
-    console.log("toggling playlist options", idx);
     $playlists[idx].visibility = !visibility
   }
 

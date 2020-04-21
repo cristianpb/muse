@@ -49,23 +49,55 @@
 </div>
 
 {#if promise}
-{#await promise}
-  <p>...waiting</p>
-{:then tracks}
-  {#if tracks}
-  <div class="list is-hoverable">
-  {#each tracks as track}
-    <a class="list-item" href="{null}">{track.artists.pop().name} - {track.name}</a>
-  {:else}
-    <a class="list-item" href="{null}">loading..</a>
-  {/each}
-  </div>
-  {:else}
-    <a class="list-item" href="{null}">no tracks found</a>
-  {/if}
-{:catch error}
-  <p style="color: red">{error.message}</p>
-{/await}
+  {#await promise}
+    <p>...waiting</p>
+  {:then tracks}
+    {#if tracks}
+      <div class="list is-hoverable">
+        {#each tracks as track, i}
+          <a class="list-item" href="{null}">
+            <div class="columns is-mobile">
+              <div class="column">
+                {#if track.artists}
+                {track.artists.map(x => x.name).join(', ')} - {track.name}
+                {:else}
+                  unknown artist
+                {/if}
+              </div>
+              <div class="column is-narrow">
+                <div class:is-active={track.visibility} class="dropdown is-right" >
+                  <div class="dropdown-trigger" on:click={() => track.visibility = !track.visibility}>
+                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                      <FontAwesomeIcon icon={faAngleDown} class="icon"/>
+                    </button>
+                  </div>
+                  <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                    <div class="dropdown-content">
+                      <a href="{null}" class="dropdown-item" on:click={playTrackSingle(track.uri)}>
+                        Play now
+                      </a>
+                      <a href={null} class="dropdown-item" on:click={addTrackNext(track.uri)}>
+                        Play next
+                      </a>
+                      <a href="{null}" class="dropdown-item" on:click={addTrackQueue(track.uri)}>
+                        Add to queue
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
+        {:else}
+      <a class="list-item" href="{null}">loading..</a>
+        {/each}
+      </div>
+    {:else}
+      <a class="list-item" href="{null}">no tracks found</a>
+    {/if}
+  {:catch error}
+    <p style="color: red">{error.message}</p>
+  {/await}
 {/if}
 
 <script>
@@ -75,6 +107,8 @@
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faSearch,
+    faPlayCircle,
+    faAngleDown
   } from '@fortawesome/free-solid-svg-icons';
 
   let searchTerm = "maluma"
@@ -96,8 +130,8 @@
     const urisRequest = selectedUris.map(x => x + ':')
     const res = await $mopidy.library.search({'query': {'any': [searchTerm]}, 'uris': [`${urisRequest}`]})
     if (res && res.length > 0) {
-      let text = res.pop().tracks
-      return text;
+      let { tracks } = res.pop()
+      return tracks.map(obj=> ({ ...obj, visibility: false }))
     } else {
       throw new Error('what', res);
     }
@@ -110,5 +144,20 @@
   function toggleDropmenu() {
     dropMenuActive = !dropMenuActive
   }
-  
+
+  function playTrackSingle(uri) {
+    $mopidy.tracklist.clear()
+    $mopidy.tracklist.add({uris:[uri]})
+    $mopidy.playback.play()
+  }
+
+  async function addTrackNext(uri) {
+    const index = await $mopidy.tracklist.index()
+    $mopidy.tracklist.add({at_position: index + 1, uris:[uri]})
+  }
+
+  async function addTrackQueue(uri) {
+    $mopidy.tracklist.add({uris:[uri]})
+  }
+
 </script>
