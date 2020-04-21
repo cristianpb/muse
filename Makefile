@@ -32,5 +32,8 @@ build-python: build-html
 		${DOCKER_USERNAME}/${APP}:${APP_VERSION} \
 		python3 setup.py sdist bdist_wheel
 
+mopidy-local-scan:
+	docker exec -it ${APP} mopidy local scan
+
 clean:
 	rm -rf __sapper__/export
