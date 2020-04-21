@@ -7,12 +7,18 @@
 
 {#if $currentTrack}
 <div class="card">
-  {#if albumImage}
-  <div class="card-image">
-    <figure class="image is-4by3">
-      <img src="{albumImage['#text']}" alt="Placeholder image">
-    </figure>
-  </div>
+  {#if albumImage['#text']}
+    <div class="card-image has-text-centered">
+      <figure class="image is-4by3">
+        <img src="{albumImage['#text']}" alt="Placeholder image">
+      </figure>
+    </div>
+  {:else}
+    <div class="card-image has-text-centered">
+      <figure class="image is-4by3">
+        <img src="/logo-512.png" alt="Placeholder image" width="256" height="192">
+      </figure>
+    </div>
   {/if}
 
   <div class="card-content">
