@@ -33,5 +33,5 @@ services:
     volumes:
       - ./__sapper__/export/apollo:/${APP}/mopidy_apollo/static
       - ./mopidy_apollo/mopidy.conf:/root/.config/mopidy/mopidy.conf
-      - ${HOST_MUSIC_DIRECTORY}:/var/lib/mopidy/media
+      - ${HOST_MUSIC_DIRECTORY}:/var/lib/mopidy/music
       - ${HOST_SNAPCAST_TEMP}:/tmp
