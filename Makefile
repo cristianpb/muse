@@ -4,7 +4,8 @@ export APP_VERSION	:= $(shell git describe --tags --always)
 
 export DOCKER_USERNAME=cristianpb
 
-export HOST_MUSIC_DIRECTORY=~/Musique
+export HOST_MUSIC_DIRECTORY=${APP_PATH}/data/music
+export HOST_PLAYLIST_DIRECTORY=${APP_PATH}/data/playlists
 export HOST_SNAPCAST_TEMP=/tmp/snapcast-mopidy
 
 up:
@@ -13,15 +14,23 @@ up:
 build:
 	docker-compose build
 
-build-python:
+__sapper__/export/apollo:
+	npm run export
+
+build-html: __sapper__/export/apollo
+
+build-python: build-html
 	sed -i -E "s/version = (.*)/version = ${APP_VERSION}/"  setup.cfg;
 	docker run --rm \
 		-v ${APP_PATH}/__sapper__/export/apollo:/${APP}/mopidy_apollo/static \
 		-v ${APP_PATH}/mopidy_apollo/mopidy.conf:/root/.config/mopidy/mopidy.conf \
 		-v ${HOST_MUSIC_DIRECTORY}:/var/lib/mopidy/media \
+		-v ${HOST_PLAYLIST_DIRECTORY}:/var/lib/mopidy/playlists \
 		-v ${HOST_SNAPCAST_TEMP}:/tmp \
 		-v ${APP_PATH}/dist:/${APP}/dist \
 		-p 6680:6680 \
 		${DOCKER_USERNAME}/${APP}:${APP_VERSION} \
-		sed -i -E "s/version = (.*)/version = ${APP_VERSION}/"  setup.cfg; \
 		python3 setup.py sdist bdist_wheel
+
+clean:
+	rm -rf __sapper__/export
