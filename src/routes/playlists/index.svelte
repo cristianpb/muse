@@ -3,42 +3,44 @@
 <div class="list is-hoverable">
   {#each $playlists as playlist, i}
     <div class="list-item">
-      <nav class="level is-mobile">
-        <a class="level-left"  href="playlists/{playlist.slug}">
-          <div class="level-item">
-            <p>
-              {playlist.name}
-            </p>
+      <div class="columns is-mobile">
+        <a class="column" href="playlists/{playlist.slug}">
+          {playlist.name}
+        </a>
+        <div class="column is-narrow">
+          {#await getPlaylistTracks(playlist.uri)}
+            loading..
+          {:then playlistInfo}
+            ({playlistInfo.tracks ? playlistInfo.tracks.length : '0'})
+          {:catch error}
+            {error.message}
+          {/await}
+        </div>
+        <div class="column is-narrow">
+          <div class="dropdown is-hoverable is-right" class:is-active={playlist.visibility} >
+            <div class="dropdown-trigger" on:click={() => playlist.visibility = !playlist.visibility}>
+            <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+              <div class="dropdown-content">
+                <a href="{null}" class="dropdown-item" on:click={playPlaylist(playlist.uri)}>
+                  <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"/>&nbsp;
+                  Play
+                </a>
+                <a href="{null}" class="dropdown-item" on:click={shufflePlaylist(playlist.uri)}>
+                  <FontAwesomeIcon icon={faRandom} class="icon is-small"/>&nbsp;
+                  Shuffle
+                </a>
+                <a href="{null}" class="dropdown-item" on:click={addToQueuePlaylists(playlist.uri)}>
+                  <FontAwesomeIcon icon={faGripLines} class="icon is-small"/>&nbsp;
+                  Add to queue
+                </a>
+              </div>
+            </div>
           </div>
-          <div class="level-item">
-            <p>
-              {#await getPlaylistTracks(playlist.uri)}
-                loading..
-              {:then playlistInfo}
-                {playlistInfo.tracks ? playlistInfo.tracks.length : '0'}
-              {:catch error}
-                {error.message}
-              {/await}
-            </p>
-          </div>
-        </a>
-        <a class="level-right" href="{null}" on:click={togglePlaylistOptions(playlist.visibility, i)}>
-          <p class="level-item"><strong>More</strong></p>
-        </a>
-      </nav>
-      {#if playlist.visibility}
-      <nav class="level">
-        <a href="{null}" class="level-item" on:click={playPlaylist(playlist.uri)}>
-          Play
-        </a>
-        <a href="{null}" class="level-item" on:click={shufflePlaylist(playlist.uri)}>
-          Shuffle
-        </a>
-        <a href="{null}" class="level-item" on:click={addToQueuePlaylists(playlist.uri)}>
-          Add to queue
-        </a>
-      </nav>
-      {/if}
+        </div>
+
+      </div>
     </div>
   {:else}
     <p>loading</p>
@@ -50,15 +52,18 @@
   import { mopidy, playlists } from '../../tools/stores';
   import { connectWS, getPlaylists, getPlaylistTracks } from '../../tools/mopidyTools';
   import { onMount } from 'svelte';
+  import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte'
+  import {
+    faAngleDown,
+    faPlayCircle,
+    faRandom,
+    faGripLines
+  } from '@fortawesome/free-solid-svg-icons';
 
   onMount(async () => {
     $mopidy = await connectWS()
     $playlists = await getPlaylists()
   })
-
-  function togglePlaylistOptions(visibility, idx) {
-    $playlists[idx].visibility = !visibility
-  }
 
   async function playPlaylist(uri) {
     const playlistInfo = await getPlaylistTracks(uri)

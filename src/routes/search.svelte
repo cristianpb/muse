@@ -65,11 +65,9 @@
                 {/if}
               </div>
               <div class="column is-narrow">
-                <div class:is-active={track.visibility} class="dropdown is-right" >
+                <div class:is-active={track.visibility} class="dropdown is-right is-hoverable" >
                   <div class="dropdown-trigger" on:click={() => track.visibility = !track.visibility}>
-                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                      <FontAwesomeIcon icon={faAngleDown} class="icon"/>
-                    </button>
+                    <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
                   </div>
                   <div class="dropdown-menu" id="dropdown-menu" role="menu">
                     <div class="dropdown-content">
