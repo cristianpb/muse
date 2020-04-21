@@ -64,9 +64,11 @@ export function connectWS() {
           totalPlaytime.set(currentTrackLocal.length)
           if (currentStateLocal === 'playing') {
             interval = setInterval(() => {
-              if (currentPlaytimeLocal >= totalPlaytimeLocal) clearInterval(interval)
-              //currentPlaytimeLocal = currentPlaytimeLocal + 1000
-              currentPlaytime.update(v => v + 1000)
+              if (currentPlaytimeLocal >= totalPlaytimeLocal) {
+                clearInterval(interval)
+              } else {
+                currentPlaytime.update(v => v + 1000)
+              }
             }, 1000);
           }
         }
@@ -99,8 +101,11 @@ export function connectWS() {
           clearInterval(interval);
         } if (new_state == 'playing') {
           interval = setInterval(() => {
-            if (currentPlaytimeLocal >= totalPlaytimeLocal) clearInterval(interval)
-            currentPlaytime.update(v => v + 1000)
+            if (currentPlaytimeLocal >= totalPlaytimeLocal) {
+              clearInterval(interval)
+            } else {
+              currentPlaytime.update(v => v + 1000)
+            }
           }, 1000);
         }
       })
