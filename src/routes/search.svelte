@@ -12,7 +12,7 @@
   <div class="column is-narrow">
     <div class="columns is-mobile">
       <div class="column">
-        <div class:is-active={dropMenuActive} class="dropdown">
+        <div class:is-active={dropMenuActive} class="dropdown  is-hoverable">
           <div class="dropdown-trigger"  on:click={toggleDropmenu}>
             <button class="button" aria-haspopup="true" aria-controls="dropdown-menu-sources">
               <span>Sources</span>
@@ -111,7 +111,7 @@
     faAngleDown
   } from '@fortawesome/free-solid-svg-icons';
 
-  let searchTerm = "maluma"
+  let searchTerm = "file"
   let dropMenuActive = false
   let selectedUris = ['local']
   let hideUris = ['http', 'https', 'mms', 'rtmp', 'rtmps', 'rtsp', 'file']

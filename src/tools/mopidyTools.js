@@ -3,23 +3,15 @@ import { mopidy, playlists, currentTrack, currentPlaytime, currentState, current
 
 let mopidyWS;
 let playlistsLocal;
-//let currentTrackLocal;
 let currentPlaytimeLocal;
 let totalPlaytimeLocal;
-//let currentStateLocal;
-//let currentVolumeLocal;
-//let currentMuteLocal;
 let interval;
 let currentTrackLocal
 
 const c = mopidy.subscribe((value) => { mopidyWS = value });
 const l = playlists.subscribe((value) => { playlistsLocal = value });
-//const t = currentTrack.subscribe((value) => { currentTrackLocal = value });
 const p = currentPlaytime.subscribe((value) => { currentPlaytimeLocal = value });
 const tt = totalPlaytime.subscribe((value) => { totalPlaytimeLocal = value });
-//const s = currentState.subscribe((value) => { currentStateLocal = value });
-//const v = currentVolume.subscribe((value) => { currentVolumeLocal = value });
-//const m = currentMute.subscribe((value) => { currentMuteLocal = value });
 
 export function convertSencondsToString(ms) {
   let minutes = ~~(ms / 60000)
@@ -35,14 +27,14 @@ export function normalizeTime(current, total) {
 export function connectWS() {
   return new Promise(function(resolve, reject) {
     if (mopidyWS) {
-      console.log('already con');
+      console.log('mopidy:already connected');
       resolve(mopidyWS)
     } else {
       mopidyWS = new Mopidy({
         webSocketUrl: `ws://${window.location.hostname}:6680/mopidy/ws/`,
       });
       mopidyWS.on("state:online", async () => {
-        console.log('CONECTED');
+        console.log('mopidy: connected');
 
         const currentTrackTL = await mopidyWS.playback.getCurrentTrack()
         if (currentTrackTL) {
@@ -68,7 +60,7 @@ export function connectWS() {
           totalPlaytime.set(currentTrackLocal.length)
           if (currentStateLocal === 'playing') {
             interval = setInterval(() => {
-              if (currentPlaytimeLocal > totalPlaytimeLocal) clearInterval(interval)
+              if (currentPlaytimeLocal >= totalPlaytimeLocal) clearInterval(interval)
               //currentPlaytimeLocal = currentPlaytimeLocal + 1000
               currentPlaytime.update(v => v + 1000)
             }, 1000);
@@ -81,58 +73,48 @@ export function connectWS() {
       mopidyWS.on("event", console.log);
 
       mopidyWS.on("event:trackPlaybackEnded", (event) => {
-        console.log("Ended", event);
+        console.log(`mopidy:event:trackPlaybackEnded: ${event}`);
         let { tl_track, time_position } = event
         clearInterval(interval);
-        //$currentPlaytime = 0
         currentPlaytime.set(time_position)
       })
 
       mopidyWS.on("event:trackPlaybackPaused", (event) => {
-        console.log("Pauseed", event);
+        console.log(`mopidy:event:trackPlaybackPaused: ${event}`);
         let { time_position, tl_track } = event
         clearInterval(interval);
-        console.log("Setting to", time_position);
         currentPlaytime.set(time_position)
-        //$currentPlaytime = 0
-        //currentPlaytime.set(0)
       })
 
 
       mopidyWS.on("event:playbackStateChanged", (event) => {
+        console.log(`mopidy:event:playbackStateChanged: ${event}`);
         let { old_state, new_state } = event
-        //$currentState = new_state
         currentState.set(new_state)
         if (new_state == 'paused') {
           clearInterval(interval);
         } if (new_state == 'playing') {
           interval = setInterval(() => {
-            //if ($currentPlaytime > $totalPlaytime) clearInterval(interval)
-            if (currentPlaytimeLocal > totalPlaytimeLocal) clearInterval(interval)
-            //$currentPlaytime = $currentPlaytime + 1000
+            if (currentPlaytimeLocal >= totalPlaytimeLocal) clearInterval(interval)
             currentPlaytime.update(v => v + 1000)
           }, 1000);
         }
       })
 
       mopidyWS.on("event:trackPlaybackStarted", (event) => {
-        console.log("Start", event);
+        console.log(`mopidy:event:trackPlaybackStarted: ${event}`);
         let { tl_track } = event
-        //$currentTrack = tl_track.track
         currentTrack.set(tl_track.track)
-        //BROKEN
-        //$totalPlaytime = tl_track.track.length
-        //totalPlaytime.set(tl_track.track.length)
-
-        //$currentPlaytime = 0
         currentPlaytime.set(0)
-        //interval = setInterval(() => {
-        //  //if ($currentPlaytime > $totalPlaytime) clearInterval(interval)
-
-        //  if (currentPlaytimeLocal > totalPlaytimeLocal) clearInterval(interval)
-        //  //$currentPlaytime = $currentPlaytime + 1000
-        //  currentPlaytime.update(v => v + 1000)
-        //}, 1000);
+        if (tl_track.track.length) {
+          totalPlaytime.set(tl_track.track.length)
+        }
+        if (!interval) {
+          interval = setInterval(() => {
+            if (currentPlaytimeLocal >= totalPlaytimeLocal) clearInterval(interval)
+            currentPlaytime.update(v => v + 1000)
+          }, 1000);
+        }
       });
 
       mopidyWS.on("error", (err) => {
