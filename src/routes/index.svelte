@@ -32,7 +32,13 @@
         </div>
         <div class="column">
           {#if ($currentPlaytime && $totalPlaytime)}
-            <progress class="progress" value="{normalizeTime($currentPlaytime,$totalPlaytime)}" max="100">{normalizeTime($currentPlaytime,$totalPlaytime)}%</progress>
+            <input 
+              type="range"
+              min="0" 
+              max="100" 
+              bind:value="{currentPlaytimePercent}" 
+              on:change="{setTrackTime(currentPlaytimePercent)}"
+              class="slider">
           {/if}
         </div>
         <div class="column is-narrow">
@@ -52,17 +58,60 @@
 {/each}
 </div>
 
+<style>
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 5px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 10%; 
+    background: #DA9C20;
+    cursor: pointer;
+  }
+
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #DA9C20;
+    cursor: pointer;
+  }
+
+</style>
+
 <script>
   import { onMount } from 'svelte';
   import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage } from '../tools/stores';
-  import { connectWS, convertSencondsToString, normalizeTime, getCurrentTrackList } from '../tools/mopidyTools';
+  import { connectWS, convertSencondsToString, convertPercentToSeconds, normalizeTime, getCurrentTrackList } from '../tools/mopidyTools';
 
   let tracklists = []
+  $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
   onMount(async () => {
     $mopidy = await connectWS()
     tracklists = await getCurrentTrackList()
-    console.log("Tracklists", tracklists);
   })
+
+  async function setTrackTime(currentPlaytimePercent) {
+    const ms = convertPercentToSeconds(currentPlaytimePercent, $totalPlaytime)
+    const changed = await $mopidy.playback.seek([ms])
+    $currentPlaytime = ms
+    console.log(changed, ms)
+    if (changed) {
+      console.log("set track time", currentPlaytimePercent)
+    }
+  }
   
 </script>

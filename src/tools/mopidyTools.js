@@ -24,6 +24,10 @@ export function normalizeTime(current, total) {
   return norm
 }
 
+export function convertPercentToSeconds(percent, total) {
+  return ~~((total * percent) / 100)
+}
+
 export function connectWS() {
   return new Promise(function(resolve, reject) {
     if (mopidyWS) {
