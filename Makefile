@@ -1,6 +1,6 @@
 export APP=mopidy-apollo
 export APP_PATH := $(shell pwd)
-export APP_VERSION	:= $(shell git describe --tags --always)
+export APP_VERSION= $(shell git describe --tags --always --abbrev=0)
 
 export DOCKER_USERNAME=cristianpb
 
@@ -36,4 +36,4 @@ mopidy-local-scan:
 	docker exec -it ${APP} mopidy local scan
 
 clean:
-	rm -rf __sapper__/export
+	rm -rf __sapper__/export dist
