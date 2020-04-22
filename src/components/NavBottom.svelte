@@ -63,15 +63,18 @@
         </div>
       </div>
       {/each}
-      <div class="navbar-item">
+
+      <div class="navbar-item is-hidden-desktop">
         <div class="columns is-mobile">
-          <a href={null} class="column is-narrow" on:click={toggleMute}>
-            {#if $currentMute}
-              <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
-            {:else}
-              <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
-            {/if}
-          </a>
+          <div class="column is-narrow">
+            <button class="button is-white" on:click={toggleMute}>
+              {#if $currentMute}
+                <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
+              {:else}
+                <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
+              {/if}
+            </button>
+          </div>
           <div class="column">
             <input 
               type="range"
@@ -82,16 +85,41 @@
               class="slider">
           </div>
           <div class="column is-narrow">
-            <a href="{null}"  on:click="{toggleCurrentRandom}">
-            {#if $currentRandom}
-              <FontAwesomeIcon icon={faRandom} class="icon"/>
-            {:else}
-              <FontAwesomeIcon icon={faGripLines} class="icon"/>
-            {/if}
-            </a>
+            <button class="button is-white" on:click="{toggleCurrentRandom}">
+              {#if $currentRandom}
+                <FontAwesomeIcon icon={faRandom} class="icon"/>
+              {:else}
+                <FontAwesomeIcon icon={faGripLines} class="icon"/>
+              {/if}
+            </button>
           </div>
         </div>
       </div>
+
+      <a href={null} class="navbar-item is-hidden-touch" on:click={toggleMute}>
+        {#if $currentMute}
+          <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
+        {:else}
+          <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
+        {/if}
+      </a>
+      <div class="navbar-item is-hidden-touch">
+        <input 
+          type="range"
+          min="0" 
+          max="100" 
+          bind:value="{$currentVolume}" 
+          on:change="{$mopidy.mixer.setVolume([$currentVolume])}"
+          class="slider">
+      </div>
+      <a class="navbar-item is-hidden-touch" href="{null}"  on:click="{toggleCurrentRandom}">
+        {#if $currentRandom}
+          <FontAwesomeIcon icon={faRandom} class="icon"/>
+        {:else}
+          <FontAwesomeIcon icon={faGripLines} class="icon"/>
+        {/if}
+      </a>
+
       <div class="navbar-item">
         <div class="columns is-mobile">
           <div class="column is-narrow">
@@ -99,7 +127,15 @@
           </div>
           <div class="column">
             {#if ($currentPlaytime && $totalPlaytime)}
-              <progress class="progress" value="{normalizeTime($currentPlaytime,$totalPlaytime)}" max="100">{normalizeTime($currentPlaytime,$totalPlaytime)}%</progress>
+              <div class="navbar-item">
+                <input 
+                  type="range"
+                  min="0" 
+                  max="100" 
+                  bind:value="{currentPlaytimePercent}" 
+                  on:change="{setTrackTime(currentPlaytimePercent)}"
+                  class="slider">
+              </div>
             {/if}
           </div>
           <div class="column is-narrow">
@@ -135,6 +171,7 @@
   import { connectSnapcast } from '../tools/snapcast';
 
   let burgerState = false;
+  $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
   //let interval
 
   onMount(async () => {
@@ -276,6 +313,16 @@
       $mopidy.tracklist.setRandom([true])
     }
     $currentRandom = !$currentRandom
+  }
+
+  async function setTrackTime(currentPlaytimePercent) {
+    const ms = convertPercentToSeconds(currentPlaytimePercent, $totalPlaytime)
+    const changed = await $mopidy.playback.seek([ms])
+    $currentPlaytime = ms
+    console.log(changed, ms)
+    if (changed) {
+      console.log("set track time", currentPlaytimePercent)
+    }
   }
 
 </script>
