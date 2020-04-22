@@ -16,7 +16,7 @@
   {:else}
     <div class="card-image has-text-centered">
       <figure class="image is-4by3">
-        <img src="/logo-512.png" alt="Placeholder image" width="256" height="192">
+        <img src="{process.env.NODE_ENV === 'development' ? '' : '/apollo'}/logo-512.png" alt="Placeholder image" width="256" height="192">
       </figure>
     </div>
   {/if}
