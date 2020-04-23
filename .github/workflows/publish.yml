@@ -82,13 +82,13 @@ jobs:
           asset_path: ./dist/Mopidy-Apollo.tar.gz
           asset_name: Mopidy-Apollo.tar.gz
           asset_content_type: application/gzip
-      - uses: stefanzweifel/git-auto-commit-action@v4.1.4
+      - uses: stefanzweifel/git-auto-commit-action@v4.1.5
         if: startsWith(github.event.ref, 'refs/tags')
         with:
           commit_message: ⬆ Upgrade package version files
-          commit_options: '--no-verify --signoff'
+          commit_options: '--signoff'
           # Optional glob pattern of files which should be added to the commit
-          file_pattern: package.json setup.cfg
+          file_pattern: "package.json setup.cfg"
           # Optional commit user and author settings
           commit_user_name: My GitHub Actions Bot
           commit_user_email: bot@github.com
