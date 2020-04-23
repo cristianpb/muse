@@ -1,6 +1,7 @@
 export APP=mopidy-apollo
 export APP_PATH := $(shell pwd)
-export APP_VERSION= $(shell git describe --tags --always --abbrev=0)
+export APP_VERSION := $(shell git describe --tags --always --abbrev=0)
+export APP_VERSION_CUT=$(subst v,,$(APP_VERSION))
 
 export DOCKER_USERNAME=cristianpb
 
@@ -20,7 +21,8 @@ __sapper__/export/apollo:
 build-html: __sapper__/export/apollo
 
 build-python: build-html
-	sed -i -E "s/version = (.*)/version = ${APP_VERSION}/"  setup.cfg;
+	sed -i -E "s/version = (.*)/version = ${APP_VERSION_CUT}/"  setup.cfg;
+	sed -i -E "s/version\": \"(.*)\"/version\": \"${APP_VERSION_CUT}\"/"  package.json;
 	docker run --rm \
 		-v ${APP_PATH}/__sapper__/export/apollo:/${APP}/mopidy_apollo/static \
 		-v ${APP_PATH}/mopidy_apollo/mopidy.conf:/root/.config/mopidy/mopidy.conf \

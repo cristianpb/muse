@@ -29,6 +29,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+
       - name: install node requirements
         run: npm ci
       - name: build html
@@ -43,20 +44,22 @@ jobs:
           publish_dir: ./__sapper__/export/apollo
       - name: Build python package
         run: |
-          export APP_VERSION=$(git describe --tags )
+          export APP_VERSION=$(git describe --tags --always --abbrev=0)
           sed -i -E "s/version = (.*)/version = ${APP_VERSION:1}/"  setup.cfg
+          sed -i -E "s/version\": \"(.*)\"/version\": \"${APP_VERSION:1}\"/"  package.json;
           cp  -r ./__sapper__/export/apollo/* mopidy_apollo/static
           python3 -m pip install  --upgrade setuptools wheel
           python3 setup.py sdist bdist_wheel
+
       - name: Publish package 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@master
-        if: success() && startsWith(github.event.ref, 'refs/tags')
+        if: startsWith(github.event.ref, 'refs/tags')
         with:
           user: __token__
           password: ${{ secrets.test_pypi_password }}
           repository_url: https://test.pypi.org/legacy/
       - name: Create Release
-        if: success() && startsWith(github.event.ref, 'refs/tags')
+        if: startsWith(github.event.ref, 'refs/tags')
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -67,9 +70,9 @@ jobs:
           draft: false
           prerelease: false
       - run: cp dist/Mopidy-Apollo*.tar.gz ./dist/Mopidy-Apollo.tar.gz
-        if: success()
+        if: startsWith(github.event.ref, 'refs/tags')
       - name: Upload Release Asset
-        if: success() && startsWith(github.event.ref, 'refs/tags')
+        if: startsWith(github.event.ref, 'refs/tags')
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
         env:
@@ -79,3 +82,14 @@ jobs:
           asset_path: ./dist/Mopidy-Apollo.tar.gz
           asset_name: Mopidy-Apollo.tar.gz
           asset_content_type: application/gzip
+      - uses: stefanzweifel/git-auto-commit-action@v4.1.4
+        if: startsWith(github.event.ref, 'refs/tags')
+        with:
+          commit_message: ⬆ Upgrade package version files
+          commit_options: '--no-verify --signoff'
+          # Optional glob pattern of files which should be added to the commit
+          file_pattern: package.json setup.cfg
+          # Optional commit user and author settings
+          commit_user_name: My GitHub Actions Bot
+          commit_user_email: bot@github.com
+          commit_author: Bot <actions@github.com>
