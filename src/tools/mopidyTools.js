@@ -157,7 +157,10 @@ export async function getPlaylistTracks(uri) {
 export async function getCurrentTrackList() {
   const currentTrackList = await mopidyWS.tracklist.getTracks()
   if (currentTrackList) {
-    return currentTrackList
+    return currentTrackList.map(x => {
+      x.visibility = false
+      return x
+    })
   } else {
     throw new Error("Error reading tracklist")
   }

@@ -17,7 +17,7 @@
           {/await}
         </div>
         <div class="column is-narrow">
-          <div class="dropdown is-hoverable is-right" class:is-active={playlist.visibility} >
+          <div class="dropdown is-right is-up" class:is-active={playlist.visibility} >
             <div class="dropdown-trigger" on:click={() => playlist.visibility = !playlist.visibility}>
             <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
             </div>
@@ -43,7 +43,9 @@
       </div>
     </div>
   {:else}
+    <div class="list-item">
     <p>loading</p>
+    </div>
   {/each}
 </div>
 

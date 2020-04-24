@@ -42,7 +42,6 @@ export function handleMessage (message) {
   let { result } = JSON.parse(message.data)
   if (result && result.server && result.server.groups) {
     let clientsRaw = result.server.groups //.map((x) => x.clients.pop())
-    console.log(clientsRaw);
     clients.update(v => {
       return clientsRaw.map(group => {
         return {id: group.clients[0].id, name: group.clients[0].host.name, volume: group.clients[0].config.volume.percent, muted: group.clients[0].config.volume.muted, group: group.id}
