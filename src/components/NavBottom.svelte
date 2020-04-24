@@ -1,6 +1,6 @@
 <nav class="navbar is-fixed-bottom " role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
-    <a href="{null}" class="navbar-item is-hidden-touch" on:click={$mopidy.playback.previous()}>
+    <a href="{null}" class="navbar-item" on:click={$mopidy.playback.previous()}>
      <FontAwesomeIcon icon={faCaretLeft} class="icon"/>
     </a>
     <a href="{null}" class="navbar-item" on:click={togglePlayPause($currentState)}>
@@ -14,7 +14,7 @@
         {/if}
       {/if}
     </a>
-    <a href="{null}" class="navbar-item is-hidden-touch" on:click={$mopidy.playback.next()}>
+    <a href="{null}" class="navbar-item" on:click={$mopidy.playback.next()}>
       <FontAwesomeIcon icon={faCaretRight} class="icon"/>
     </a>
     <div class="navbar-item is-hidden-touch">
@@ -31,38 +31,41 @@
   </div>
   <div id="navMenu" class="navbar-menu" class:is-active={burgerState}>
     <div class="navbar-end">
-      <a href="{null}" class="navbar-item  is-hidden-touch" on:click='{toggleClienstVisibility}'>
-        {#if $snapClientsVisibility}
-          <FontAwesomeIcon icon={faCompressAlt} class="icon"/>
-        {:else}
-          <FontAwesomeIcon icon={faPodcast} class="icon"/>
-        {/if}
-      </a>
-      {#each $clients as client}
-      <div class="navbar-item  is-hidden-desktop">
-        <div class="columns is-mobile">
-          <div class="column is-narrow">
-            {client.name}
+
+      {#if $clients.length > 0}
+        <a href="{null}" class="navbar-item  is-hidden-touch" on:click='{toggleClienstVisibility}'>
+          {#if $snapClientsVisibility}
+            <FontAwesomeIcon icon={faCompressAlt} class="icon"/>
+          {:else}
+            <FontAwesomeIcon icon={faPodcast} class="icon"/>
+          {/if}
+        </a>
+        {#each $clients as client}
+          <div class="navbar-item  is-hidden-desktop">
+            <div class="columns is-mobile">
+              <div class="column is-narrow">
+                {client.name}
+              </div>
+              <div class="column is-narrow">
+                {#if client.muted}
+                  <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
+                {:else}
+                  <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
+                {/if}
+              </div>
+              <div class="column">
+                <input 
+                  type="range"
+                  min="0" 
+                  max="100" 
+                  bind:value="{client.volume}" 
+                  on:change="{changeHandler(client.id, client.volume)}"
+                  class="slider">
+              </div>
+            </div>
           </div>
-          <div class="column is-narrow">
-            {#if client.muted}
-              <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
-            {:else}
-              <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
-            {/if}
-          </div>
-          <div class="column">
-            <input 
-              type="range"
-              min="0" 
-              max="100" 
-              bind:value="{client.volume}" 
-              on:change="{changeHandler(client.id, client.volume)}"
-              class="slider">
-          </div>
-        </div>
-      </div>
-      {/each}
+        {/each}
+      {/if}
 
       <div class="navbar-item is-hidden-desktop">
         <div class="columns is-mobile">
