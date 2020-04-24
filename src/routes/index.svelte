@@ -7,10 +7,10 @@
 
 {#if $currentTrack}
 <div class="card">
-  {#if albumImage['#text']}
+  {#if $albumImage['#text']}
     <div class="card-image has-text-centered">
       <figure class="image is-4by3">
-        <img src="{albumImage['#text']}" alt="Placeholder image">
+        <img src="{$albumImage['#text']}" alt="Placeholder image">
       </figure>
     </div>
   {:else}
@@ -57,11 +57,42 @@
 {/if}
 
 <div class="list is-hoverable">
-{#each tracklists as tracklist}
-  <a class="list-item" href="{null}">{tracklist.name}</a>
-{:else}
-  <a class="list-item" href="{null}">loading songs</a>
-{/each}
+  {#each tracklists as tracklist}
+    <a class="list-item" href="{null}">
+      <div class="columns is-mobile">
+        <div class="column" on:click={() => tracklist.visibility = !tracklist.visibility}>
+          {tracklist.artists ? tracklist.artists.map(x => x.name).join(', ') : ''} - {tracklist.name}
+        </div>
+        <div class="column is-narrow">
+          <div class="dropdown is-right is-up" class:is-active={tracklist.visibility} >
+            <div class="dropdown-trigger" on:click={() => tracklist.visibility = !tracklist.visibility}>
+            {#if tracklist.visibility}
+              <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+            {:else}
+              <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+            {/if}
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+              <div class="dropdown-content">
+                <a href="{null}" class="dropdown-item" on:click={playTracklist(tracklist)}>
+                  <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"/>&nbsp;
+                  Play
+                </a>
+                <a href="{null}" class="dropdown-item" on:click={removeTrack(tracklist)}>
+                  <FontAwesomeIcon icon={faMinus} class="icon is-small"/>&nbsp;
+                  Remove track
+                </a>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </a>
+  {:else}
+    <a class="list-item" href="{null}">loading songs...</a>
+  {/each}
 </div>
 
 <style>
@@ -101,14 +132,35 @@
   import { onMount } from 'svelte';
   import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage } from '../tools/stores';
   import { connectWS, convertSencondsToString, convertPercentToSeconds, normalizeTime, getCurrentTrackList } from '../tools/mopidyTools';
+  import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
+  import {
+    faAngleDown,
+    faAngleUp,
+    faPlayCircle,
+    faGripLines,
+    faRandom,
+    faMinus
+  } from '@fortawesome/free-solid-svg-icons';
 
   let tracklists = []
+  let image
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
   onMount(async () => {
     $mopidy = await connectWS()
     tracklists = await getCurrentTrackList()
+    console.log('TRAckslists', tracklists);
+    loadAlbumImage()
   })
+
+  async function loadAlbumImage() {
+    if ($currentTrack.album) {
+      let res = await fetch(`https://ws.audioscrobbler.com/2.0/?format=json&method=album.getInfo&album=${$currentTrack.album.name}&artist=${$currentTrack.artists[0].name}&api_key=4320a3ef51c9b3d69de552ac083c55e3`)
+      //res = await mopidy.library.getImages([currentTrack.uri])
+      let lastfm = await res.json()
+      $albumImage = lastfm.album.image.find(x => x.size === 'extralarge');
+    }
+  }
 
   async function setTrackTime(currentPlaytimePercent) {
     const ms = convertPercentToSeconds(currentPlaytimePercent, $totalPlaytime)
@@ -118,6 +170,19 @@
     if (changed) {
       console.log("set track time", currentPlaytimePercent)
     }
+  }
+
+  async function removeTrack(track) {
+    const res = await $mopidy.tracklist.remove({criteria: {uri: [track.uri]}})
+    if (res.length > 0) {
+      tracklists = tracklists.filter(x => x.uri != res[0].track.uri)
+    }
+  }
+
+  async function playTracklist(track) {
+    delete track.visibility
+    const res2 = await $mopidy.tracklist.add([[track]])
+    //$mopidy.playback.play()
   }
   
 </script>
