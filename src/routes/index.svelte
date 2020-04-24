@@ -57,16 +57,16 @@
 {/if}
 
 <div class="list is-hoverable">
-  {#each tracklists as tracklist}
+  {#each tlTracklists as tlTrack}
     <a class="list-item" href="{null}">
       <div class="columns is-mobile">
-        <div class="column" on:click={() => tracklist.visibility = !tracklist.visibility}>
-          {tracklist.artists ? tracklist.artists.map(x => x.name).join(', ') : ''} - {tracklist.name}
+        <div class="column" on:click={() => tlTrack.visibility = !tlTrack.visibility}>
+          {tlTrack.track.artists ? tlTrack.track.artists.map(x => x.name).join(', ') : ''} - {tlTrack.track.name}
         </div>
         <div class="column is-narrow">
-          <div class="dropdown is-right is-up" class:is-active={tracklist.visibility} >
-            <div class="dropdown-trigger" on:click={() => tracklist.visibility = !tracklist.visibility}>
-            {#if tracklist.visibility}
+          <div class="dropdown is-right is-up" class:is-active={tlTrack.visibility} >
+            <div class="dropdown-trigger" on:click={() => tlTrack.visibility = !tlTrack.visibility}>
+            {#if tlTrack.visibility}
               <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
             {:else}
               <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
@@ -74,11 +74,11 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu" role="menu">
               <div class="dropdown-content">
-                <a href="{null}" class="dropdown-item" on:click={playTracklist(tracklist)}>
+                <a href="{null}" class="dropdown-item" on:click={playTracklist(tlTrack)}>
                   <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"/>&nbsp;
                   Play
                 </a>
-                <a href="{null}" class="dropdown-item" on:click={removeTrack(tracklist)}>
+                <a href="{null}" class="dropdown-item" on:click={removeTrack(tlTrack)}>
                   <FontAwesomeIcon icon={faMinus} class="icon is-small"/>&nbsp;
                   Remove track
                 </a>
@@ -131,7 +131,7 @@
 <script>
   import { onMount } from 'svelte';
   import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage } from '../tools/stores';
-  import { connectWS, convertSencondsToString, convertPercentToSeconds, normalizeTime, getCurrentTrackList } from '../tools/mopidyTools';
+  import { connectWS, convertSencondsToString, convertPercentToSeconds, normalizeTime, getCurrentTlTrackList } from '../tools/mopidyTools';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faAngleDown,
@@ -142,14 +142,13 @@
     faMinus
   } from '@fortawesome/free-solid-svg-icons';
 
-  let tracklists = []
+  let tlTracklists = []
   let image
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
   onMount(async () => {
     $mopidy = await connectWS()
-    tracklists = await getCurrentTrackList()
-    console.log('TRAckslists', tracklists);
+    tlTracklists = await getCurrentTlTrackList()
     loadAlbumImage()
   })
 
@@ -172,17 +171,17 @@
     }
   }
 
-  async function removeTrack(track) {
-    const res = await $mopidy.tracklist.remove({criteria: {uri: [track.uri]}})
+  async function removeTrack(tlTrack) {
+    const res = await $mopidy.tracklist.remove({criteria: {uri: [tlTrack.track.uri]}})
     if (res.length > 0) {
-      tracklists = tracklists.filter(x => x.uri != res[0].track.uri)
+      tlTracklists = tlTracklists.filter(x => x.track.uri != res[0].track.uri)
     }
   }
 
-  async function playTracklist(track) {
-    delete track.visibility
-    const res2 = await $mopidy.tracklist.add([[track]])
-    //$mopidy.playback.play()
+  async function playTracklist(tlTrack) {
+    // tl_model do not contain visibility key
+    delete tlTrack.visibility
+    $mopidy.playback.play([tlTrack])
   }
   
 </script>

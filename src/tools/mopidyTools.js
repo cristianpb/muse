@@ -166,6 +166,18 @@ export async function getCurrentTrackList() {
   }
 }
 
+export async function getCurrentTlTrackList() {
+  const currentTrackList = await mopidyWS.tracklist.getTlTracks()
+  if (currentTrackList) {
+    return currentTrackList.map(x => {
+      x.visibility = false
+      return x
+    })
+  } else {
+    throw new Error("Error reading tracklist")
+  }
+}
+
 export async function getRandomMode() {
   const mopidyWS = await connectWS()
   const randomMode = await mopidyWS.tracklist.getRandom()
