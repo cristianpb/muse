@@ -74,13 +74,16 @@
 
 <div class="list is-hoverable">
   {#if playlistsTracks.tracks}
-    {#each playlistsTracks.tracks as track, i}
+    {#each playlistsTracks.tracks as track, index (getKey(track)) }
       <a class="list-item" 
          href="{null}" 
          draggable={true} 
-         on:dragstart={event => dragstart(event, i)}
-         on:drop|preventDefault={event => drop(event, i)}
+         on:dragstart={event => dragstart(event, index)}
+         on:drop|preventDefault={event => drop(event, index)}
          ondragover="return false"
+         on:dragenter={() => hovering = index}
+         class:is-active={hovering === index}
+         animate:flip
          >
          <div class="columns is-mobile">
            <div class="column" on:click={() => track.visibility = !track.visibility}>
@@ -131,6 +134,7 @@
   import { stores } from "@sapper/app";
   import { onMount } from 'svelte';
   import { mopidy, playlists } from '../../tools/stores';
+  import { flip } from 'svelte/animate';
   import { connectWS, getPlaylists, getPlaylistTracks, playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
   import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte'
   import {
@@ -152,9 +156,12 @@
   const { slug } = $page.params;
 
   let showOptions = false;
-  let playlistsTracks = []
-  let selectedPlaylist
-  let savePlaylistPromise
+  let playlistsTracks = [];
+  let selectedPlaylist;
+  let savePlaylistPromise;
+  let hovering = false;
+  let key;
+  const getKey = item => (key ? item[key] : item);
 
   onMount(async() => {
     $mopidy = await connectWS()
@@ -169,6 +176,7 @@
     let newPlaylist = playlistsTracks.tracks
     newPlaylist[i] = newPlaylist.splice(target, 1, newPlaylist[i])[0];
     playlistsTracks.tracks = newPlaylist
+    hovering = null
   }
 
   function dragstart(event, i) {
