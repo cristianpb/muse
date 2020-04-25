@@ -43,7 +43,9 @@ export function connectWS() {
         currentTrackTL = await mopidyWS.playback.getCurrentTlTrack()
         if (currentTrackTL) {
           const currentTrackRaw = await mopidyWS.library.lookup([[currentTrackTL.track.uri]])
+          const currentIndex = await mopidyWS.tracklist.index()
           currentTrackTL.track = Object.values(currentTrackRaw)[0][0]
+          currentTrackTL.index = currentIndex
           currentTrack.set(currentTrackTL);
         }
 
@@ -110,9 +112,11 @@ export function connectWS() {
         }
       })
 
-      mopidyWS.on("event:trackPlaybackStarted", (event) => {
+      mopidyWS.on("event:trackPlaybackStarted", async (event) => {
         console.log(`mopidy:event:trackPlaybackStarted: ${event}`);
-        let { tl_track } = event
+        const { tl_track } = event
+        const currentIndex = await mopidyWS.tracklist.index({tlid: tl_track.tlid})
+        tl_track.index = currentIndex 
         currentTrack.set(tl_track)
         currentPlaytime.set(0)
         if (tl_track.track.length) {

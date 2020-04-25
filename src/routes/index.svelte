@@ -73,6 +73,9 @@
       <div class="columns is-mobile">
         <div class="column" on:click={() => tlTrack.visibility = !tlTrack.visibility}>
           {tlTrack.track.name}
+          {#if index === $currentTrack.index}
+              &nbsp;<FontAwesomeIcon icon={faCog} spin={true} class="icon is-small"/>
+          {/if}
         </div>
         <div class="column is-narrow">
           <div class="dropdown is-right is-up" class:is-active={tlTrack.visibility} >
@@ -151,7 +154,8 @@
     faPlayCircle,
     faGripLines,
     faRandom,
-    faMinus
+    faMinus,
+    faCog
   } from '@fortawesome/free-solid-svg-icons';
 
   let image;
