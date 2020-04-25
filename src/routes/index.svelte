@@ -6,56 +6,56 @@
 <h1 class="title">Now playing</h1>
 
 {#if $currentTrack}
-<div class="card">
-  {#if $albumImage['#text']}
-    <div class="card-image has-text-centered">
-      <figure class="image is-4by3">
-        <img src="{$albumImage['#text']}" alt="Placeholder image">
-      </figure>
-    </div>
-  {:else}
-    <div class="card-image has-text-centered">
-      <figure class="image is-4by3">
-        <img src="{process.env.NODE_ENV === 'development' ? '' : '/apollo'}/logo-512.png" alt="Placeholder image" width="256" height="192">
-      </figure>
-    </div>
-  {/if}
-
-  <div class="card-content">
-    <div class="media">
-      <div class="media-content">
-        {#if $currentTrack.track}
-          <p class="title is-4">{$currentTrack.track.name}</p>
-          {#if $currentTrack.track.artists}
-            <p class="subtitle is-6">{$currentTrack.track.artists[0].name}</p>
-          {/if}
-        {/if}
+  <div class="card">
+    {#if $albumImage['#text']}
+      <div class="card-image has-text-centered">
+        <figure class="image is-4by3">
+          <img src="{$albumImage['#text']}" alt="Placeholder image">
+        </figure>
       </div>
-    </div>
+    {:else}
+      <div class="card-image has-text-centered">
+        <figure class="image is-1by1">
+          <img src="{process.env.NODE_ENV === 'development' ? '' : '/apollo'}/icon.svg" alt="Placeholder image" width="128" height="128">
+        </figure>
+      </div>
+    {/if}
 
-    <div class="content">
-      <div class="columns is-mobile">
-        <div class="column is-narrow">
-            {convertSencondsToString($currentPlaytime)}
-        </div>
-        <div class="column">
-          {#if ($currentPlaytime && $totalPlaytime)}
-            <input 
-              type="range"
-              min="0" 
-              max="100" 
-              bind:value="{currentPlaytimePercent}" 
-              on:change="{setTrackTime(currentPlaytimePercent)}"
-              class="slider">
+    <div class="card-content">
+      <div class="media">
+        <div class="media-content">
+          {#if $currentTrack.track}
+            <p class="title is-4">{$currentTrack.track.name}</p>
+            {#if $currentTrack.track.artists}
+              <p class="subtitle is-6">{$currentTrack.track.artists[0].name}</p>
+            {/if}
           {/if}
         </div>
-        <div class="column is-narrow">
+      </div>
+
+      <div class="content">
+        <div class="columns is-mobile">
+          <div class="column is-narrow">
+            {convertSencondsToString($currentPlaytime)}
+          </div>
+          <div class="column">
+            {#if ($currentPlaytime && $totalPlaytime)}
+              <input 
+                type="range"
+                min="0" 
+                max="100" 
+                bind:value="{currentPlaytimePercent}" 
+                on:change="{setTrackTime(currentPlaytimePercent)}"
+                class="slider">
+            {/if}
+          </div>
+          <div class="column is-narrow">
             {convertSencondsToString($totalPlaytime)}
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 {/if}
 
 <div class="list is-hoverable">
@@ -107,6 +107,12 @@
   {:else}
     <a class="list-item" href="{null}">loading songs...</a>
   {/each}
+</div>
+
+<div class="columns">
+  <div class="column has-text-centered">
+    Version - __VERSION__
+  </div>
 </div>
 
 <style>
@@ -174,7 +180,7 @@
   })
 
   async function loadAlbumImage() {
-    if ($currentTrack.track.album) {
+    if ($currentTrack.track && $currentTrack.track.album) {
       let res = await fetch(`https://ws.audioscrobbler.com/2.0/?format=json&method=album.getInfo&album=${$currentTrack.track.album.name}&artist=${$currentTrack.track.artists[0].name}&api_key=4320a3ef51c9b3d69de552ac083c55e3`)
       //res = await mopidy.library.getImages([currentTrack.uri])
       let lastfm = await res.json()
