@@ -9,11 +9,12 @@
 </svg>
 <script>
   export let icon;
+  export let spin=false;
   let path = [];
   let classes = "";
   let viewBox = "";
   $: viewBox = "0 0 " + icon.icon[0] + " " + icon.icon[1];
-  $: classes = "fa " + ($$props.class ? $$props.class : "");
+  $: classes = "fa " + ($$props.class ? $$props.class : "") + (spin ? " spin" : "");
   $: path = icon.icon[4];
 </script>
 
@@ -66,4 +67,15 @@
       margin-bottom: -0.15rem!important;
   }
 
+  @-webkit-keyframes spinner-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @-moz-keyframes spinner-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @-o-keyframes spinner-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @-ms-keyframes spinner-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes spinner-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .spin {
+    -webkit-animation: spinner-spin  1s steps(8) infinite;
+    -moz-animation: spinner-spin  1s steps(8) infinite;
+    -o-animation: spinner-spin  1s steps(8) infinite;
+    animation: spinner-spin  1s steps(8) infinite;
+  }
 </style>
