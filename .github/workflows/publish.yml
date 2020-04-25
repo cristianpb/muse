@@ -94,6 +94,7 @@ jobs:
         with:
           commit_message: ⬆ Upgrade package version files
           commit_options: '--signoff'
+          branch: master
           # Optional glob pattern of files which should be added to the commit
           file_pattern: "package.json setup.cfg"
           # Optional commit user and author settings
