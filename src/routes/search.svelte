@@ -12,8 +12,8 @@
   <div class="column is-narrow">
     <div class="columns is-mobile">
       <div class="column">
-        <div class:is-active={dropMenuActive} class="dropdown  is-hoverable">
-          <div class="dropdown-trigger"  on:click={toggleDropmenu}>
+        <div class:is-active={dropMenuActive} class="dropdown">
+          <div class="dropdown-trigger"  on:click={() => dropMenuActive = !dropMenuActive}>
             <button class="button" aria-haspopup="true" aria-controls="dropdown-menu-sources">
               <span>Sources</span>
               <span class="icon is-small">
@@ -57,7 +57,7 @@
         {#each tracks as track, i}
           <a class="list-item" href="{null}">
             <div class="columns is-mobile">
-              <div class="column">
+              <div class="column"  on:click={() => track.visibility = !track.visibility}>
                 {#if track.artists}
                 {track.artists.map(x => x.name).join(', ')} - {track.name}
                 {:else}
@@ -65,19 +65,26 @@
                 {/if}
               </div>
               <div class="column is-narrow">
-                <div class:is-active={track.visibility} class="dropdown is-right is-hoverable" >
+                <div class:is-active={track.visibility} class="dropdown is-right is-up" >
                   <div class="dropdown-trigger" on:click={() => track.visibility = !track.visibility}>
+                  {#if track.visibility }
+                    <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+                  {:else}
                     <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+                  {/if}
                   </div>
                   <div class="dropdown-menu" id="dropdown-menu" role="menu">
                     <div class="dropdown-content">
                       <a href="{null}" class="dropdown-item" on:click={playTrackSingle(track.uri)}>
+                        <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"/>&nbsp;
                         Play now
                       </a>
                       <a href={null} class="dropdown-item" on:click={addTrackNext(track.uri)}>
+                        <FontAwesomeIcon icon={faArrowRight} class="icon is-small"/>&nbsp;
                         Play next
                       </a>
                       <a href="{null}" class="dropdown-item" on:click={addTrackQueue(track.uri)}>
+                        <FontAwesomeIcon icon={faLevelDownAlt} class="icon is-small"/>&nbsp;
                         Add to queue
                       </a>
                     </div>
@@ -99,14 +106,17 @@
 {/if}
 
 <script>
-  import { connectWS } from '../tools/mopidyTools';
+  import { connectWS, playTrackSingle, addTrackNext, addTrackQueue } from '../tools/mopidyTools';
   import { mopidy } from '../tools/stores';
   import { onMount } from 'svelte';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faSearch,
     faPlayCircle,
-    faAngleDown
+    faAngleDown,
+    faArrowRight,
+    faLevelDownAlt,
+    faAngleUp
   } from '@fortawesome/free-solid-svg-icons';
 
   let searchTerm = "file"
@@ -137,25 +147,6 @@
 
   function handleSearch() {
     setTimeout(() => { promise = searchFunction() }, 100)
-  }
-
-  function toggleDropmenu() {
-    dropMenuActive = !dropMenuActive
-  }
-
-  function playTrackSingle(uri) {
-    $mopidy.tracklist.clear()
-    $mopidy.tracklist.add({uris:[uri]})
-    $mopidy.playback.play()
-  }
-
-  async function addTrackNext(uri) {
-    const index = await $mopidy.tracklist.index()
-    $mopidy.tracklist.add({at_position: index + 1, uris:[uri]})
-  }
-
-  async function addTrackQueue(uri) {
-    $mopidy.tracklist.add({uris:[uri]})
   }
 
 </script>

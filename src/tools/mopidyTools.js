@@ -183,3 +183,20 @@ export async function getRandomMode() {
   const randomMode = await mopidyWS.tracklist.getRandom()
     return randomMode
 }
+
+
+export function playTrackSingle(uri) {
+  mopidyWS.tracklist.clear()
+  mopidyWS.tracklist.add({uris:[uri]})
+  mopidyWS.playback.play()
+}
+
+export async function addTrackNext(uri) {
+  const index = await mopidyWS.tracklist.index()
+  mopidyWS.tracklist.add({at_position: index + 1, uris:[uri]})
+}
+
+export async function addTrackQueue(uri) {
+  mopidyWS.tracklist.add({uris:[uri]})
+}
+
