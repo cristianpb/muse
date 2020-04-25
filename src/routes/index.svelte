@@ -59,8 +59,17 @@
 {/if}
 
 <div class="list is-hoverable">
-  {#each tlTracklists as tlTrack}
-    <a class="list-item" href="{null}">
+  {#each tlTracklists as tlTrack, index (getKey(tlTrack))}
+    <a class="list-item" 
+       animate:flip={{ duration: 300 }}
+       href="{null}"
+       draggable={true} 
+       on:dragstart={event => dragstart(event, index)}
+       on:drop|preventDefault={event => drop(event, index)}
+       ondragover="return false"
+       on:dragenter={() => hovering = index}
+       class:is-active={hovering === index}
+       >
       <div class="columns is-mobile">
         <div class="column" on:click={() => tlTrack.visibility = !tlTrack.visibility}>
           {tlTrack.track.name}
@@ -132,6 +141,7 @@
 
 <script>
   import { onMount } from 'svelte';
+  import { flip } from 'svelte/animate';
   import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage } from '../tools/stores';
   import { connectWS, convertSencondsToString, convertPercentToSeconds, normalizeTime, getCurrentTlTrackList } from '../tools/mopidyTools';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
@@ -144,8 +154,12 @@
     faMinus
   } from '@fortawesome/free-solid-svg-icons';
 
+  let image;
+  let key;
   let tlTracklists = []
-  let image
+  let hovering = false;
+  const getKey = item => (key ? item[key] : item);
+
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
   onMount(async () => {
@@ -184,9 +198,33 @@
   }
 
   async function playTracklist(tlTrack) {
-    // tl_model do not contain visibility key
+    // tl_model does not contain visibility key
     delete tlTrack.visibility
     $mopidy.playback.play([tlTrack])
+  }
+
+  function drop(event, target) {
+		event.dataTransfer.dropEffect = 'move';
+    const start = parseInt(event.dataTransfer.getData("text/plain"));
+    const newTracklist = tlTracklists
+    if (start < target) {
+      newTracklist.splice(target + 1, 0, newTracklist[start]);
+      newTracklist.splice(start, 1);
+      $mopidy.tracklist.move({start, end: start+1, to_position: target})
+    } else {
+      newTracklist.splice(target, 0, newTracklist[start]);
+      newTracklist.splice(start + 1, 1);
+      $mopidy.tracklist.move({start: target, end: start, to_position: target + 1})
+    }
+    tlTracklists = newTracklist
+    hovering = null
+  }
+
+  function dragstart(event, i) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.dropEffect = 'move';
+    const start = i;
+    event.dataTransfer.setData('text/plain', start);
   }
   
 </script>
