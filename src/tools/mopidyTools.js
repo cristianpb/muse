@@ -200,3 +200,22 @@ export async function addTrackQueue(uri) {
   mopidyWS.tracklist.add({uris:[uri]})
 }
 
+export async function playPlaylist(uri) {
+  const playlistInfo = await getPlaylistTracks(uri)
+  mopidyWS.tracklist.clear()
+  mopidyWS.tracklist.add([playlistInfo.tracks])
+  mopidyWS.playback.play()
+}
+
+export async function shufflePlaylist(uri) {
+  const playlistInfo = await getPlaylistTracks(uri)
+  mopidyWS.tracklist.clear()
+  mopidyWS.tracklist.add([playlistInfo.tracks])
+  mopidyWS.tracklist.shuffle()
+  mopidyWS.playback.play()
+}
+
+export async function addToQueuePlaylists(uri) {
+  const playlistInfo = await getPlaylistTracks(uri)
+  mopidyWS.tracklist.add([playlistInfo.tracks])
+}

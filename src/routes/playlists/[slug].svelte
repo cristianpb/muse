@@ -1,39 +1,78 @@
-<div class="columns is-mobile">
+<div class="columns">
   <div class="column">
     <h1 class="title">{slug.replace('-',' ')}</h1>
   </div>
-  <div class="column is-narrow">
-    <a class="button" href="playlists">
-      <FontAwesomeIcon icon={faArrowLeft} class="icon"/>
-    </a>
-  </div>
-  <div class="column is-narrow">
-    <a class="button" href="{null}" on:click={handleClickSave}>
-      Save
-    </a>
-    {#if savePlaylistPromise}
-      {#await savePlaylistPromise}
-        <a class="button" href="{null}">
-          <FontAwesomeIcon icon={faSpinner} spin={true} class="icon"/>
+  <div class="column is-narrow" >
+    <div class="columns is-mobile">
+      <div class="column">
+        <a class="button" href="playlists">
+          <FontAwesomeIcon icon={faArrowLeft} class="icon"/>
         </a>
-      {:then res}
-        {#if res}
-          <a class="button" href="{null}">
-            <FontAwesomeIcon icon={faCheck} class="icon"/>
-          </a>
-        {:else}
-          Error
-        {/if}
-      {:catch error}
-        {error.message}
-      {/await}
-    {/if}
+      </div>
+      <div class="column">
+        <a class="button" href="{null}" on:click={handleClickSave}>
+          <FontAwesomeIcon icon={faSave} class="icon"/>
+        </a>
+      </div>
+      <div class="column">
+        <div class="dropdown is-right" class:is-active={showOptions} >
+          <div class="dropdown-trigger" on:click={() => showOptions = !showOptions}>
+          {#if showOptions}
+            <a href="{null}" class="button">
+              <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+            </a>
+          {:else}
+            <a href="{null}" class="button">
+              <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+            </a>
+          {/if}
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <a href="{null}" class="dropdown-item" on:click={playPlaylist(selectedPlaylist.uri)}>
+                <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"/>&nbsp;&nbsp;
+                  Play now
+              </a>
+              <a href="{null}" class="dropdown-item" on:click={shufflePlaylist(selectedPlaylist.uri)}>
+                <FontAwesomeIcon icon={faRandom} class="icon is-small"/>&nbsp;&nbsp;
+                  Play shuffle
+              </a>
+              <a href="{null}" class="dropdown-item" on:click={addToQueuePlaylists(selectedPlaylist.uri)}>
+                <FontAwesomeIcon icon={faLevelDownAlt} class="icon is-small"/>&nbsp;&nbsp;
+                  Add to queue
+              </a>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      {#if savePlaylistPromise}
+        {#await savePlaylistPromise}
+          <div class="column">
+            <a class="button" href="{null}">
+              <FontAwesomeIcon icon={faSpinner} spin={true} class="icon"/>
+            </a>
+          </div>
+        {:then res}
+          {#if res}
+            <div class="column">
+              <a class="button" href="{null}">
+                <FontAwesomeIcon icon={faCheck} class="icon"/>
+              </a>
+            </div>
+          {:else}
+            Error
+          {/if}
+        {:catch error}
+          {error.message}
+        {/await}
+      {/if}
+    </div>
   </div>
 </div>
 
-<div class="list is-hoverable"
-     
-  >
+<div class="list is-hoverable">
   {#if playlistsTracks.tracks}
     {#each playlistsTracks.tracks as track, i}
       <a class="list-item" 
@@ -92,7 +131,7 @@
   import { stores } from "@sapper/app";
   import { onMount } from 'svelte';
   import { mopidy, playlists } from '../../tools/stores';
-  import { connectWS, getPlaylists, getPlaylistTracks, playTrackSingle, addTrackNext, addTrackQueue } from '../../tools/mopidyTools';
+  import { connectWS, getPlaylists, getPlaylistTracks, playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
   import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte'
   import {
     faArrowLeft,
@@ -103,20 +142,24 @@
     faPlayCircle,
     faSpinner,
     faCheck,
-    faMinus
+    faMinus,
+    faSave,
+    faRandom,
+    faGripLines
   } from '@fortawesome/free-solid-svg-icons';
 
   const { page } = stores();
   const { slug } = $page.params;
 
-	let hovering = false;
+  let showOptions = false;
   let playlistsTracks = []
+  let selectedPlaylist
   let savePlaylistPromise
 
   onMount(async() => {
     $mopidy = await connectWS()
     $playlists = await getPlaylists()
-    const selectedPlaylist = $playlists.find(playlist => playlist.name === slug)
+    selectedPlaylist = $playlists.find(playlist => playlist.name === slug)
     playlistsTracks  = await getPlaylistTracks(selectedPlaylist.uri)
   })
 

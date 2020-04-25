@@ -52,7 +52,7 @@
 <script>
 
   import { mopidy, playlists } from '../../tools/stores';
-  import { connectWS, getPlaylists, getPlaylistTracks } from '../../tools/mopidyTools';
+  import { connectWS, getPlaylists, getPlaylistTracks, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
   import { onMount } from 'svelte';
   import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte'
   import {
@@ -66,26 +66,5 @@
     $mopidy = await connectWS()
     $playlists = await getPlaylists()
   })
-
-  async function playPlaylist(uri) {
-    const playlistInfo = await getPlaylistTracks(uri)
-    $mopidy.tracklist.clear()
-    $mopidy.tracklist.add([playlistInfo.tracks])
-    $mopidy.playback.play()
-  }
-
-  async function shufflePlaylist(uri) {
-    const playlistInfo = await getPlaylistTracks(uri)
-    $mopidy.tracklist.clear()
-    $mopidy.tracklist.add([playlistInfo.tracks])
-    $mopidy.tracklist.shuffle()
-    $mopidy.playback.play()
-  }
-
-  async function addToQueuePlaylists(uri) {
-    const playlistInfo = await getPlaylistTracks(uri)
-    $mopidy.tracklist.add([playlistInfo.tracks])
-  }
-
 
 </script>
