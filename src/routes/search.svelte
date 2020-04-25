@@ -119,7 +119,7 @@
     faAngleUp
   } from '@fortawesome/free-solid-svg-icons';
 
-  let searchTerm = "file"
+  let searchTerm = ""
   let dropMenuActive = false
   let selectedUris = ['local']
   let hideUris = ['http', 'https', 'mms', 'rtmp', 'rtmps', 'rtsp', 'file']
