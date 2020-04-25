@@ -6,7 +6,7 @@ let playlistsLocal;
 let currentPlaytimeLocal;
 let totalPlaytimeLocal;
 let interval;
-let currentTrackLocal
+let currentTrackTL
 
 const c = mopidy.subscribe((value) => { mopidyWS = value });
 const l = playlists.subscribe((value) => { playlistsLocal = value });
@@ -40,11 +40,11 @@ export function connectWS() {
       mopidyWS.on("state:online", async () => {
         console.log('mopidy: connected');
 
-        const currentTrackTL = await mopidyWS.playback.getCurrentTrack()
+        currentTrackTL = await mopidyWS.playback.getCurrentTlTrack()
         if (currentTrackTL) {
-          const currentTrackRaw = await mopidyWS.library.lookup([[currentTrackTL.uri]])
-          currentTrackLocal = Object.values(currentTrackRaw)[0][0]
-          currentTrack.set(currentTrackLocal);
+          const currentTrackRaw = await mopidyWS.library.lookup([[currentTrackTL.track.uri]])
+          currentTrackTL.track = Object.values(currentTrackRaw)[0][0]
+          currentTrack.set(currentTrackTL);
         }
 
         currentPlaytimeLocal = await mopidyWS.playback.getTimePosition()
@@ -59,9 +59,9 @@ export function connectWS() {
         currentMute.set(currentMuteLocal);
         currentRandom.set(currentRandomLocal);
 
-        if (currentTrackLocal) {
-          const totalPlaytimeLocal = currentTrackLocal.length
-          totalPlaytime.set(currentTrackLocal.length)
+        if (currentTrackTL) {
+          const totalPlaytimeLocal = currentTrackTL.track.length
+          totalPlaytime.set(currentTrackTL.track.length)
           if (currentStateLocal === 'playing') {
             interval = setInterval(() => {
               if (currentPlaytimeLocal >= totalPlaytimeLocal) {
@@ -113,7 +113,7 @@ export function connectWS() {
       mopidyWS.on("event:trackPlaybackStarted", (event) => {
         console.log(`mopidy:event:trackPlaybackStarted: ${event}`);
         let { tl_track } = event
-        currentTrack.set(tl_track.track)
+        currentTrack.set(tl_track)
         currentPlaytime.set(0)
         if (tl_track.track.length) {
           totalPlaytime.set(tl_track.track.length)

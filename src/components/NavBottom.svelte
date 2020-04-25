@@ -18,7 +18,7 @@
       <FontAwesomeIcon icon={faCaretRight} class="icon"/>
     </a>
     <div class="navbar-item is-hidden-touch">
-      {$currentTrack ? $currentTrack.name : "-:-"}
+      {$currentTrack.track ? $currentTrack.track.name : "-:-"}
     </div>
     <a href="{null}" 
        class:is-active={burgerState}

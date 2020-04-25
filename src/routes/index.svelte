@@ -24,9 +24,11 @@
   <div class="card-content">
     <div class="media">
       <div class="media-content">
-        <p class="title is-4">{$currentTrack.name}</p>
-        {#if $currentTrack.artists}
-        <p class="subtitle is-6">{$currentTrack.artists[0].name}</p>
+        {#if $currentTrack.track}
+          <p class="title is-4">{$currentTrack.track.name}</p>
+          {#if $currentTrack.track.artists}
+            <p class="subtitle is-6">{$currentTrack.track.artists[0].name}</p>
+          {/if}
         {/if}
       </div>
     </div>
@@ -61,7 +63,7 @@
     <a class="list-item" href="{null}">
       <div class="columns is-mobile">
         <div class="column" on:click={() => tlTrack.visibility = !tlTrack.visibility}>
-          {tlTrack.track.artists ? tlTrack.track.artists.map(x => x.name).join(', ') : ''} - {tlTrack.track.name}
+          {tlTrack.track.name}
         </div>
         <div class="column is-narrow">
           <div class="dropdown is-right is-up" class:is-active={tlTrack.visibility} >
@@ -150,14 +152,17 @@
     $mopidy = await connectWS()
     tlTracklists = await getCurrentTlTrackList()
     loadAlbumImage()
+    $mopidy.tracklist.index()
   })
 
   async function loadAlbumImage() {
-    if ($currentTrack.album) {
-      let res = await fetch(`https://ws.audioscrobbler.com/2.0/?format=json&method=album.getInfo&album=${$currentTrack.album.name}&artist=${$currentTrack.artists[0].name}&api_key=4320a3ef51c9b3d69de552ac083c55e3`)
+    if ($currentTrack.track.album) {
+      let res = await fetch(`https://ws.audioscrobbler.com/2.0/?format=json&method=album.getInfo&album=${$currentTrack.track.album.name}&artist=${$currentTrack.track.artists[0].name}&api_key=4320a3ef51c9b3d69de552ac083c55e3`)
       //res = await mopidy.library.getImages([currentTrack.uri])
       let lastfm = await res.json()
-      $albumImage = lastfm.album.image.find(x => x.size === 'extralarge');
+      if (lastfm && lastfm.album) {
+        $albumImage = lastfm.album.image.find(x => x.size === 'extralarge');
+      }
     }
   }
 
