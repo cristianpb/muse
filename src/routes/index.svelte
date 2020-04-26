@@ -111,7 +111,9 @@
 
 <div class="columns">
   <div class="column has-text-centered">
-    Version - __VERSION__
+    <a href="https://github.com/cristianpb/apollo">
+      Version - __VERSION__
+    </a>
   </div>
 </div>
 
