@@ -41,6 +41,10 @@
                 <FontAwesomeIcon icon={faLevelDownAlt} class="icon is-small"/>&nbsp;&nbsp;
                   Add to queue
               </a>
+              <a href="{null}" class="dropdown-item" on:click={() => deletePlaylistConfirmation = !deletePlaylistConfirmation}>
+                <FontAwesomeIcon icon={faMinus} class="icon is-small"/>&nbsp;&nbsp;
+                  Delete playlist
+              </a>
             </div>
           </div>
         </div>
@@ -71,6 +75,20 @@
     </div>
   </div>
 </div>
+
+<div class="modal" class:is-active={deletePlaylistConfirmation}  >
+  <div class="modal-background"  on:click={() => deletePlaylistConfirmation = !deletePlaylistConfirmation}></div>
+  <div class="modal-content has-text-centered">
+    <p class="title">
+      Delete playlist
+    </p>
+    <button class="button" on:click={deletePlaylist(selectedPlaylist.uri)}>
+      Yes
+    </button>
+  </div>
+  <button class="modal-close is-large" aria-label="close" on:click={() => deletePlaylistConfirmation = !deletePlaylistConfirmation}></button>
+</div>
+
 
 <div class="list is-hoverable">
   {#if playlistsTracks.tracks}
@@ -135,6 +153,7 @@
   import { onMount } from 'svelte';
   import { mopidy, playlists } from '../../tools/stores';
   import { flip } from 'svelte/animate';
+  import { goto } from '@sapper/app';
   import { connectWS, getPlaylists, getPlaylistTracks, playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
   import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte'
   import {
@@ -155,6 +174,7 @@
   const { page } = stores();
   const { slug } = $page.params;
 
+  let deletePlaylistConfirmation = false;
   let showOptions = false;
   let playlistsTracks = [];
   let selectedPlaylist;
@@ -203,6 +223,16 @@
     let newPlaylist = playlistsTracks.tracks
     newPlaylist = newPlaylist.filter(x => x.uri != uri);
     playlistsTracks.tracks = newPlaylist
+  }
+
+  const deletePlaylist = async (uri) => {
+    const res = await $mopidy.playlists.delete({uri})
+    if (res) {
+      deletePlaylistConfirmation = !deletePlaylistConfirmation
+      setTimeout(() => { goto('playlists'); }, 1000)
+    } else {
+      console.log("Error: no laylist remove")
+    }
   }
 
 </script>
