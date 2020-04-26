@@ -23,7 +23,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: apollo
+      target: muse
       args:
         app_path: /${APP}
     depends_on:
@@ -31,8 +31,8 @@ services:
     ports:
       - 6680:6680
     volumes:
-      - ./__sapper__/export/apollo:/${APP}/mopidy_apollo/static
-      - ./mopidy_apollo/mopidy.conf:/root/.config/mopidy/mopidy.conf
+      - ./__sapper__/export/muse:/${APP}/mopidy_muse/static
+      - ./mopidy_muse/mopidy.conf:/root/.config/mopidy/mopidy.conf
       - ${HOST_MUSIC_DIRECTORY}:/var/lib/mopidy/music
       - ${HOST_PLAYLIST_DIRECTORY}:/var/lib/mopidy/playlists
       - ${HOST_SNAPCAST_TEMP}:/tmp

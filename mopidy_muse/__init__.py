@@ -7,12 +7,12 @@ import pkg_resources
 
 from mopidy import config, ext
 
-__version__ = pkg_resources.get_distribution("Mopidy-Apollo").version
+__version__ = pkg_resources.get_distribution("Mopidy-Muse").version
 
 class Extension(ext.Extension):
 
-    dist_name = "Mopidy-Apollo"
-    ext_name = "apollo"
+    dist_name = "Mopidy-Muse"
+    ext_name = "muse"
     version = __version__
 
     def get_default_config(self):

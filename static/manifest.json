@@ -1,8 +1,8 @@
 {
 	"background_color": "#ffffff",
 	"theme_color": "#333333",
-	"name": "Mopidy-Apollo",
-	"short_name": "Mopidy-Apollo",
+	"name": "Mopidy-Muse",
+	"short_name": "Mopidy-Muse",
 	"display": "minimal-ui",
 	"start_url": "/",
 	"icons": [

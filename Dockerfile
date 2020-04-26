@@ -16,20 +16,20 @@ RUN  apt-get install -y \
 RUN  pip3 install Mopidy-TuneIn Mopidy-Local
 
 ##########################################################
-FROM base as apollo
+FROM base as muse
 ARG app_path
 
 # Base dir /app
 WORKDIR /$app_path
 
-COPY mopidy_apollo/mopidy.conf /root/.config/mopidy.conf
+COPY mopidy_muse/mopidy.conf /root/.config/mopidy.conf
 COPY setup.py ./
 COPY setup.cfg ./
 COPY LICENSE ./
 COPY MANIFEST.in ./
 COPY README.md ./
 COPY pyproject.toml ./
-ADD ./mopidy_apollo ./mopidy_apollo
+ADD ./mopidy_muse ./mopidy_muse
 RUN pip3 install -e .
 
 EXPOSE 6680

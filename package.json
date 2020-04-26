@@ -1,11 +1,11 @@
 {
-  "name": "Mopidy-Apollo",
+  "name": "Mopidy-Muse",
   "description": "Mopidy web interface with snapcast support",
   "version": "0.0.7",
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build --legacy",
-    "export": "sapper export --legacy --basepath apollo",
+    "export": "sapper export --legacy --basepath muse",
     "start": "node __sapper__/build",
     "cy:run": "cypress run",
     "cy:open": "cypress open",

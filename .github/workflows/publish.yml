@@ -41,13 +41,13 @@ jobs:
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           publish_branch: gh-pages
-          publish_dir: ./__sapper__/export/apollo
+          publish_dir: ./__sapper__/export/muse
       - name: Build python package
         run: |
           export APP_VERSION=$(git describe --tags --always --abbrev=0)
           sed -i -E "s/version = (.*)/version = ${APP_VERSION:1}/"  setup.cfg
           sed -i -E "s/version\": \"(.*)\"/version\": \"${APP_VERSION:1}\"/"  package.json;
-          cp  -r ./__sapper__/export/apollo/* mopidy_apollo/static
+          cp  -r ./__sapper__/export/muse/* mopidy_muse/static
           python3 -m pip install  --upgrade setuptools wheel
           python3 setup.py sdist bdist_wheel
 
@@ -76,7 +76,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-      - run: cp dist/Mopidy-Apollo*.tar.gz ./dist/Mopidy-Apollo.tar.gz
+      - run: cp dist/Mopidy-Muse*.tar.gz ./dist/Mopidy-Muse.tar.gz
         if: startsWith(github.event.ref, 'refs/tags')
       - name: Upload Release Asset
         if: startsWith(github.event.ref, 'refs/tags')
@@ -86,8 +86,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/Mopidy-Apollo.tar.gz
-          asset_name: Mopidy-Apollo.tar.gz
+          asset_path: ./dist/Mopidy-Muse.tar.gz
+          asset_name: Mopidy-Muse.tar.gz
           asset_content_type: application/gzip
       - uses: stefanzweifel/git-auto-commit-action@v4.1.5
         if: startsWith(github.event.ref, 'refs/tags')

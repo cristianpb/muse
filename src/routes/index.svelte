@@ -16,7 +16,7 @@
     {:else}
       <div class="card-image has-text-centered">
         <figure class="image is-1by1">
-          <img src="{process.env.NODE_ENV === 'development' ? '' : '/apollo'}/icon.svg" alt="Placeholder image" width="128" height="128">
+          <img src="{process.env.NODE_ENV === 'development' ? '' : '/muse'}/icon.svg" alt="Placeholder image" width="128" height="128">
         </figure>
       </div>
     {/if}
@@ -111,7 +111,7 @@
 
 <div class="columns">
   <div class="column has-text-centered">
-    <a href="https://github.com/cristianpb/apollo">
+    <a href="https://github.com/cristianpb/muse">
       Version - __VERSION__
     </a>
   </div>
