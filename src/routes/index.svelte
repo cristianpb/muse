@@ -155,7 +155,7 @@
   import { flip } from 'svelte/animate';
   import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage } from '../tools/stores';
   import { connectWS, convertSencondsToString, convertPercentToSeconds, normalizeTime, getCurrentTlTrackList } from '../tools/mopidyTools';
-  import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
+  import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte';
   import {
     faAngleDown,
     faAngleUp,

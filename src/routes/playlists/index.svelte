@@ -1,4 +1,15 @@
-<h1 class="title">Playlists</h1>
+<div class="columns is-mobile">
+  <div class="column">
+    <h1 class="title">Playlists</h1>
+  </div>
+  <div class="column is-narrow">
+    <a class="button" href="{null}" on:click={() => showCreatePlaylistModal = !showCreatePlaylistModal} >
+      <FontAwesomeIcon icon={faPlus} class="icon"/>
+    </a>
+  </div>
+</div>
+
+<CreatePlalist {showCreatePlaylistModal} />
 
 <div class="list is-hoverable">
   {#each $playlists as playlist, i}
@@ -54,13 +65,17 @@
   import { mopidy, playlists } from '../../tools/stores';
   import { connectWS, getPlaylists, getPlaylistTracks, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
   import { onMount } from 'svelte';
-  import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte'
+  import CreatePlalist from '../../components/CreatePlaylist.svelte';
+  import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte';
   import {
     faAngleDown,
     faPlayCircle,
     faRandom,
-    faGripLines
+    faGripLines,
+    faPlus
   } from '@fortawesome/free-solid-svg-icons';
+
+  let showCreatePlaylistModal = false;
 
   onMount(async () => {
     $mopidy = await connectWS()
