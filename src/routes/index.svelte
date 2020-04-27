@@ -155,6 +155,7 @@
   import { flip } from 'svelte/animate';
   import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage } from '../tools/stores';
   import { connectWS, convertSencondsToString, convertPercentToSeconds, normalizeTime, getCurrentTlTrackList } from '../tools/mopidyTools';
+  import { loadAlbumImage }  from '../tools/lastfm';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte';
   import {
     faAngleDown,
@@ -178,19 +179,7 @@
     $mopidy = await connectWS()
     tlTracklists = await getCurrentTlTrackList()
     loadAlbumImage()
-    $mopidy.tracklist.index()
   })
-
-  async function loadAlbumImage() {
-    if ($currentTrack.track && $currentTrack.track.album) {
-      let res = await fetch(`https://ws.audioscrobbler.com/2.0/?format=json&method=album.getInfo&album=${$currentTrack.track.album.name}&artist=${$currentTrack.track.artists[0].name}&api_key=4320a3ef51c9b3d69de552ac083c55e3`)
-      //res = await mopidy.library.getImages([currentTrack.uri])
-      let lastfm = await res.json()
-      if (lastfm && lastfm.album) {
-        $albumImage = lastfm.album.image.find(x => x.size === 'extralarge');
-      }
-    }
-  }
 
   async function setTrackTime(currentPlaytimePercent) {
     const ms = convertPercentToSeconds(currentPlaytimePercent, $totalPlaytime)

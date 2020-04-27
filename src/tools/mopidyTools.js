@@ -1,12 +1,12 @@
 import Mopidy from "mopidy";
-import { mopidy, playlists, currentTrack, currentPlaytime, currentState, currentVolume, currentMute, totalPlaytime, currentRandom } from '../tools/stores';
+import { mopidy, playlists, currentTrack, currentPlaytime, currentState, currentVolume, currentMute, totalPlaytime, currentRandom } from './stores';
+import { loadAlbumImage }  from './lastfm';
 
 let mopidyWS;
 let playlistsLocal;
 let currentPlaytimeLocal;
 let totalPlaytimeLocal;
 let interval;
-let currentTrackTL
 
 const c = mopidy.subscribe((value) => { mopidyWS = value });
 const l = playlists.subscribe((value) => { playlistsLocal = value });
@@ -40,15 +40,7 @@ export function connectWS() {
       mopidyWS.on("state:online", async () => {
         console.log('mopidy: connected');
 
-        currentTrackTL = await mopidyWS.playback.getCurrentTlTrack()
-        if (currentTrackTL) {
-          const currentTrackRaw = await mopidyWS.library.lookup([[currentTrackTL.track.uri]])
-          const currentIndex = await mopidyWS.tracklist.index()
-          currentTrackTL.track = Object.values(currentTrackRaw)[0][0]
-          currentTrackTL.index = currentIndex
-          currentTrack.set(currentTrackTL);
-        }
-
+        const currentTrackTL = await upgradeCurrentTrack()
         currentPlaytimeLocal = await mopidyWS.playback.getTimePosition()
         const currentStateLocal = await mopidyWS.playback.getState()
         const currentVolumeLocal = await mopidyWS.mixer.getVolume()
@@ -81,14 +73,12 @@ export function connectWS() {
       mopidyWS.on("event", console.log);
 
       mopidyWS.on("event:trackPlaybackEnded", (event) => {
-        console.log(`mopidy:event:trackPlaybackEnded: ${event}`);
         let { tl_track, time_position } = event
         clearInterval(interval);
         currentPlaytime.set(time_position)
       })
 
       mopidyWS.on("event:trackPlaybackPaused", (event) => {
-        console.log(`mopidy:event:trackPlaybackPaused: ${event}`);
         let { time_position, tl_track } = event
         clearInterval(interval);
         currentPlaytime.set(time_position)
@@ -96,7 +86,6 @@ export function connectWS() {
 
 
       mopidyWS.on("event:playbackStateChanged", (event) => {
-        console.log(`mopidy:event:playbackStateChanged: ${event}`);
         let { old_state, new_state } = event
         currentState.set(new_state)
         if (new_state == 'paused') {
@@ -112,16 +101,12 @@ export function connectWS() {
         }
       })
 
-      mopidyWS.on("event:trackPlaybackStarted", async (event) => {
-        console.log(`mopidy:event:trackPlaybackStarted: ${event}`);
-        const { tl_track } = event
-        const currentIndex = await mopidyWS.tracklist.index({tlid: tl_track.tlid})
-        tl_track.index = currentIndex 
-        currentTrack.set(tl_track)
+      mopidyWS.on("event:trackPlaybackStarted", async (_) => {
         currentPlaytime.set(0)
-        if (tl_track.track.length) {
-          totalPlaytime.set(tl_track.track.length)
-        }
+        const currentTrackTL = await upgradeCurrentTrack()
+        const totalPlaytimeLocal = currentTrackTL.track.length
+        totalPlaytime.set(currentTrackTL.track.length)
+        loadAlbumImage()
         if (!interval) {
           interval = setInterval(() => {
             if (currentPlaytimeLocal >= totalPlaytimeLocal) clearInterval(interval)
@@ -137,6 +122,18 @@ export function connectWS() {
     }
 
   });
+}
+
+export const upgradeCurrentTrack = async () => {
+  const currentTrackTL = await mopidyWS.playback.getCurrentTlTrack()
+  if (currentTrackTL) {
+    const currentTrackRaw = await mopidyWS.library.lookup([[currentTrackTL.track.uri]])
+    const currentIndex = await mopidyWS.tracklist.index()
+    currentTrackTL.track = Object.values(currentTrackRaw)[0][0]
+    currentTrackTL.index = currentIndex
+    currentTrack.set(currentTrackTL);
+    return currentTrackTL
+  }
 }
 
 export async function getPlaylists() {
