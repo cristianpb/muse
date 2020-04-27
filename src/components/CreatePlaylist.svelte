@@ -35,6 +35,7 @@
 <script>
   import { onMount } from 'svelte';
   import { mopidy } from '../tools/stores';
+  import { connectWS } from '../tools/mopidyTools';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faCheck,
