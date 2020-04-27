@@ -1,5 +1,8 @@
 {#if $snapClientsVisibility}
   <div class="notification is-primary" id="notification">
+    <a href="{null}" on:click={() => $snapClientsVisibility = !$snapClientsVisibility}>
+      <FontAwesomeIcon icon={faTimesCircle} class="icon"/>
+    </a>
     {#each $clients as client}
       <div class="columns is-mobile">
         <div class="column is-narrow">
@@ -38,7 +41,8 @@
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faVolumeUp,
-    faVolumeMute
+    faVolumeMute,
+    faTimesCircle
   } from '@fortawesome/free-solid-svg-icons';
   import { connectSnapcast } from '../tools/snapcast';
 
