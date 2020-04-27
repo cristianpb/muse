@@ -1,7 +1,9 @@
 import { snapcast, clients } from '../tools/stores';
 
 let snapcastWS;
+let clientsLocal
 
+const c = clients.subscribe((value) => { clientsLocal = value })
 const s = snapcast.subscribe((value) => { snapcastWS = value });
 
 export function connectSnapcast() {
@@ -38,15 +40,41 @@ export function connectSnapcast() {
 }
 
 export function handleMessage (message) {
-  console.log('[Snapcast]: ', message)
-  let { result } = JSON.parse(message.data)
-  if (result && result.server && result.server.groups) {
-    let clientsRaw = result.server.groups //.map((x) => x.clients.pop())
+  const data = JSON.parse(message.data)
+  console.log('[Snapcast]: ', data)
+  if (data.result && data.result.server && data.result.server.groups) {
+    const clientsRaw = data.result.server.groups //.map((x) => x.clients.pop())
     clients.update(v => {
       return clientsRaw.map(group => {
-        return {id: group.clients[0].id, name: group.clients[0].host.name, volume: group.clients[0].config.volume.percent, muted: group.clients[0].config.volume.muted, group: group.id}
+        return {
+          id: group.clients[0].id,
+          name: group.clients[0].host.name,
+          volume: group.clients[0].config.volume.percent,
+          connected: group.clients[0].connected,
+          muted: group.clients[0].config.volume.muted,
+          group: group.id}
       })
     })
+  } 
+  if (data && data.method) {
+      const id = data.params.client.id
+      let filteredClients
+      if (data.method === 'Client.OnDisconnect') {
+        filteredClients = clientsLocal.map(x => {
+          if (x.id === id) {
+            x.connected = false
+          }
+          return x
+        })
+      } else if (data.method === 'Client.OnConnect') {
+        filteredClients = clientsLocal.map(x => {
+          if (x.id === id) {
+            x.connected = true
+          }
+          return x
+        })
+      }
+      clients.set(filteredClients)
   }
 }
 
