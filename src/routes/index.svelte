@@ -59,7 +59,7 @@
 {/if}
 
 <div class="list is-hoverable">
-  {#each tlTracklists as tlTrack, index (getKey(tlTrack))}
+  {#each tlTracklists as tlTrack, index (tlTrack.track.name)}
     <a class="list-item" 
        animate:flip={{ duration: 300 }}
        href="{null}"
@@ -168,10 +168,8 @@
   } from '@fortawesome/free-solid-svg-icons';
 
   let image;
-  let key;
   let tlTracklists = []
   let hovering = false;
-  const getKey = item => (key ? item[key] : item);
 
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
@@ -218,6 +216,9 @@
       $mopidy.tracklist.move({start: target, end: start, to_position: target + 1})
     }
     tlTracklists = newTracklist
+    if (start === $currentTrack.index) {
+      $currentTrack.index = target
+    }
     hovering = null
   }
 
