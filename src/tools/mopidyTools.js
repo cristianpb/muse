@@ -7,6 +7,7 @@ let playlistsLocal;
 let currentPlaytimeLocal;
 let totalPlaytimeLocal;
 let interval;
+let connecting = false
 
 const c = mopidy.subscribe((value) => { mopidyWS = value });
 const l = playlists.subscribe((value) => { playlistsLocal = value });
@@ -31,9 +32,17 @@ export function convertPercentToSeconds(percent, total) {
 export function connectWS() {
   return new Promise(function(resolve, reject) {
     if (mopidyWS) {
-      console.log('mopidy:already connected');
-      resolve(mopidyWS)
+      if (connecting) {
+        console.log('Waiting for connection');
+        setTimeout(() => {
+          console.log('mopidy:already connected');
+          resolve(mopidyWS)
+        }, 1000)
+      } else {
+        resolve(mopidyWS)
+      }
     } else {
+      connecting = true;
       mopidyWS = new Mopidy({
         webSocketUrl: `ws://${window.location.hostname}:6680/mopidy/ws/`,
       });
@@ -66,6 +75,7 @@ export function connectWS() {
             }, 1000);
           }
         }
+        connecting = false
         resolve(mopidyWS);
       })
 
@@ -137,6 +147,7 @@ export const upgradeCurrentTrack = async () => {
 }
 
 export async function getPlaylists() {
+  mopidyWS = await connectWS()
   const playlistsRaw = await mopidyWS.playlists.asList()
   playlistsLocal = playlistsRaw.map(playlistRaw => {
     playlistRaw.slug = playlistRaw.name
@@ -180,7 +191,7 @@ export async function getCurrentTlTrackList() {
 }
 
 export async function getRandomMode() {
-  const mopidyWS = await connectWS()
+  mopidyWS = await connectWS()
   const randomMode = await mopidyWS.tracklist.getRandom()
     return randomMode
 }
