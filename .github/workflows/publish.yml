@@ -30,23 +30,26 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: install node requirements
+      - name: Install node requirements
         run: npm ci
-      - name: build html
+      - name: ⬆ Bump version files
+        if: startsWith(github.event.ref, 'refs/tags')
+        run: |
+          export APP_VERSION=$(git describe --tags --always)
+          sed -i -E "s/version = (.*)/version = ${APP_VERSION:1}/"  setup.cfg
+          sed -i -E "s/version\": \"(.*)\"/version\": \"${APP_VERSION:1}\"/"  package.json;
+      - name: 🏗 Build html
         run: |
           npm run export
-      - name: deploy to github pages
-        if: success() && steps.extract_branch.outputs.branch == 'master'
+      - name: 🚀 Deploy to GitHub pages
+        if: startsWith(github.event.ref, 'refs/tags') || steps.extract_branch.outputs.branch == 'master'
         uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           publish_branch: gh-pages
           publish_dir: ./__sapper__/export/muse
-      - name: Build python package
+      - name: 🐍 Build Python package
         run: |
-          export APP_VERSION=$(git describe --tags --always --abbrev=0)
-          sed -i -E "s/version = (.*)/version = ${APP_VERSION:1}/"  setup.cfg
-          sed -i -E "s/version\": \"(.*)\"/version\": \"${APP_VERSION:1}\"/"  package.json;
           cp  -r ./__sapper__/export/muse/* mopidy_muse/static
           python3 -m pip install  --upgrade setuptools wheel
           python3 setup.py sdist bdist_wheel
@@ -65,7 +68,7 @@ jobs:
           user: __token__
           password: ${{ secrets.pypi_password }}
           repository_url: https://upload.pypi.org/legacy/
-      - name: Create Release
+      - name: 🔖Publish Release
         if: startsWith(github.event.ref, 'refs/tags')
         id: create_release
         uses: actions/create-release@v1
@@ -78,7 +81,7 @@ jobs:
           prerelease: false
       - run: cp dist/Mopidy-Muse*.tar.gz ./dist/Mopidy-Muse.tar.gz
         if: startsWith(github.event.ref, 'refs/tags')
-      - name: Upload Release Asset
+      - name: 🍱 Upload Release Asset
         if: startsWith(github.event.ref, 'refs/tags')
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
@@ -89,7 +92,7 @@ jobs:
           asset_path: ./dist/Mopidy-Muse.tar.gz
           asset_name: Mopidy-Muse.tar.gz
           asset_content_type: application/gzip
-      - name: Upgrade package version files
+      - name: ⬆ Upgrade package version files
         if: startsWith(github.event.ref, 'refs/tags')
         run: |
           git config --global user.name 'Github Bot'
