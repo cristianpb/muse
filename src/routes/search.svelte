@@ -1,6 +1,5 @@
 <svelte:head>
   <title>Search</title>
-  <style src="../scss/global.scss"></style>
 </svelte:head>
 
 <h1 class="title">Search</h1>
@@ -48,6 +47,7 @@
   </div>
 </div>
 
+<AddToPlaylist showAddToPlaylistModal={showAddToPlaylistModal} track={selectedTrack}/>
 {#if promise}
   {#await promise}
     <p>...waiting</p>
@@ -87,6 +87,10 @@
                         <FontAwesomeIcon icon={faLevelDownAlt} class="icon is-small"/>&nbsp;
                         Add to queue
                       </a>
+                      <a href="{null}" class="dropdown-item" on:click={openAddListModal(track)}>
+                        <FontAwesomeIcon icon={faPlus} class="icon is-small" />&nbsp;
+                          Add to a playlist
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -107,6 +111,7 @@
 
 <script>
   import { connectWS, playTrackSingle, addTrackNext, addTrackQueue } from '../tools/mopidyTools';
+  import AddToPlaylist from '../components/AddToPlaylist.svelte';
   import { mopidy } from '../tools/stores';
   import { onMount } from 'svelte';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
@@ -116,15 +121,18 @@
     faAngleDown,
     faArrowRight,
     faLevelDownAlt,
-    faAngleUp
+    faAngleUp,
+    faPlus
   } from '@fortawesome/free-solid-svg-icons';
 
-  let searchTerm = ""
-  let dropMenuActive = false
-  let selectedUris = ['local']
+  let searchTerm = "";
+  let dropMenuActive = false;
+  let selectedUris = ['local'];
   let hideUris = ['http', 'https', 'mms', 'rtmp', 'rtmps', 'rtsp', 'file']
-  let uris = []
-  let promise
+  let uris = [];
+  let promise;
+  let showAddToPlaylistModal = false;
+  let selectedTrack;
 
   onMount(async () => {
     $mopidy = await connectWS()
@@ -147,6 +155,12 @@
 
   function handleSearch() {
     setTimeout(() => { promise = searchFunction() }, 100)
+  }
+
+  const openAddListModal = (track) => {
+    delete track.visibility;
+    selectedTrack = track 
+    showAddToPlaylistModal = !showAddToPlaylistModal
   }
 
 </script>
