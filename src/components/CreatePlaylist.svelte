@@ -3,9 +3,12 @@
   <div class="modal-card">
     <header class="modal-card-head">
       <p class="modal-card-title">Create playlist</p>
-      <button class="delete" aria-label="close"></button>
+      <a href="{null}" aria-label="close" on:click={() => showCreatePlaylistModal = !showCreatePlaylistModal}>
+        <FontAwesomeIcon icon={faTimesCircle} class="icon"/>
+      </a>
     </header>
     <section class="modal-card-body">
+      <label class="label">Name</label>
       <input class="input" type="text" bind:value={playlistName} name="playlist name" id="playlist name"/>
     </section>
     <footer class="modal-card-foot">
@@ -39,7 +42,8 @@
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faCheck,
-    faSpinner
+    faSpinner,
+    faTimesCircle
   } from '@fortawesome/free-solid-svg-icons';
 
   let playlistName = '';
