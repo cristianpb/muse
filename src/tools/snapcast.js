@@ -57,24 +57,25 @@ export function handleMessage (message) {
     })
   } 
   if (data && data.method) {
+    if (data.method === 'Client.OnDisconnect') {
       const id = data.params.client.id
-      let filteredClients
-      if (data.method === 'Client.OnDisconnect') {
-        filteredClients = clientsLocal.map(x => {
-          if (x.id === id) {
-            x.connected = false
-          }
-          return x
-        })
-      } else if (data.method === 'Client.OnConnect') {
-        filteredClients = clientsLocal.map(x => {
-          if (x.id === id) {
-            x.connected = true
-          }
-          return x
-        })
-      }
+      const filteredClients = clientsLocal.map(x => {
+        if (x.id === id) {
+          x.connected = false
+        }
+        return x
+      })
       clients.set(filteredClients)
+    } else if (data.method === 'Client.OnConnect') {
+      const id = data.params.client.id
+      const filteredClients = clientsLocal.map(x => {
+        if (x.id === id) {
+          x.connected = true
+        }
+        return x
+      })
+      clients.set(filteredClients)
+    }
   }
 }
 
