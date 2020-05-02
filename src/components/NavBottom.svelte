@@ -46,22 +46,28 @@
               <div class="column is-narrow">
                 {client.name}
               </div>
-              <div class="column is-narrow">
-                {#if client.muted}
-                  <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
-                {:else}
-                  <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
-                {/if}
-              </div>
-              <div class="column">
-                <input 
-                  type="range"
-                  min="0" 
-                  max="100" 
-                  bind:value="{client.volume}" 
-                  on:change="{changeHandler(client.id, client.volume)}"
-                  class="slider">
-              </div>
+              {#if client.connected}
+                <div class="column is-narrow">
+                  {#if client.muted}
+                    <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
+                  {:else}
+                    <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
+                  {/if}
+                </div>
+                <div class="column">
+                  <input 
+                    type="range"
+                    min="0" 
+                    max="100" 
+                    bind:value="{client.volume}" 
+                    on:change="{changeHandler(client.id, client.volume)}"
+                    class="slider">
+                </div>
+              {:else}
+                <div class="column">
+                 disconnected 
+                </div>
+              {/if}
             </div>
           </div>
         {/each}
