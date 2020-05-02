@@ -6,7 +6,7 @@
 
 <div class="columns">
   <div class="column">
-    <input class="input is-rounded" type="text" placeholder="Rounded input" on:input|preventDefault={handleSearch} bind:value={searchTerm}>
+    <input class="input is-rounded" type="text" placeholder="Rounded input" on:keydown={handleSearch}>
   </div>
   <div class="column is-narrow">
     <div class="columns is-mobile">
@@ -125,7 +125,6 @@
     faPlus
   } from '@fortawesome/free-solid-svg-icons';
 
-  let searchTerm = "";
   let dropMenuActive = false;
   let selectedUris = ['local'];
   let hideUris = ['http', 'https', 'mms', 'rtmp', 'rtmps', 'rtsp', 'file']
@@ -142,7 +141,7 @@
     }
   })
 
-  async function searchFunction() {
+  async function searchFunction(searchTerm) {
     const urisRequest = selectedUris.map(x => x + ':')
     const res = await $mopidy.library.search({'query': {'any': [searchTerm]}, 'uris': [`${urisRequest}`]})
     if (res && res.length > 0) {
@@ -153,8 +152,10 @@
     }
   }
 
-  function handleSearch() {
-    setTimeout(() => { promise = searchFunction() }, 100)
+  function handleSearch(event) {
+    if (event.which === 13) {
+      setTimeout(() => { promise = searchFunction(event.target.value) }, 100)
+    }
   }
 
   const openAddListModal = (track) => {
