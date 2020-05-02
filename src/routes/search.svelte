@@ -43,6 +43,45 @@
           <FontAwesomeIcon icon={faSearch} class="icon"/>
         </button>
       </div>
+      {#if resultTracks.length > 0}
+      <div class="column">
+        <div class="dropdown is-right"  class:is-active={showOptions}>
+          <div class="dropdown-trigger" on:click={() => showOptions = !showOptions}>
+            {#if showOptions}
+              <a href="{null}" class="button">
+                <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+              </a>
+            {:else}
+              <a href="{null}" class="button">
+                <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+              </a>
+            {/if}
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <a href="{null}" class="dropdown-item" on:click={playAllTracks}>
+                <FontAwesomeIcon icon={faPlayCircle} class="icon is-small" />&nbsp;
+                  Play All
+              </a>
+              <a href="{null}" class="dropdown-item" on:click={shufflePlayAllTracks}>
+                <FontAwesomeIcon icon={faRandom} class="icon is-small"/>&nbsp;
+                  Shuffle & Play All
+              </a>
+              <a href="{null}" class="dropdown-item" on:click={addTracksQueue}>
+                <FontAwesomeIcon icon={faLevelDownAlt} class="icon is-small"/>&nbsp;
+                  Add to queue
+              </a>
+              <!--
+              <a href="{null}" class="dropdown-item">
+                <FontAwesomeIcon icon={faPlus} class="icon is-small"/>&nbsp;
+                  Add to playlist
+              </a>
+              -->
+            </div>
+          </div>
+        </div>
+      </div>
+      {/if}
     </div>
   </div>
 </div>
@@ -52,9 +91,9 @@
   {#await promise}
     <p>...waiting</p>
   {:then tracks}
-    {#if tracks}
+    {#if resultTracks.length > 0}
       <div class="list is-hoverable">
-        {#each tracks as track, i}
+        {#each resultTracks as track, i}
           <a class="list-item" href="{null}">
             <div class="columns is-mobile">
               <div class="column"  on:click={() => track.visibility = !track.visibility}>
@@ -122,7 +161,8 @@
     faArrowRight,
     faLevelDownAlt,
     faAngleUp,
-    faPlus
+    faPlus,
+    faRandom,
   } from '@fortawesome/free-solid-svg-icons';
 
   let dropMenuActive = false;
@@ -131,7 +171,9 @@
   let uris = [];
   let promise;
   let showAddToPlaylistModal = false;
+  let showOptions = false;
   let selectedTrack;
+  let resultTracks = [];
 
   onMount(async () => {
     $mopidy = await connectWS()
@@ -146,9 +188,8 @@
     const res = await $mopidy.library.search({'query': {'any': [searchTerm]}, 'uris': [`${urisRequest}`]})
     if (res && res.length > 0) {
       let { tracks } = res.pop()
-      return tracks.map(obj=> ({ ...obj, visibility: false }))
-    } else {
-      throw new Error('what', res);
+      resultTracks =  tracks
+      return true
     }
   }
 
@@ -162,6 +203,29 @@
     delete track.visibility;
     selectedTrack = track 
     showAddToPlaylistModal = !showAddToPlaylistModal
+  }
+
+  const playAllTracks = () => {
+    resultTracks.forEach(track => delete track.visibility)
+    $mopidy.tracklist.clear()
+    $mopidy.tracklist.add([resultTracks])
+    $mopidy.playback.play()
+    showOptions = !showOptions
+  }
+
+  const shufflePlayAllTracks = () => {
+    resultTracks.forEach(track => delete track.visibility)
+    $mopidy.tracklist.clear()
+    $mopidy.tracklist.add([resultTracks])
+    $mopidy.tracklist.shuffle()
+    $mopidy.playback.play()
+    showOptions = !showOptions
+  }
+
+  const addTracksQueue = () => {
+    resultTracks.forEach(track => delete track.visibility)
+    $mopidy.tracklist.add([resultTracks])
+    showOptions = !showOptions
   }
 
 </script>
