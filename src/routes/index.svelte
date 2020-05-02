@@ -59,7 +59,7 @@
 {/if}
 
 <div class="list is-hoverable">
-  {#each tlTracklists as tlTrack, index (tlTrack.track.name)}
+  {#each tlTracklists as tlTrack, index (tlTrack.tlid)}
     <a class="list-item" 
        animate:flip={{ duration: 300 }}
        href="{null}"
