@@ -17,8 +17,11 @@
     <a href="{null}" class="navbar-item" on:click={$mopidy.playback.next()}>
       <FontAwesomeIcon icon={faCaretRight} class="icon"/>
     </a>
-    <div class="navbar-item is-hidden-touch">
+    <div class="navbar-item is-hidden-mobile">
       {$currentTrack.track ? $currentTrack.track.name : "-:-"}
+    </div>
+    <div class="navbar-item is-hidden-tablet">
+      {trimNameMobile($currentTrack.track)}
     </div>
     <a href="{null}" 
        class:is-active={burgerState}
@@ -331,6 +334,17 @@
     console.log(changed, ms)
     if (changed) {
       console.log("set track time", currentPlaytimePercent)
+    }
+  }
+
+  const trimNameMobile = (trackname) => {
+    const limit = 20
+    if (trackname && trackname.name && trackname.name.length > limit) {
+      return trackname.name.substring(0,20) + ".."
+    } else if (trackname && trackname.name) {
+      return trackname.name
+    } else {
+      return "-:-"
     }
   }
 
