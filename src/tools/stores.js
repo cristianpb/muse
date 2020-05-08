@@ -4,7 +4,7 @@ export const mopidy = writable(null);
 
 export const snapcast = writable(null);
 
-export const clients = writable([]);
+export const snapGroups = writable([]);
 
 export const currentTrack = writable({});
 

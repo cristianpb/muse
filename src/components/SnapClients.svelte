@@ -3,13 +3,22 @@
     <a href="{null}" on:click={() => $snapClientsVisibility = !$snapClientsVisibility}>
       <FontAwesomeIcon icon={faTimesCircle} class="icon"/>
     </a>
-    {#each $clients as client}
+    {#each $snapGroups as group}
+      <p>
+        Group: {group.name ? group.name : group.id.substring(0,6)} &nbsp;&nbsp;
+      {#if group.muted}
+        <FontAwesomeIcon icon={faVolumeMute} class="icon" on:click={muteGroup(group.id, group.muted)}/>
+      {:else}
+        <FontAwesomeIcon icon={faVolumeUp} class="icon" on:click={muteGroup(group.id, group.muted)}/>
+      {/if}
+      </p>
+    {#each group.clients as client}
       <div class="columns is-mobile">
         <div class="column is-narrow">
           {client.name}
         </div>
         {#if client.connected}
-          <div class="column is-narrow" on:click={muteGroup(client.group,client.muted)}>
+          <div class="column is-narrow" on:click={muteClient(client.id, client.muted)}>
             {#if client.muted}
               <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
             {:else}
@@ -32,26 +41,27 @@
         {/if}
       </div>
     {/each}
+    {/each}
   </div>
 {/if}
 
 <script charset="utf-8">
   import { onMount } from 'svelte';
-  import { clients, snapClientsVisibility, snapcast } from '../tools/stores';
+  import { snapGroups, snapClientsVisibility, snapcast } from '../tools/stores';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faVolumeUp,
     faVolumeMute,
     faTimesCircle
   } from '@fortawesome/free-solid-svg-icons';
-  import { connectSnapcast } from '../tools/snapcast';
+  import { connectSnapcast, muteGroup, muteClient, changeHandler } from '../tools/snapcast';
 
   onMount(async () => {
     $snapcast = await connectSnapcast()
   })
 
   function volumeSetSnapcast(name, volumeLevel) {
-    let id = $clients.find((x)=> x.name == name) ? $clients.find((x)=> x.name == name).id : null
+    let id = $snapGroups.find((x)=> x.name == name) ? $snapGroups.find((x)=> x.name == name).id : null
     if (id) {
       let message = { 
         id:8,
@@ -68,46 +78,6 @@
       console.log("[Snapcast]: No client with this name");
     }
   }
-
-  function changeHandler(id, volume) {
-    console.log(`client ${id} - vol ${volume}`);
-    let message = {
-      id:8,
-      jsonrpc:"2.0",
-      method:"Client.SetVolume",
-      params:{
-        id,
-        volume:{
-        muted:false,
-        percent:volume
-        }
-      }
-    }
-    $snapcast.send(JSON.stringify(message));
-  }
-
-  function muteGroup(groupId, muted) {
-    console.log($clients);
-    console.log(`Muted ${groupId} - ${muted}`);
-    let message = {
-      id:8,
-      jsonrpc:"2.0",
-      method:"Group.SetMute",
-      params:{
-        id: groupId,
-        mute: !muted
-      }
-    }
-    $snapcast.send(JSON.stringify(message));
-    $clients = $clients.map(group => {
-      if (group.group === groupId) {
-        group.muted = !muted
-      }
-      return group
-    });
-  }
-
-
 
 </script>
 
