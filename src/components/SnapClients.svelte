@@ -6,11 +6,13 @@
     {#each $snapGroups as group}
       <p>
         Group: {group.name ? group.name : group.id.substring(0,6)} &nbsp;&nbsp;
-      {#if group.muted}
-        <FontAwesomeIcon icon={faVolumeMute} class="icon" on:click={muteGroup(group.id, group.muted)}/>
-      {:else}
-        <FontAwesomeIcon icon={faVolumeUp} class="icon" on:click={muteGroup(group.id, group.muted)}/>
-      {/if}
+        <a href="{null}" on:click={muteGroup(group.id, group.muted)}>
+          {#if group.muted}
+            <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
+          {:else}
+            <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
+          {/if}
+        </a>
       </p>
     {#each group.clients as client}
       <div class="columns is-mobile">
@@ -19,11 +21,13 @@
         </div>
         {#if client.connected}
           <div class="column is-narrow" on:click={muteClient(client.id, client.muted)}>
-            {#if client.muted}
-              <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
-            {:else}
-              <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
-            {/if}
+            <a href="{null}">
+              {#if client.muted}
+                <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
+              {:else}
+                <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
+              {/if}
+            </a>
           </div>
           <div class="column">
             <input 
@@ -59,25 +63,6 @@
   onMount(async () => {
     $snapcast = await connectSnapcast()
   })
-
-  function volumeSetSnapcast(name, volumeLevel) {
-    let id = $snapGroups.find((x)=> x.name == name) ? $snapGroups.find((x)=> x.name == name).id : null
-    if (id) {
-      let message = { 
-        id:8,
-        jsonrpc:"2.0",
-        method:"Client.SetVolume",
-        params:{
-          id,
-          volume:{"muted":false,"percent":volumeLevel}
-        }
-      }
-      $snapcast.send(JSON.stringify(message));
-      console.log(`[Handler snapcast]: volumen set to ${name}`);
-    } else {
-      console.log("[Snapcast]: No client with this name");
-    }
-  }
 
 </script>
 

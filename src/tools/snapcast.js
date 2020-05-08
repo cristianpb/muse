@@ -127,9 +127,9 @@ export function muteGroup(groupId, muted) {
   snapGroups.update(v => {
     return groupsLocal.map(group => {
       group.muted = !muted
-      //if (group.id === groupId) {
-      //  group.clients.forEach(client => client.muted = !muted)
-      //}
+      if (group.id === groupId) {
+        group.clients.forEach(client => client.muted = !muted)
+      }
       return group
     });
   })

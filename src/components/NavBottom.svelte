@@ -179,25 +179,13 @@
 
   let burgerState = false;
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
-  //let interval
 
   onMount(async () => {
     $mopidy = await connectWS()
     $snapcast = await connectSnapcast()
-    console.log($snapGroups)
   })
 
-  function defineState(state) {
-    if (state === 'playing') {
-      return 'Pause'
-    } else if ((state === 'paused') || (state === 'stopped')) {
-      return 'Play'
-    } else {
-      return '-'
-    }
-  }
-
-  function togglePlayPause(state) {
+  const togglePlayPause = (state) => {
     if (state === 'playing') {
       $mopidy.playback.pause()
     } else if ((state === 'paused') || (state === 'stopped')) {
@@ -205,7 +193,7 @@
     } 
   }
 
-  function toggleMute() {
+  const toggleMute = () => {
     if ($currentMute) {
       $mopidy.mixer.setMute([false])
     } else {
@@ -214,7 +202,7 @@
     $currentMute = !$currentMute
   }
 
-  function toggleCurrentRandom() {
+  const toggleCurrentRandom = () => {
     if ($currentRandom) {
       $mopidy.tracklist.setRandom([false])
     } else {
@@ -223,7 +211,7 @@
     $currentRandom = !$currentRandom
   }
 
-  async function setTrackTime(currentPlaytimePercent) {
+  const setTrackTime = async (currentPlaytimePercent) => {
     const ms = convertPercentToSeconds(currentPlaytimePercent, $totalPlaytime)
     const changed = await $mopidy.playback.seek([ms])
     $currentPlaytime = ms
