@@ -4,16 +4,16 @@ describe('Sapper template app', () => {
 	});
 
 	it('has the correct <h1>', () => {
-		cy.contains('h1', 'Great success!')
+		cy.contains('h1', 'Now playing')
 	});
 
-	it('navigates to /about', () => {
-		cy.get('nav a').contains('about').click();
-		cy.url().should('include', '/about');
+	it('navigates to /search', () => {
+		cy.get('nav a').contains('Search').click();
+		cy.url().should('include', '/search');
 	});
 
-	it('navigates to /blog', () => {
-		cy.get('nav a').contains('blog').click();
-		cy.url().should('include', '/blog');
+	it('navigates to /browse', () => {
+		cy.get('nav a').contains('Browse').click();
+		cy.url().should('include', '/browse');
 	});
 });
