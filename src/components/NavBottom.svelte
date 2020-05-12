@@ -182,7 +182,11 @@
 
   onMount(async () => {
     $mopidy = await connectWS()
-    $snapcast = await connectSnapcast()
+    try {
+      $snapcast = await connectSnapcast()
+    } catch(e) {
+      console.log(e);
+    }
   })
 
   const togglePlayPause = (state) => {

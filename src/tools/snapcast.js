@@ -6,12 +6,14 @@ let groupsLocal
 const c = snapGroups.subscribe((value) => { groupsLocal = value })
 const s = snapcast.subscribe((value) => { snapcastWS = value });
 
-export function connectSnapcast() {
+export function connectSnapcast(options) {
   return new Promise(function(resolve, reject) {
-    if (snapcastWS) {
+    if (snapcastWS && !options && !option.reconnect) {
       resolve(snapcastWS)
     } else {
-      snapcastWS = new WebSocket(`ws://${window.location.hostname}:1780/jsonrpc`);
+      const host = options && options.host ? options.host : window.location.hostname;
+      const port = options && options.port ? options.port : '1780';
+      snapcastWS = new WebSocket(`ws://${host}:${port}/jsonrpc`);
 
       /* Error Event Handler */
       snapcastWS.onerror = (e) => {

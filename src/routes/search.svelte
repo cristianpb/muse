@@ -6,7 +6,7 @@
 
 <div class="columns">
   <div class="column">
-    <input class="input is-rounded" type="text" placeholder="Rounded input" on:keydown={handleSearch}>
+    <input class="input is-rounded" type="text" placeholder="Search for music" on:keydown={handleSearch}>
   </div>
   <div class="column is-narrow">
     <div class="columns is-mobile">

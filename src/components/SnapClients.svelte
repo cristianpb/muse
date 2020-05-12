@@ -64,7 +64,7 @@
     faVolumeMute,
     faTimesCircle
   } from '@fortawesome/free-solid-svg-icons';
-  import { connectSnapcast, muteGroup, muteClient, changeHandler } from '../tools/snapcast';
+  import { muteGroup, muteClient, changeHandler } from '../tools/snapcast';
 
 </script>
 
