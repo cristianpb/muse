@@ -10,7 +10,7 @@
     {#if $albumImage['#text']}
       <div class="card-image has-text-centered">
         <figure class="image is-4by3">
-          <img src="{$albumImage['#text']}" alt="Placeholder image">
+          <img src="{$albumImage['#text']}" alt="Album image">
         </figure>
       </div>
     {:else}

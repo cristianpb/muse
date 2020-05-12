@@ -1,5 +1,6 @@
 <script>
   export let segment;
+  let burgerState = false;
 </script>
 
 <style>
@@ -7,23 +8,6 @@
     border-bottom: 1px solid rgba(255,62,0,0.1);
     font-weight: 300;
     padding: 0 1em;
-  }
-
-  ul {
-    margin: 0;
-    padding: 0;
-  }
-
-  /* clearfix */
-  ul::after {
-    content: '';
-    display: block;
-    clear: both;
-  }
-
-  li {
-    display: block;
-    float: left;
   }
 
   [aria-current] {
@@ -44,15 +28,41 @@
   a {
     text-decoration: none;
     padding: 1em 0.5em;
-    display: block;
   }
 </style>
 
-<nav>
-  <ul>
-    <li><a aria-current='{segment === undefined ? "page" : undefined}' href='.'>Now playing</a></li>
-    <li><a aria-current='{segment === "search" ? "page" : undefined}' href='search'>Search</a></li>
-    <li><a aria-current='{segment === "browse" ? "page" : undefined}' href='browse'>Browse</a></li>
-    <li><a aria-current='{segment === "playlists" ? "page" : undefined}' href='playlists'>Playlists</a></li>
-  </ul>
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" aria-current='{segment === undefined ? "page" : undefined}' href='.'>Now playing</a>
+    <a class="navbar-item" aria-current='{segment === "search" ? "page" : undefined}' href='search'>Search</a>
+    <a class="navbar-item" aria-current='{segment === "browse" ? "page" : undefined}' href='browse'>Browse</a>
+    <a class="navbar-item" aria-current='{segment === "playlists" ? "page" : undefined}' href='playlists'>Playlists</a>
+
+    <a role="button"
+       class:is-active={burgerState}
+       on:click={() => burgerState = !burgerState}
+       class="navbar-burger burger"
+       aria-label="menu" aria-expanded="false" href="{null}"
+       data-target="navMenu">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navMenu" class="navbar-menu" class:is-active={burgerState}>
+    <div class="navbar-start">
+    <a class="navbar-item" aria-current='{segment === "settings" ? "page" : undefined}' href='settings'>Settings</a>
+    </div>
+    <a class="navbar-item  is-hidden-touch" href="https://github.com/cristianpb/muse">
+      <figure class="image is-1by1">
+        <img src="{process.env.NODE_ENV === 'development' ? '' : '/muse'}/icon.svg" alt="Muse logo" width="20" height="20">
+      </figure>
+    </a>
+    <a class="navbar-item is-hidden-desktop" href="https://github.com/cristianpb/muse">
+      <img src="{process.env.NODE_ENV === 'development' ? '' : '/muse'}/icon.svg" alt="Muse logo" width="18" height="18">
+      Muse - __VERSION__
+    </a>
+
+  </div>
 </nav>
