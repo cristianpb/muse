@@ -1,7 +1,7 @@
 {
   "name": "Mopidy-Muse",
   "description": "Mopidy web interface with snapcast support",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build --legacy",
