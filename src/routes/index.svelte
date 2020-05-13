@@ -1,5 +1,4 @@
 <svelte:head>
-  <style src="../scss/global.scss"></style>
   <title>Now Playing</title>
 </svelte:head>
 
