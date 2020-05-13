@@ -33,10 +33,26 @@
 
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
-    <a class="navbar-item" aria-current='{segment === undefined ? "page" : undefined}' href='.'>Now playing</a>
-    <a class="navbar-item" aria-current='{segment === "search" ? "page" : undefined}' href='search'>Search</a>
-    <a class="navbar-item" aria-current='{segment === "browse" ? "page" : undefined}' href='browse'>Browse</a>
-    <a class="navbar-item" aria-current='{segment === "playlists" ? "page" : undefined}' href='playlists'>Playlists</a>
+    <a 
+      class="navbar-item" 
+      class:is-active={segment === undefined}
+      aria-current='{segment === undefined ? "page" : undefined}' 
+      href='.'> Now playing </a>
+    <a 
+      class="navbar-item" 
+      class:is-active={segment === "search"}
+      aria-current='{segment === "search" ? "page" : undefined}'
+      href='search'>Search</a>
+    <a 
+      class="navbar-item" 
+      class:is-active={segment === "browse"}
+      aria-current='{segment === "browse" ? "page" : undefined}'
+      href='browse'>Browse</a>
+    <a 
+      class="navbar-item" 
+      class:is-active={segment === "playlists"}
+      aria-current='{segment === "playlists" ? "page" : undefined}'
+      href='playlists'>Playlists</a>
 
     <a role="button"
        class:is-active={burgerState}
@@ -52,7 +68,11 @@
 
   <div id="navMenu" class="navbar-menu" class:is-active={burgerState}>
     <div class="navbar-start">
-    <a class="navbar-item" aria-current='{segment === "settings" ? "page" : undefined}' href='settings'>Settings</a>
+      <a 
+        class="navbar-item" 
+        class:is-active={segment === "settings"}
+        aria-current='{segment === "settings" ? "page" : undefined}' 
+        href='settings'>Settings</a>
     </div>
     <a class="navbar-item  is-hidden-touch" href="https://github.com/cristianpb/muse">
       <figure class="image is-1by1">
