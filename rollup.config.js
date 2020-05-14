@@ -7,16 +7,8 @@ import { terser } from 'rollup-plugin-terser';
 import config from 'sapper/config/rollup.js';
 import pkg from './package.json';
 import builtins from 'rollup-plugin-node-builtins';
-import sveltePreprocess from 'svelte-preprocess'
-
-const preprocessOptions = {
-  scss: {
-    includePaths: [
-      'node_modules',
-      'src'
-    ]
-  }
-}
+import { sass as sv_sass } from 'svelte-preprocess-sass'
+import sass from 'rollup-plugin-sass';
 
 const mode = process.env.NODE_ENV;
 const dev = mode === 'development';
@@ -34,10 +26,22 @@ export default {
 				'process.env.NODE_ENV': JSON.stringify(mode),
 			__VERSION__: process.env.npm_package_version,
 			}),
+      sass({
+        includePaths: ['src/scss', 'node_modules'],
+        output: 'static/global.css',
+        options: {
+          outputStyle: 'compressed',
+          sourceMap: false,
+        }
+      }),
 			svelte({
 				dev,
         // Prepare scss
-        preprocess: sveltePreprocess(preprocessOptions),
+        preprocess: {
+          style: sv_sass({
+            includePaths: ['src/scss', 'node_modules']
+          })
+        },
 				hydratable: true,
 				emitCss: true
 			}),
