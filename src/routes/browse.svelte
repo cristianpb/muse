@@ -126,3 +126,66 @@
   }
   
 </script>
+
+<style>
+  .breadcrumb {
+    font-size: 1rem;
+    white-space: nowrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb a {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    padding: 0 0.75em;
+  }
+
+  .breadcrumb a:hover {
+    color: #363636;
+  }
+
+  .breadcrumb li {
+    align-items: center;
+    display: flex;
+  }
+
+  .breadcrumb li:first-child a {
+    padding-left: 0;
+  }
+
+  .breadcrumb li.is-active a {
+    color: #363636;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .breadcrumb li + li::before {
+    color: #b5b5b5;
+    content: "\0002f";
+  }
+
+  .breadcrumb ul {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .breadcrumb.has-arrow-separator li + li::before {
+    content: "\02192";
+  }
+
+  .breadcrumb.has-bullet-separator li + li::before {
+    content: "\02022";
+  }
+
+  .breadcrumb.has-dot-separator li + li::before {
+    content: "\000b7";
+  }
+
+  .breadcrumb.has-succeeds-separator li + li::before {
+    content: "\0227B";
+  }
+
+</style>
