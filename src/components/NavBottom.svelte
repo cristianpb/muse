@@ -1,9 +1,19 @@
 <nav class="navbar is-fixed-bottom " role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
-    <a href="{null}" class="navbar-item" on:click={$mopidy.playback.previous()}>
+    <a 
+      href="{null}" 
+      class="navbar-item" 
+      title="Previous track"
+      data-toggle="tooltip"
+      on:click={$mopidy.playback.previous()}>
      <FontAwesomeIcon icon={faCaretLeft} class="icon"/>
     </a>
-    <a href="{null}" class="navbar-item" on:click={togglePlayPause($currentState)}>
+    <a 
+      href="{null}"
+      class="navbar-item"
+      title="{$currentState == 'playing'? 'Pause' : 'Play'}"
+      data-toggle="tooltip"
+      on:click={togglePlayPause($currentState)}>
       {#if $currentState == 'playing'}
         <FontAwesomeIcon icon={faPauseCircle} class="icon"/>
       {:else}
@@ -14,7 +24,12 @@
         {/if}
       {/if}
     </a>
-    <a href="{null}" class="navbar-item" on:click={$mopidy.playback.next()}>
+    <a 
+      href="{null}" 
+      class="navbar-item" 
+      title="Next track"
+      data-toggle="tooltip"
+      on:click={$mopidy.playback.next()}>
       <FontAwesomeIcon icon={faCaretRight} class="icon"/>
     </a>
     <div class="navbar-item is-hidden-mobile">
@@ -74,7 +89,11 @@
       <div class="navbar-item is-hidden-desktop">
         <div class="columns is-mobile">
           <div class="column is-narrow">
-            <button class="button is-white" on:click={toggleMute}>
+            <button 
+              class="button is-white"
+              title="Random {$currentMute ? 'on' : 'off'}"
+              data-toggle="tooltip"
+              on:click={toggleMute}>
               {#if $currentMute}
                 <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
               {:else}
@@ -92,7 +111,11 @@
               class="slider">
           </div>
           <div class="column is-narrow">
-            <button class="button is-white" on:click="{toggleCurrentRandom}">
+            <button 
+              class="button is-white"
+              title="Random {$currentRandom ? 'on' : 'off'}"
+              data-toggle="tooltip"
+              on:click="{toggleCurrentRandom}">
               {#if $currentRandom}
                 <FontAwesomeIcon icon={faRandom} class="icon"/>
               {:else}
@@ -103,14 +126,22 @@
         </div>
       </div>
 
-      <a href={null} class="navbar-item is-hidden-touch" on:click={toggleMute}>
+      <a 
+        href={null}
+        title="Mute {$currentMute ? 'on' : 'off'}"
+        data-toggle="tooltip"
+        class="navbar-item is-hidden-touch" on:click={toggleMute}>
         {#if $currentMute}
           <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
         {:else}
           <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
         {/if}
       </a>
-      <div class="navbar-item is-hidden-touch">
+      <div 
+        class="navbar-item is-hidden-touch"
+        title="Volume {$currentVolume}"
+        data-toggle="tooltip"
+        >
         <input 
           type="range"
           min="0" 
@@ -119,7 +150,12 @@
           on:change="{$mopidy.mixer.setVolume([$currentVolume])}"
           class="slider">
       </div>
-      <a class="navbar-item is-hidden-touch" href="{null}"  on:click="{toggleCurrentRandom}">
+      <a 
+        class="navbar-item is-hidden-touch"
+        href="{null}"
+        title="Random mode {$currentRandom ? 'on' : 'off'}"
+        data-toggle="tooltip"
+        on:click="{toggleCurrentRandom}">
         {#if $currentRandom}
           <FontAwesomeIcon icon={faRandom} class="icon"/>
         {:else}
@@ -127,29 +163,40 @@
         {/if}
       </a>
 
-      <div class="navbar-item">
-        <div class="columns is-mobile">
-          <div class="column is-narrow">
-            {convertSencondsToString($currentPlaytime)}
-          </div>
-          <div class="column">
-            {#if ($currentPlaytime && $totalPlaytime)}
-              <div class="navbar-item">
-                <input 
-                  type="range"
-                  min="0" 
-                  max="100" 
-                  bind:value="{currentPlaytimePercent}" 
-                  on:change="{setTrackTime(currentPlaytimePercent)}"
-                  class="slider">
-              </div>
-            {/if}
-          </div>
-          <div class="column is-narrow">
-            {convertSencondsToString($totalPlaytime)}
+      {#if $currentTrack.track}
+        <div class="navbar-item">
+          <div class="columns is-mobile">
+            <div 
+              title="current time: {convertSencondsToString($currentPlaytime)}"
+              data-toggle="tooltip"
+              class="column is-narrow">
+              {convertSencondsToString($currentPlaytime)}
+            </div>
+            <div class="column">
+              {#if ($currentPlaytime && $totalPlaytime)}
+                <div 
+                  title="time: {convertSencondsToString($currentPlaytime)}"
+                  data-toggle="tooltip"
+                  class="navbar-item">
+                  <input 
+                    type="range"
+                    min="0" 
+                    max="100" 
+                    bind:value="{currentPlaytimePercent}" 
+                    on:change="{setTrackTime(currentPlaytimePercent)}"
+                    class="slider">
+                </div>
+              {/if}
+            </div>
+            <div 
+              title="total time: {convertSencondsToString($totalPlaytime)}"
+              data-toggle="tooltip"
+              class="column is-narrow">
+              {convertSencondsToString($totalPlaytime)}
+            </div>
           </div>
         </div>
-      </div>
+      {/if}
     </div>
   </div>
 </nav>

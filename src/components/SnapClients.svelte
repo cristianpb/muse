@@ -34,7 +34,10 @@
             </a>
           </div>
           <div class="column">
-            <div class="navbar-item">
+            <div
+              title="Volume: {client.volume}"
+              data-toggle="tooltip"
+              class="navbar-item">
             <input 
               type="range"
               min="0" 
