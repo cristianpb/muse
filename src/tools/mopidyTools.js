@@ -151,7 +151,6 @@ export async function getPlaylists() {
   const playlistsRaw = await mopidyWS.playlists.asList()
   playlistsLocal = playlistsRaw.map(playlistRaw => {
     playlistRaw.slug = playlistRaw.name
-    playlistRaw.visibility = false
     return playlistRaw
   })
   return playlistsLocal
@@ -169,10 +168,7 @@ export async function getPlaylistTracks(uri) {
 export async function getCurrentTrackList() {
   const currentTrackList = await mopidyWS.tracklist.getTracks()
   if (currentTrackList) {
-    return currentTrackList.map(x => {
-      x.visibility = false
-      return x
-    })
+    return currentTrackList
   } else {
     throw new Error("Error reading tracklist")
   }
@@ -181,10 +177,7 @@ export async function getCurrentTrackList() {
 export async function getCurrentTlTrackList() {
   const currentTrackList = await mopidyWS.tracklist.getTlTracks()
   if (currentTrackList) {
-    return currentTrackList.map(x => {
-      x.visibility = false
-      return x
-    })
+    return currentTrackList
   } else {
     throw new Error("Error reading tracklist")
   }

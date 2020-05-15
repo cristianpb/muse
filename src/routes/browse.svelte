@@ -100,7 +100,7 @@
   })
 
   const browserUri = async (result, idx, location) => {
-    if (result.type == 'directory') {
+    if (['directory', 'artist', 'album'].indexOf(result.type) > -1) {
       waitSearch = true;
       results = await $mopidy.library.browse({uri: result.uri});
       waitSearch = false;

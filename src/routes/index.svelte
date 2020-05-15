@@ -70,16 +70,16 @@
        class:is-active={hovering === index}
        >
       <div class="columns is-mobile">
-        <div class="column" on:click={() => tlTrack.visibility = !tlTrack.visibility}>
+        <div class="column"  on:click={handleDropdownActivation(tlTrack.tlid)}>
           {tlTrack.track.name}
           {#if index === $currentTrack.index}
               &nbsp;<FontAwesomeIcon icon={faCog} spin={true} class="icon is-small"/>
           {/if}
         </div>
         <div class="column is-narrow">
-          <div class="dropdown is-right is-up" class:is-active={tlTrack.visibility} >
-            <div class="dropdown-trigger" on:click={() => tlTrack.visibility = !tlTrack.visibility}>
-            {#if tlTrack.visibility}
+          <div class="dropdown is-right is-up" class:is-active={dropdownActivate == tlTrack.tlid} >
+            <div class="dropdown-trigger" on:click={handleDropdownActivation(tlTrack.tlid)}>
+            {#if dropdownActivate == tlTrack.tlid}
               <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
             {:else}
               <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
@@ -169,6 +169,7 @@
   let image;
   let tlTracklists = []
   let hovering = false;
+  let dropdownActivate;
 
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
@@ -196,8 +197,6 @@
   }
 
   async function playTracklist(tlTrack) {
-    // tl_model does not contain visibility key
-    delete tlTrack.visibility
     $mopidy.playback.play([tlTrack])
   }
 
@@ -226,6 +225,14 @@
     event.dataTransfer.dropEffect = 'move';
     const start = i;
     event.dataTransfer.setData('text/plain', start);
+  }
+
+  const handleDropdownActivation = (tlid) => {
+    if (dropdownActivate === tlid) {
+      dropdownActivate = null
+    } else {
+      dropdownActivate = tlid
+    }
   }
   
 </script>

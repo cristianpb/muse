@@ -6,7 +6,7 @@
 
 <div class="columns">
   <div class="column">
-    <input class="input is-rounded" type="text" placeholder="Search for music" on:keydown={handleSearch}>
+    <input class="input is-rounded" type="text" placeholder="Search for music" on:keydown={handleSearch}  bind:value={searchTerm}>
   </div>
   <div class="column is-narrow">
     <div class="columns is-mobile">
@@ -41,7 +41,7 @@
         </div>
       </div>
       <div class="column">
-        <button on:click={handleSearch} class="button">
+        <button on:click={searchFunction} class="button">
           <FontAwesomeIcon icon={faSearch} class="icon"/>
         </button>
       </div>
@@ -89,68 +89,76 @@
 </div>
 
 <AddToPlaylist showAddToPlaylistModal={showAddToPlaylistModal} track={selectedTrack}/>
-{#if promise}
-  {#await promise}
-    <p>...waiting</p>
-  {:then tracks}
-    {#if resultTracks.length > 0}
-      <div class="list is-hoverable">
-        {#each resultTracks as track, i}
-          <a class="list-item" href="{null}">
-            <div class="columns is-mobile">
-              <div class="column"  on:click={() => track.visibility = !track.visibility}>
-                {#if track.artists}
-                {track.artists.map(x => x.name).join(', ')} - {track.name}
+{#if resultTracks.length > 0}
+  <div class="list is-hoverable">
+    {#each resultTracks as track, idx (idx)}
+      <a class="list-item" 
+         animate:flip={{ duration: 300 }}
+         href="{null}"
+         draggable={true} 
+         on:dragstart={event => dragstart(event, idx)}
+         on:drop|preventDefault={event => drop(event, idx)}
+         ondragover="return false"
+         on:dragenter={() => hovering = idx}
+         class:is-active={hovering === idx}
+         >
+        <div class="columns is-mobile">
+          <div class="column"  on:click={handleDropdownActivation(idx + 1)} >
+            {#if track.artists}
+              {track.artists.map(x => x.name).join(', ')} - {track.name}
+            {:else}
+              unknown artist
+            {/if}
+          </div>
+          <div class="column is-narrow">
+            <div class:is-active={dropdownActivate == idx + 1} class="dropdown is-right is-up" >
+              <div class="dropdown-trigger">
+                {#if dropdownActivate == idx + 1 }
+                  <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
                 {:else}
-                  unknown artist
+                  <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
                 {/if}
               </div>
-              <div class="column is-narrow">
-                <div class:is-active={track.visibility} class="dropdown is-right is-up" >
-                  <div class="dropdown-trigger" on:click={() => track.visibility = !track.visibility}>
-                  {#if track.visibility }
-                    <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
-                  {:else}
-                    <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
-                  {/if}
-                  </div>
-                  <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                    <div class="dropdown-content">
-                      <a href="{null}" class="dropdown-item" on:click={playTrackSingle(track.uri)}>
-                        <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"/>&nbsp;
-                        Play now
-                      </a>
-                      <a href={null} class="dropdown-item" on:click={addTrackNext(track.uri)}>
-                        <FontAwesomeIcon icon={faArrowRight} class="icon is-small"/>&nbsp;
-                        Play next
-                      </a>
-                      <a href="{null}" class="dropdown-item" on:click={addTrackQueue(track.uri)}>
-                        <FontAwesomeIcon icon={faLevelDownAlt} class="icon is-small"/>&nbsp;
-                        Add to queue
-                      </a>
-                      <a href="{null}" class="dropdown-item" on:click={openAddListModal(track)}>
-                        <FontAwesomeIcon icon={faPlus} class="icon is-small" />&nbsp;
-                          Add to a playlist
-                      </a>
-                    </div>
-                  </div>
+              <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content">
+                  <a href="{null}" class="dropdown-item" on:click={playTrackSingle(track.uri)}>
+                    <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"/>&nbsp;
+                      Play now
+                  </a>
+                  <a href={null} class="dropdown-item" on:click={addTrackNext(track.uri)}>
+                    <FontAwesomeIcon icon={faArrowRight} class="icon is-small"/>&nbsp;
+                      Play next
+                  </a>
+                  <a href="{null}" class="dropdown-item" on:click={addTrackQueue(track.uri)}>
+                    <FontAwesomeIcon icon={faLevelDownAlt} class="icon is-small"/>&nbsp;
+                      Add to queue
+                  </a>
+                  <a href="{null}" class="dropdown-item" on:click={openAddListModal(track)}>
+                    <FontAwesomeIcon icon={faPlus} class="icon is-small" />&nbsp;
+                      Add to a playlist
+                  </a>
                 </div>
               </div>
             </div>
-          </a>
-        {:else}
-      <a class="list-item" href="{null}">loading..</a>
-        {/each}
-      </div>
-    {:else}
+          </div>
+        </div>
+      </a>
+    {/each}
+  </div>
+{:else}
+  {#if promise}
+    {#await promise}
+      <p>...waiting</p>
+    {:then number}
       <a class="list-item" href="{null}">no tracks found</a>
-    {/if}
-  {:catch error}
-    <p style="color: red">{error.message}</p>
-  {/await}
+    {:catch error}
+      <p style="color: red">{error.message}</p>
+    {/await}
+  {/if}
 {/if}
 
 <script>
+  import { flip } from 'svelte/animate';
   import { connectWS, playTrackSingle, addTrackNext, addTrackQueue } from '../tools/mopidyTools';
   import AddToPlaylist from '../components/AddToPlaylist.svelte';
   import { mopidy } from '../tools/stores';
@@ -175,7 +183,10 @@
   let showAddToPlaylistModal = false;
   let showOptions = false;
   let selectedTrack;
+  let dropdownActivate;
   let resultTracks = [];
+  let hovering = false;
+  let searchTerm = '';
 
   onMount(async () => {
     $mopidy = await connectWS()
@@ -185,7 +196,8 @@
     }
   })
 
-  async function searchFunction(searchTerm) {
+  async function searchFunction() {
+    resultTracks = []
     const urisRequest = selectedUris.map(x => x + ':')
     const res = await $mopidy.library.search({'query': {'any': [searchTerm]}, 'uris': [`${urisRequest}`]})
     if (res && res.length > 0) {
@@ -197,18 +209,16 @@
 
   function handleSearch(event) {
     if (event.which === 13) {
-      setTimeout(() => { promise = searchFunction(event.target.value) }, 100)
+      promise = searchFunction()
     }
   }
 
   const openAddListModal = (track) => {
-    delete track.visibility;
     selectedTrack = track 
     showAddToPlaylistModal = !showAddToPlaylistModal
   }
 
   const playAllTracks = () => {
-    resultTracks.forEach(track => delete track.visibility)
     $mopidy.tracklist.clear()
     $mopidy.tracklist.add([resultTracks])
     $mopidy.playback.play()
@@ -216,7 +226,6 @@
   }
 
   const shufflePlayAllTracks = () => {
-    resultTracks.forEach(track => delete track.visibility)
     $mopidy.tracklist.clear()
     $mopidy.tracklist.add([resultTracks])
     $mopidy.tracklist.shuffle()
@@ -225,10 +234,31 @@
   }
 
   const addTracksQueue = () => {
-    resultTracks.forEach(track => delete track.visibility)
     $mopidy.tracklist.add([resultTracks])
     showOptions = !showOptions
   }
+
+  const handleDropdownActivation = (idx) => {
+    if (dropdownActivate === idx) {
+      dropdownActivate = null
+    } else {
+      dropdownActivate = idx
+    }
+  }
+
+  function drop(event, target) {
+		event.dataTransfer.dropEffect = 'move';
+    const start = parseInt(event.dataTransfer.getData("text/plain"));
+    hovering = null
+  }
+
+  function dragstart(event, i) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.dropEffect = 'move';
+    const start = i;
+    event.dataTransfer.setData('text/plain', start);
+  }
+
 
 </script>
 

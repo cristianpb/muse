@@ -104,13 +104,13 @@
          animate:flip
          >
          <div class="columns is-mobile">
-           <div class="column" on:click={() => track.visibility = !track.visibility}>
+           <div class="column" on:click={handleDropdownActivation(index)}>
              {track.name}
            </div>
            <div class="column is-narrow">
-             <div class="dropdown is-right is-up" class:is-active={track.visibility} >
-               <div class="dropdown-trigger" on:click={() => track.visibility = !track.visibility}>
-               {#if track.visibility}
+             <div class="dropdown is-right is-up" class:is-active={dropdownActivate == index} >
+               <div class="dropdown-trigger" on:click={handleDropdownActivation(index)}>
+               {#if dropdownActivate == index}
                  <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
                {:else}
                  <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
@@ -181,6 +181,7 @@
   let savePlaylistPromise;
   let hovering = false;
   let key;
+  let dropdownActivate;
   const getKey = item => (key ? item[key] : item);
 
   onMount(async() => {
@@ -232,6 +233,14 @@
       setTimeout(() => { goto('playlists'); }, 1000)
     } else {
       console.log("Error: no laylist remove")
+    }
+  }
+
+  const handleDropdownActivation = (index) => {
+    if (dropdownActivate === index) {
+      dropdownActivate = null
+    } else {
+      dropdownActivate = index
     }
   }
 
