@@ -3,21 +3,18 @@
 </svelte:head>
 
 <h1 class="title">Browse
-  {#if waitSearch}
-    <FontAwesomeIcon icon={faSpinner} class="icon is-24" spin={true}/>
-  {/if}
 </h1>
             
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
     <li>
-      <a href="{null}" on:click={goToRoot}>
+      <a href="{null}" on:click={() => promise = goToRoot()}>
       Root
       </a>
     </li>
     {#each browsePath as pathElement, idx}
       <li>
-        <a href="{null}" on:click={browserUri(pathElement, idx, 'back')}>
+        <a href="{null}" on:click={() => promise = browserUri(pathElement, idx, 'back')}>
         {pathElement.name}
         </a>
       </li>
@@ -25,10 +22,22 @@
   </ul>
 </nav>
 
+{#if promise}
+  <div class="list is-hoverable">
+    {#await promise}
+      <p class="list-item">
+        <FontAwesomeIcon icon={faSpinner} class="icon is-24" spin={true}/>
+      </p>
+    {:catch error}
+      <p class="list-item" style="color: red">{error.message}</p>
+    {/await}
+  </div>
+{/if}
+
 {#if results.length > 0}
   <div class="list is-hoverable">
     {#each results as result, idx}
-          <a href={null} class="list-item" on:click={browserUri(result, idx, 'avance')}>
+      <a href={null} class="list-item" on:click={() => promise = browserUri(result, idx, 'avance')}>
             <div class="columns is-mobile">
               <div class="column">
                 {result.name}
@@ -90,20 +99,17 @@
 
   let browsePath = [];
   let results = [];
-  let waitSearch = true;
+  let promise;
   let options;
 
   onMount(async () => {
     $mopidy = await connectWS()
     results = await $mopidy.library.browse({uri: null})
-    waitSearch = false;
   })
 
   const browserUri = async (result, idx, location) => {
     if (['directory', 'artist', 'album'].indexOf(result.type) > -1) {
-      waitSearch = true;
       results = await $mopidy.library.browse({uri: result.uri});
-      waitSearch = false;
       if (location === 'back') {
         browsePath = [result];
       } else if (location === 'avance') {
@@ -119,9 +125,7 @@
   }
 
   const goToRoot = async () => {
-    waitSearch = true;
     results = await $mopidy.library.browse({uri: null})
-    waitSearch = false;
     browsePath = [];
   }
   
