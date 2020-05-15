@@ -19,7 +19,7 @@ export function connectSnapcast(options) {
       snapcastWS.onerror = (e) => {
         // need to get both the statusCode and the reason phrase
         console.log('[Snapcast]: error:', e);
-        reject(e);
+        reject(new Error("error connecting to snapcast"));
       };
 
       snapcastWS.onopen = () => {
