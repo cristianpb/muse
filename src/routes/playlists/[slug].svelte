@@ -91,6 +91,12 @@
 
 
 <div class="list is-hoverable">
+  {#await promise}
+    <p class="list-item">
+      <FontAwesomeIcon icon={faSpinner} class="icon is-24" spin={true}/>
+      Loading songs ..
+    </p>
+  {:then _}
   {#if playlistsTracks.tracks}
     {#each playlistsTracks.tracks as track, index (getKey(track)) }
       <a class="list-item" 
@@ -142,10 +148,13 @@
       </a>
   {:else}
     <a class="list-item" href="{null}">loading songs</a>
-    {/each}
+  {/each}
   {:else}
     <a class="list-item" href="{null}">No tracks</a>
   {/if}
+  {:catch error}
+    <p class="list-item" style="color: red">{error.message}</p>
+  {/await}
 </div>
 
 <script>
@@ -183,13 +192,15 @@
   let key;
   let dropdownActivate;
   const getKey = item => (key ? item[key] : item);
+  let promise
 
-  onMount(async() => {
-    $mopidy = await connectWS()
+  onMount(() => promise = loadTracks())
+
+  const loadTracks = async() => {
     $playlists = await getPlaylists()
     selectedPlaylist = $playlists.find(playlist => playlist.name === slug)
     playlistsTracks  = await getPlaylistTracks(selectedPlaylist.uri)
-  })
+  }
 
   function drop(event, i) {
 		event.dataTransfer.dropEffect = 'move';

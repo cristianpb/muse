@@ -175,6 +175,7 @@ export async function getCurrentTrackList() {
 }
 
 export async function getCurrentTlTrackList() {
+  mopidyWS = await connectWS()
   const currentTrackList = await mopidyWS.tracklist.getTlTracks()
   if (currentTrackList) {
     return currentTrackList

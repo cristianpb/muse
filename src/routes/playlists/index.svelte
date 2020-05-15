@@ -12,52 +12,63 @@
 <CreatePlalist {showCreatePlaylistModal} />
 
 <div class="list is-hoverable">
-  {#each $playlists as playlist, i}
-    <div class="list-item">
-      <div class="columns is-mobile">
-        <a class="column" href="playlists/{playlist.slug}">
-          {playlist.name}
-        </a>
-        <div class="column is-narrow">
-          {#await getPlaylistTracks(playlist.uri)}
-            loading..
-          {:then playlistInfo}
-            ({playlistInfo.tracks ? playlistInfo.tracks.length : '0'})
-          {:catch error}
-            {error.message}
-          {/await}
-        </div>
-        <div class="column is-narrow">
-          <div class="dropdown is-right is-up" class:is-active={playlist.visibility} >
-            <div class="dropdown-trigger" on:click={() => playlist.visibility = !playlist.visibility}>
-            <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+  {#if promise}
+    {#await promise}
+      <p class="list-item">
+        <FontAwesomeIcon icon={faSpinner} class="icon is-24" spin={true}/>
+        Loading playlists ..
+      </p>
+    {:then _}
+      {#each $playlists as playlist, i}
+        <div class="list-item">
+          <div class="columns is-mobile">
+            <a class="column" href="playlists/{playlist.slug}">
+              {playlist.name}
+            </a>
+            <div class="column is-narrow">
+              {#await getPlaylistTracks(playlist.uri)}
+                loading..
+              {:then playlistInfo}
+                ({playlistInfo.tracks ? playlistInfo.tracks.length : '0'})
+              {:catch error}
+                {error.message}
+              {/await}
             </div>
-            <div class="dropdown-menu" id="dropdown-menu" role="menu">
-              <div class="dropdown-content">
-                <a href="{null}" class="dropdown-item" on:click={playPlaylist(playlist.uri)}>
-                  <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"/>&nbsp;
-                  Play
-                </a>
-                <a href="{null}" class="dropdown-item" on:click={shufflePlaylist(playlist.uri)}>
-                  <FontAwesomeIcon icon={faRandom} class="icon is-small"/>&nbsp;
-                  Shuffle
-                </a>
-                <a href="{null}" class="dropdown-item" on:click={addToQueuePlaylists(playlist.uri)}>
-                  <FontAwesomeIcon icon={faGripLines} class="icon is-small"/>&nbsp;
-                  Add to queue
-                </a>
+            <div class="column is-narrow">
+              <div class="dropdown is-right is-up" class:is-active={playlist.visibility} >
+                <div class="dropdown-trigger" on:click={() => playlist.visibility = !playlist.visibility}>
+                <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                  <div class="dropdown-content">
+                    <a href="{null}" class="dropdown-item" on:click={playPlaylist(playlist.uri)}>
+                      <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"/>&nbsp;
+                        Play
+                    </a>
+                    <a href="{null}" class="dropdown-item" on:click={shufflePlaylist(playlist.uri)}>
+                      <FontAwesomeIcon icon={faRandom} class="icon is-small"/>&nbsp;
+                        Shuffle
+                    </a>
+                    <a href="{null}" class="dropdown-item" on:click={addToQueuePlaylists(playlist.uri)}>
+                      <FontAwesomeIcon icon={faGripLines} class="icon is-small"/>&nbsp;
+                        Add to queue
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
+
           </div>
         </div>
-
-      </div>
-    </div>
   {:else}
     <div class="list-item">
-    <p>loading</p>
+      <p>loading</p>
     </div>
-  {/each}
+      {/each}
+      {:catch error}
+        <p class="list-item" style="color: red">{error.message}</p>
+        {/await}
+  {/if}
 </div>
 
 <script>
@@ -72,14 +83,19 @@
     faPlayCircle,
     faRandom,
     faGripLines,
-    faPlus
+    faPlus,
+    faSpinner
   } from '@fortawesome/free-solid-svg-icons';
 
+  let promise;
   let showCreatePlaylistModal = false;
 
   onMount(async () => {
-    $mopidy = await connectWS()
-    $playlists = await getPlaylists()
+    promise = loadPlaylists()
   })
+
+  const loadPlaylists = async () => {
+    $playlists = await getPlaylists()
+  }
 
 </script>

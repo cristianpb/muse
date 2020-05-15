@@ -189,7 +189,6 @@
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
   onMount(async () => {
-    $mopidy = await connectWS()
     promise = loadCurrentTracklist()
     loadAlbumImage()
   })
