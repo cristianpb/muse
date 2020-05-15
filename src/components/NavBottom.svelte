@@ -185,7 +185,7 @@
     try {
       $snapcast = await connectSnapcast()
     } catch(e) {
-      console.log(e);
+      console.log('[Snapcast]: catch error:', e);
     }
   })
 

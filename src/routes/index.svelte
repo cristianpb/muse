@@ -20,15 +20,14 @@
       </div>
     {/if}
 
+    {#if $currentTrack.track}
     <div class="card-content">
       <div class="media">
         <div class="media-content">
-          {#if $currentTrack.track}
             <p class="title is-4">{$currentTrack.track.name}</p>
             {#if $currentTrack.track.artists}
               <p class="subtitle is-6">{$currentTrack.track.artists[0].name}</p>
             {/if}
-          {/if}
         </div>
       </div>
 
@@ -54,6 +53,7 @@
         </div>
       </div>
     </div>
+    {/if}
   </div>
 {/if}
 
@@ -104,7 +104,21 @@
       </div>
     </a>
   {:else}
-    <a class="list-item" href="{null}">loading songs...</a>
+    {#if promise && $mopidy && $mopidy._webSocket.readyState == 1}
+      {#await promise}
+        <p class="list-item">loading songs...</p>
+      {:then number}
+        <p class="list-item">no tracks playing</p>
+      {:catch error}
+        <p class="list-item" style="color: red">{error.message}</p>
+      {/await}
+    {:else}
+      {#if $mopidy && $mopidy._webSocket.readyState == 1}
+        <p class="list-item">loading songs...</p>
+      {:else}
+        <p class="list-item">not connected to mopidy</p>
+      {/if}
+    {/if}
   {/each}
 </div>
 
@@ -167,17 +181,22 @@
   } from '@fortawesome/free-solid-svg-icons';
 
   let image;
-  let tlTracklists = []
+  let tlTracklists = [];
   let hovering = false;
   let dropdownActivate;
+  let promise;
 
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
   onMount(async () => {
     $mopidy = await connectWS()
-    tlTracklists = await getCurrentTlTrackList()
+    promise = loadCurrentTracklist()
     loadAlbumImage()
   })
+
+  const loadCurrentTracklist = async () => {
+    tlTracklists = await getCurrentTlTrackList()
+  }
 
   async function setTrackTime(currentPlaytimePercent) {
     const ms = convertPercentToSeconds(currentPlaytimePercent, $totalPlaytime)
