@@ -202,7 +202,7 @@
     const res = await $mopidy.library.search({'query': {'any': [searchTerm]}, 'uris': [`${urisRequest}`]})
     if (res && res.length > 0) {
       let { tracks } = res.pop()
-      resultTracks =  tracks
+      if (tracks) resultTracks =  tracks
       return true
     }
   }
