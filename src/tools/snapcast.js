@@ -13,7 +13,8 @@ export function connectSnapcast(options) {
     } else {
       const host = options && options.host ? options.host : window.location.hostname;
       const port = options && options.port ? options.port : '1780';
-      snapcastWS = new WebSocket(`ws://${host}:${port}/jsonrpc`);
+      const ssl = options && options.ssl ? 's' : '';
+      snapcastWS = new WebSocket(`ws${ssl}://${host}:${port}/jsonrpc`);
 
       /* Error Event Handler */
       snapcastWS.onerror = (e) => {
