@@ -18,6 +18,12 @@ export const currentMute = writable(false);
 
 export const currentRandom = writable(false);
 
+export const currentConsume = writable(false);
+
+export const currentRepeat = writable(false);
+
+export const currentSingle = writable(false);
+
 export const totalPlaytime = writable(0);
 
 export const snapClientsVisibility = writable(false);

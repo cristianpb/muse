@@ -51,7 +51,12 @@
     <div class="navbar-end">
 
       {#if $snapGroups.length > 0}
-        <a href="{null}" class="navbar-item  is-hidden-touch" on:click={() =>$snapClientsVisibility = !$snapClientsVisibility}>
+        <a 
+          href="{null}"
+          title="Show snapcast clients"
+          data-toggle="tooltip"
+          class="navbar-item  is-hidden-touch"
+          on:click={() =>$snapClientsVisibility = !$snapClientsVisibility}>
           {#if $snapClientsVisibility}
             <FontAwesomeIcon icon={faCompressAlt} class="icon"/>
           {:else}
@@ -91,7 +96,7 @@
           <div class="column is-narrow">
             <button 
               class="button is-white"
-              title="Random {$currentMute ? 'on' : 'off'}"
+              title="Mute {$currentMute ? 'on' : 'off'}"
               data-toggle="tooltip"
               on:click={toggleMute}>
               {#if $currentMute}
@@ -110,6 +115,11 @@
               on:change="{$mopidy.mixer.setVolume([$currentVolume])}"
               class="slider">
           </div>
+        </div>
+      </div>
+
+      <div class="navbar-item is-hidden-desktop">
+        <div class="columns is-mobile is-centered">
           <div class="column is-narrow">
             <button 
               class="button is-white"
@@ -117,9 +127,48 @@
               data-toggle="tooltip"
               on:click="{toggleCurrentRandom}">
               {#if $currentRandom}
-                <FontAwesomeIcon icon={faRandom} class="icon"/>
+                <FontAwesomeIcon icon={faRandom} class="icon is-info"/>
               {:else}
-                <FontAwesomeIcon icon={faGripLines} class="icon"/>
+                <FontAwesomeIcon icon={faRandom} class="icon"/>
+              {/if}
+            </button>
+          </div>
+          <div class="column is-narrow">
+            <button 
+              class="button is-white"
+              title="Consume {$currentConsume ? 'on' : 'off'}"
+              data-toggle="tooltip"
+              on:click={toggleCurrentConsume}>
+              {#if $currentConsume}
+                <FontAwesomeIcon icon={faUtensils} class="icon is-info"/>
+              {:else}
+                <FontAwesomeIcon icon={faUtensils} class="icon"/>
+              {/if}
+            </button>
+          </div>
+          <div class="column is-narrow">
+            <button 
+              class="button is-white"
+              title="Repeat {$currentRepeat ? 'on' : 'off'}"
+              data-toggle="tooltip"
+              on:click={toggleCurrentRepeat}>
+              {#if $currentRepeat}
+                <FontAwesomeIcon icon={faRecycle} class="icon is-info"/>
+              {:else}
+                <FontAwesomeIcon icon={faRecycle} class="icon"/>
+              {/if}
+            </button>
+          </div>
+          <div class="column is-narrow">
+            <button 
+              class="button is-white"
+              title="Single {$currentSingle ? 'on' : 'off'}"
+              data-toggle="tooltip"
+              on:click={toggleCurrentSingle}>
+              {#if $currentSingle}
+                <FontAwesomeIcon icon={faRedo} class="icon is-info"/>
+              {:else}
+                <FontAwesomeIcon icon={faRedo} class="icon"/>
               {/if}
             </button>
           </div>
@@ -157,9 +206,45 @@
         data-toggle="tooltip"
         on:click="{toggleCurrentRandom}">
         {#if $currentRandom}
-          <FontAwesomeIcon icon={faRandom} class="icon"/>
+          <FontAwesomeIcon icon={faRandom} class="icon is-info"/>
         {:else}
-          <FontAwesomeIcon icon={faGripLines} class="icon"/>
+          <FontAwesomeIcon icon={faRandom} class="icon"/>
+        {/if}
+      </a>
+      <a 
+        class="navbar-item is-hidden-touch"
+        href="{null}"
+        title="Consume mode {$currentConsume ? 'on' : 'off'}"
+        data-toggle="tooltip"
+        on:click="{toggleCurrentConsume}">
+        {#if $currentConsume}
+          <FontAwesomeIcon icon={faUtensils} class="icon is-info"/>
+        {:else}
+          <FontAwesomeIcon icon={faUtensils} class="icon"/>
+        {/if}
+      </a>
+      <a 
+        class="navbar-item is-hidden-touch"
+        href="{null}"
+        title="Repeat mode {$currentRepeat ? 'on' : 'off'}"
+        data-toggle="tooltip"
+        on:click="{toggleCurrentRepeat}">
+        {#if $currentRepeat}
+          <FontAwesomeIcon icon={faRecycle} class="icon is-info"/>
+        {:else}
+          <FontAwesomeIcon icon={faRecycle} class="icon"/>
+        {/if}
+      </a>
+      <a 
+        class="navbar-item is-hidden-touch"
+        href="{null}"
+        title="Single mode {$currentSingle ? 'on' : 'off'}"
+        data-toggle="tooltip"
+        on:click="{toggleCurrentSingle}">
+        {#if $currentSingle}
+          <FontAwesomeIcon icon={faRedo} class="icon is-info"/>
+        {:else}
+          <FontAwesomeIcon icon={faRedo} class="icon"/>
         {/if}
       </a>
 
@@ -218,11 +303,13 @@
     faVolumeUp,
     faVolumeMute,
     faRandom,
-    faGripLines
+    faUtensils,
+    faRedo,
+    faRecycle
   } from '@fortawesome/free-solid-svg-icons';
-  import { snapGroups, snapClientsVisibility, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState, currentVolume, currentMute, mopidy, snapcast, currentRandom } from '../tools/stores';
-  import { convertSencondsToString, normalizeTime, connectWS, getRandomMode } from '../tools/mopidyTools';
-  import { connectSnapcast, muteGroup, changeHandler } from '../tools/snapcast';
+  import { snapGroups, snapClientsVisibility, currentTrack, currentPlaytime, totalPlaytime, currentState, currentVolume, currentMute, mopidy, snapcast, currentRandom, currentConsume, currentRepeat, currentSingle } from '../tools/stores';
+  import { convertSencondsToString, normalizeTime, connectWS } from '../tools/mopidyTools';
+  import { connectSnapcast, changeHandler } from '../tools/snapcast';
 
   let burgerState = false;
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
@@ -261,6 +348,34 @@
     }
     $currentRandom = !$currentRandom
   }
+
+  const toggleCurrentConsume = () => {
+    if ($currentConsume) {
+      $mopidy.tracklist.setConsume([false])
+    } else {
+      $mopidy.tracklist.setConsume([true])
+    }
+    $currentConsume = !$currentConsume
+  }
+
+  const toggleCurrentRepeat = () => {
+    if ($currentRepeat) {
+      $mopidy.tracklist.setRepeat([false])
+    } else {
+      $mopidy.tracklist.setRepeat([true])
+    }
+    $currentRepeat = !$currentRepeat
+  }
+
+  const toggleCurrentSingle = () => {
+    if ($currentSingle) {
+      $mopidy.tracklist.setSingle([false])
+    } else {
+      $mopidy.tracklist.setSingle([true])
+    }
+    $currentSingle = !$currentSingle
+  }
+
 
   const setTrackTime = async (currentPlaytimePercent) => {
     const ms = convertPercentToSeconds(currentPlaytimePercent, $totalPlaytime)

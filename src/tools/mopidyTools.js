@@ -1,5 +1,5 @@
 import Mopidy from "mopidy";
-import { mopidy, playlists, currentTrack, currentPlaytime, currentState, currentVolume, currentMute, totalPlaytime, currentRandom } from './stores';
+import { mopidy, playlists, currentTrack, currentPlaytime, currentState, currentVolume, currentMute, totalPlaytime, currentRandom, currentConsume, currentRepeat, currentSingle } from './stores';
 import { loadAlbumImage }  from './lastfm';
 
 let mopidyWS;
@@ -55,12 +55,18 @@ export function connectWS() {
         const currentVolumeLocal = await mopidyWS.mixer.getVolume()
         const currentMuteLocal = await mopidyWS.mixer.getMute()
         const currentRandomLocal = await mopidyWS.tracklist.getRandom()
+        const currentConsumeLocal = await mopidyWS.tracklist.getConsume()
+        const currentRepeatLocal = await mopidyWS.tracklist.getRepeat()
+        const currentSingleLocal = await mopidyWS.tracklist.getSingle()
 
         currentPlaytime.set(currentPlaytimeLocal);
         currentState.set(currentStateLocal);
         currentVolume.set(currentVolumeLocal);
         currentMute.set(currentMuteLocal);
         currentRandom.set(currentRandomLocal);
+        currentConsume.set(currentConsumeLocal);
+        currentRepeat.set(currentRepeatLocal);
+        currentSingle.set(currentSingleLocal);
 
         if (currentTrackTL) {
           const totalPlaytimeLocal = currentTrackTL.track.length
@@ -183,13 +189,6 @@ export async function getCurrentTlTrackList() {
     throw new Error("Error reading tracklist")
   }
 }
-
-export async function getRandomMode() {
-  mopidyWS = await connectWS()
-  const randomMode = await mopidyWS.tracklist.getRandom()
-    return randomMode
-}
-
 
 export function playTrackSingle(uri) {
   mopidyWS.tracklist.clear()
