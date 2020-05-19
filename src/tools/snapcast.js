@@ -69,22 +69,24 @@ export function handleMessage (message) {
   if (data && data.method) {
     if (data.method === 'Client.OnDisconnect') {
       const id = data.params.client.id
-      const filteredClients = clientsLocal.map(x => {
-        if (x.id === id) {
-          x.connected = false
-        }
-        return x
+      snapGroups.update(v => {
+        return groupsLocal.map(group => {
+          group.clients.forEach(client => {
+            if (client.id == id) client.connected = false
+          })
+          return group
+        });
       })
-      snapGroups.set(filteredClients)
     } else if (data.method === 'Client.OnConnect') {
       const id = data.params.client.id
-      const filteredClients = clientsLocal.map(x => {
-        if (x.id === id) {
-          x.connected = true
-        }
-        return x
+      snapGroups.update(v => {
+        return groupsLocal.map(group => {
+          group.clients.forEach(client => {
+            if (client.id == id) client.connected = true
+          })
+          return group
+        });
       })
-      snapGroups.set(filteredClients)
     }
   }
 }
