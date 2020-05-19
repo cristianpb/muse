@@ -106,6 +106,16 @@ export function handleMessage (message) {
           return group
         });
       })
+    } else if (data.method === 'Client.OnVolumeChanged') {
+      const id = data.params.id
+      snapGroups.update(v => {
+        return groupsLocal.map(group => {
+          group.clients.forEach(client => {
+            if (client.id === id) client.volume = data.params.volume.percent
+          })
+          return group
+        });
+      })
     }
   }
 }
