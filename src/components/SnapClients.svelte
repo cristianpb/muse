@@ -5,8 +5,7 @@
     </a>
     {#each $snapGroups as group}
       <header class="card-header">
-        <p class="card-header-title is-centered">
-          Group: {group.name ? group.name : group.id.substring(0,6)} &nbsp;&nbsp;
+        <div class="card-header-title is-centered">
           <a class="navbar-item" href="{null}" on:click={muteGroup(group.id, group.muted)}>
             {#if group.muted}
               <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
@@ -14,12 +13,15 @@
               <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
             {/if}
           </a>
-        </p>
+          <p class="expand-on-hover">
+            Group: {group.name ? group.name : group.id}
+          </p>
+        </div>
       </header>
     {#each group.clients as client}
       <div class="columns is-mobile oneline">
         <div class="column is-narrow">
-          <div class="navbar-item">
+          <div class="navbar-item expand-on-hover-name">
             {client.name}
           </div>
         </div>
@@ -145,6 +147,33 @@
 
   .columns.oneline:not(:last-child) {
     margin-bottom: 0;
+  }
+
+
+  .expand-on-hover {
+    display: inline-block;
+    position: relative;
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 2px 5px;
+  }
+
+  .expand-on-hover-name {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 2px 5px;
+  }
+
+  .expand-on-hover:hover, .expand-on-hover-name:hover {
+    z-index: 1;
+    width: auto;
+    background-color: #FFFFCC;
   }
 
 </style>
