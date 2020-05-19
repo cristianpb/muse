@@ -26,7 +26,7 @@
                 </div>
               </div>
             </div>
-          {#each group.clients as client}
+          {#each group.clients as client, idx}
             <div class="columns is-mobile">
               <div class="column is-12">
                 <label class="label">Client ID: {client.id}</label>
@@ -34,7 +34,7 @@
                   <div class="control is-expanded">
                     <input class="input"
                            type="text" 
-                           bind:value="{client.name}" 
+                           bind:value="{group.clients[idx].name}" 
                            placeholder="Client name">
                   </div>
                   <div class="control">

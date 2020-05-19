@@ -23,11 +23,11 @@
           </p>
         </div>
       </header>
-    {#each group.clients as client}
+    {#each group.clients as client, idx}
       <div class="columns is-mobile oneline">
         <div class="column is-narrow">
           <div class="navbar-item expand-on-hover-name">
-            {client.name}
+            {group.clients[idx].name ? client.name : client.host}
           </div>
         </div>
         {#if client.connected}
@@ -49,8 +49,8 @@
               type="range"
               min="0" 
               max="100" 
-              bind:value="{client.volume}" 
-              on:change="{changeHandler(client.id, client.volume)}"
+              bind:value="{group.clients[idx].volume}" 
+              on:change="{changeHandler(group.clients[idx].id, group.clients[idx].volume)}"
               class="slider">
             </div>
           </div>

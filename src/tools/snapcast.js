@@ -56,7 +56,8 @@ export function handleMessage (message) {
           clients: group.clients.map(client => {
             return {
               id: client.id,
-              name: client.host.name,
+              host: client.host.name,
+              name: client.config.name,
               volume: client.config.volume.percent,
               connected: client.connected,
               muted: client.config.volume.muted,
@@ -72,7 +73,7 @@ export function handleMessage (message) {
       snapGroups.update(v => {
         return groupsLocal.map(group => {
           group.clients.forEach(client => {
-            if (client.id == id) client.connected = false
+            if (client.id === id) client.connected = false
           })
           return group
         });
@@ -82,8 +83,26 @@ export function handleMessage (message) {
       snapGroups.update(v => {
         return groupsLocal.map(group => {
           group.clients.forEach(client => {
-            if (client.id == id) client.connected = true
+            if (client.id === id) client.connected = true
           })
+          return group
+        });
+      })
+    } else if (data.method === 'Client.OnNameChanged') {
+      const id = data.params.id
+      snapGroups.update(v => {
+        return groupsLocal.map(group => {
+          group.clients.forEach(client => {
+            if (client.id === id) client.name = data.params.name
+          })
+          return group
+        });
+      })
+    } else if (data.method === 'GrClient.OnNameChanged') {
+      const id = data.params.id
+      snapGroups.update(v => {
+        return groupsLocal.map(group => {
+          if (group.id === id) client.name = data.params.name
           return group
         });
       })
@@ -117,7 +136,6 @@ export function muteClient(clientId, muted) {
 }
 
 export function muteGroup(groupId, muted) {
-  console.log(groupsLocal);
   console.log(`Muted ${groupId} - ${muted}`);
   let message = {
     id:8,
@@ -141,7 +159,7 @@ export function muteGroup(groupId, muted) {
 }
 
 export function changeHandler(id, volume) {
-  console.log(`client ${id} - vol ${volume}`);
+  console.log(`Client ${id} - vol ${volume}`);
   let message = {
     id:8,
     jsonrpc:"2.0",
@@ -168,12 +186,6 @@ export const editGroupName = (id, name) => {
     }
   }
   snapcastWS.send(JSON.stringify(message));
-  snapGroups.update(v => {
-    return groupsLocal.map(group => {
-      if (group.id === id) group.name = name
-      return group
-    });
-  })
 }
 
 export const editClientName = (id, name) => {
@@ -187,12 +199,4 @@ export const editClientName = (id, name) => {
     }
   }
   snapcastWS.send(JSON.stringify(message));
-  snapGroups.update(v => {
-    return groupsLocal.map(group => {
-      group.clients.forEach(client => {
-        if (client.id === id) client.name = name
-      })
-      return group
-    });
-  })
 }
