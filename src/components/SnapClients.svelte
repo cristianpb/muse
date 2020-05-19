@@ -1,11 +1,11 @@
-<EditClients {showEditClients} />
+<EditClients />
 
 {#if $snapClientsVisibility}
   <div class="notification is-primary" id="notification">
     <a href="{null}" on:click={() => $snapClientsVisibility = !$snapClientsVisibility}>
       <FontAwesomeIcon icon={faTimesCircle} class="icon"/>
     </a>
-    <a href="{null}" on:click={() => showEditClients = !showEditClients} class="to-the-right">
+    <a href="{null}" on:click={() => $snapClientsEditVisibility = !$snapClientsEditVisibility} class="to-the-right">
       <FontAwesomeIcon icon={faEdit} class="icon"/>
     </a>
     {#each $snapGroups as group}
@@ -67,7 +67,7 @@
 
 <script charset="utf-8">
   import { onMount } from 'svelte';
-  import { snapGroups, snapClientsVisibility, snapcast } from '../tools/stores';
+  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility, snapcast } from '../tools/stores';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faVolumeUp,
@@ -77,8 +77,6 @@
   } from '@fortawesome/free-solid-svg-icons';
   import { muteGroup, muteClient, changeHandler } from '../tools/snapcast';
   import EditClients from './EditClients.svelte';
-
-  let showEditClients = false;
 
 </script>
 

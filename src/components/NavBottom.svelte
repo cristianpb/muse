@@ -64,11 +64,11 @@
           {/if}
         </a>
         {#each $snapGroups as group}
-        {#each group.clients as client}
+        {#each group.clients as client, idx}
           <div class="navbar-item  is-hidden-desktop">
             <div class="columns is-mobile">
               <div class="column is-narrow">
-                {client.name}
+                {client.name ? client.name : client.host}
               </div>
               {#if client.connected}
                 <div class="column">
@@ -76,8 +76,8 @@
                     type="range"
                     min="0" 
                     max="100" 
-                    bind:value="{client.volume}" 
-                    on:change="{changeHandler(client.id, client.volume)}"
+                    bind:value="{group.clients[idx].volume}" 
+                    on:change="{changeHandler(group.clients[idx].id, group.clients[idx].volume)}"
                     class="slider">
                 </div>
               {:else}
@@ -120,6 +120,17 @@
 
       <div class="navbar-item is-hidden-desktop">
         <div class="columns is-mobile is-centered">
+          {#if $snapGroups.length > 0 }
+          <div class="column is-narrow">
+            <button 
+              class="button is-white"
+              title="Edit snapcast clients"
+              data-toggle="tooltip"
+              on:click="{() => $snapClientsEditVisibility = !$snapClientsEditVisibility}">
+              <FontAwesomeIcon icon={faPodcast} class="icon"/>
+            </button>
+          </div>
+          {/if}
           <div class="column is-narrow">
             <button 
               class="button is-white"
@@ -307,7 +318,7 @@
     faRedo,
     faRecycle
   } from '@fortawesome/free-solid-svg-icons';
-  import { snapGroups, snapClientsVisibility, currentTrack, currentPlaytime, totalPlaytime, currentState, currentVolume, currentMute, mopidy, snapcast, currentRandom, currentConsume, currentRepeat, currentSingle } from '../tools/stores';
+  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility, currentTrack, currentPlaytime, totalPlaytime, currentState, currentVolume, currentMute, mopidy, snapcast, currentRandom, currentConsume, currentRepeat, currentSingle } from '../tools/stores';
   import { convertSencondsToString, normalizeTime, connectWS } from '../tools/mopidyTools';
   import { connectSnapcast, changeHandler } from '../tools/snapcast';
 

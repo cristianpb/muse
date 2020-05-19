@@ -1,9 +1,9 @@
-<div class="modal" class:is-active={showEditClients}  >
-    <div class="modal-background" on:click={() => showEditClients = !showEditClients}></div>
+<div class="modal" class:is-active={$snapClientsEditVisibility}  >
+    <div class="modal-background" on:click={() => $snapClientsEditVisibility = !$snapClientsEditVisibility}></div>
   <div class="modal-card">
     <header class="modal-card-head">
       <p class="modal-card-title">Edit Snapcast Clients</p>
-      <a href="{null}" aria-label="close" on:click={() => showEditClients = !showEditClients}>
+      <a href="{null}" aria-label="close" on:click={() => $snapClientsEditVisibility = !$snapClientsEditVisibility}>
         <FontAwesomeIcon icon={faTimesCircle} class="icon"/>
       </a>
     </header>
@@ -52,12 +52,12 @@
       </div>
     </section>
   </div>
-  <button class="modal-close is-large" aria-label="close" on:click={() => showEditClients = !showEditClients}></button>
+  <button class="modal-close is-large" aria-label="close" on:click={() => $snapClientsEditVisibility = !$snapClientsEditVisibility}></button>
 </div>
 
 <script>
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
-  import { snapGroups, snapClientsVisibility, snapcast } from '../tools/stores';
+  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility,  snapcast } from '../tools/stores';
   import {
     faPlus,
     faSpinner,
@@ -65,8 +65,6 @@
     faCheck
   } from '@fortawesome/free-solid-svg-icons';
   import { editGroupName, editClientName } from '../tools/snapcast';
-
-  export let showEditClients;
 
 </script>
 

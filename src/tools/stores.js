@@ -28,6 +28,8 @@ export const totalPlaytime = writable(0);
 
 export const snapClientsVisibility = writable(false);
 
+export const snapClientsEditVisibility = writable(false);
+
 export const albumImage = writable({});
 
 export const playlists = writable([]);
