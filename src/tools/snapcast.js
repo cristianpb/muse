@@ -154,3 +154,43 @@ export function changeHandler(id, volume) {
   }
   snapcastWS.send(JSON.stringify(message));
 }
+
+export const editGroupName = (id, name) => {
+  const message = {
+    id:8,
+    jsonrpc:"2.0",
+    method:"Group.SetName",
+    params:{
+      id,
+      name
+    }
+  }
+  snapcastWS.send(JSON.stringify(message));
+  snapGroups.update(v => {
+    return groupsLocal.map(group => {
+      if (group.id === id) group.name = name
+      return group
+    });
+  })
+}
+
+export const editClientName = (id, name) => {
+  const message = {
+    id:8,
+    jsonrpc:"2.0",
+    method:"Client.SetName",
+    params:{
+      id,
+      name
+    }
+  }
+  snapcastWS.send(JSON.stringify(message));
+  snapGroups.update(v => {
+    return groupsLocal.map(group => {
+      group.clients.forEach(client => {
+        if (client.id === id) client.name = name
+      })
+      return group
+    });
+  })
+}

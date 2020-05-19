@@ -1,7 +1,12 @@
+<EditClients {showEditClients} />
+
 {#if $snapClientsVisibility}
   <div class="notification is-primary" id="notification">
     <a href="{null}" on:click={() => $snapClientsVisibility = !$snapClientsVisibility}>
       <FontAwesomeIcon icon={faTimesCircle} class="icon"/>
+    </a>
+    <a href="{null}" on:click={() => showEditClients = !showEditClients} class="to-the-right">
+      <FontAwesomeIcon icon={faEdit} class="icon"/>
     </a>
     {#each $snapGroups as group}
       <header class="card-header">
@@ -67,9 +72,13 @@
   import {
     faVolumeUp,
     faVolumeMute,
-    faTimesCircle
+    faTimesCircle,
+    faEdit
   } from '@fortawesome/free-solid-svg-icons';
   import { muteGroup, muteClient, changeHandler } from '../tools/snapcast';
+  import EditClients from './EditClients.svelte';
+
+  let showEditClients = false;
 
 </script>
 
@@ -174,6 +183,11 @@
     z-index: 1;
     width: auto;
     background-color: #FFFFCC;
+  }
+
+  .to-the-right {
+    right: 1rem;
+    position: absolute;
   }
 
 </style>
