@@ -57,7 +57,7 @@
 
 <script>
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
-  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility,  snapcast } from '../tools/stores';
+  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility } from '../tools/stores';
   import {
     faPlus,
     faSpinner,

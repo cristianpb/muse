@@ -66,21 +66,105 @@
   </div>
 </div>
 
+
+{#each $snapGroups as group, g}
+  <div class="list is-hoverable basket">
+    <div class="list-item"
+         on:drop|preventDefault={event => drop(event, g)}
+         ondragover="return false"
+         on:dragenter="{() => hovering = group.name}"
+         on:dragleave="{() => hovering = null}"
+         class:hovering="{hovering === group.name}"
+         >
+         <div class="columns is-mobile">
+           <div class="column">
+             {#if editLine === g}
+               <input class="input"
+                      type="text" 
+                      bind:value="{group.name}" 
+                      on:input={() => editGroupName(group.id, group.name)}
+                      placeholder="Group name">
+             {:else}
+               <b>Group {group.name ? `${group.name} - ` : ''}{group.id}</b>
+             {/if}
+           </div>
+           {#if editLine === g}
+             <div class="column is-narrow" on:click={() => editLine = null}>
+               <FontAwesomeIcon icon={faCheckCircle} class="icon"/>
+             </div>
+           {:else}
+             <div class="column is-narrow" on:click={() => editLine = g}>
+               <FontAwesomeIcon icon={faEdit} class="icon"/>
+             </div>
+           {/if}
+         </div>
+    </div>
+    {#each group.clients as client, i}
+      <div 
+        class="list-item" draggable={true} 
+        on:dragstart={event => dragstart(event, g, i)}
+        on:mouseenter={() => hoveringList = {group: g, client: i}}
+        on:mouseleave={() => hoveringList = {}}
+        class:is-active={hoveringList.group === g && hoveringList.client === i}
+        id = {client.id}>
+        {#if editLine === g}
+          <input class="input"
+                 type="text" 
+                 bind:value="{group.clients[g].name}" 
+                 on:input={() => editClientName(group.clients[g].id, group.clients[g].name)}
+                 placeholder="Client name">
+        {:else}
+          <FontAwesomeIcon icon={faSatellite} class="icon is-small"/>
+          {client.name ? `${client.name} - ` : ''}{client.host}
+        {/if}
+      </div>
+    {/each}
+  </div>
+{/each}
+
+
 <script>
   import { onMount } from 'svelte';
   import { connectSnapcast } from '../tools/snapcast';
+  import { snapGroups,  snapcast } from '../tools/stores';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
-    faSpinner
+    faSpinner,
+    faSatellite,
+    faEdit,
+    faCheckCircle
   } from '@fortawesome/free-solid-svg-icons';
+  import { editGroupName, editClientName, setGroupClients } from '../tools/snapcast';
   let promise;
   let snapcastHost = 'localhost'
   let snapcastPort = '1780'
   let snapcastSSL = ''
+  let hovering = false;
+  let hoveringList = {};
+  let editLine;
 
   onMount(() => {
     snapcastHost = window.location.hostname
   })
+
+  export function dragstart (ev, group, item) {
+    ev.dataTransfer.effectAllowed = 'move';
+    ev.dataTransfer.dropEffect = 'move';
+    let obj = {group: group, item: item, id: ev.target.getAttribute('id')};
+    ev.dataTransfer.setData('text/plain', JSON.stringify(obj));
+  };
+
+  export function drop (ev, new_g) {
+    ev.dataTransfer.dropEffect = 'move';
+    let json_obj = ev.dataTransfer.getData("text/plain");
+    let obj = JSON.parse(json_obj);
+    let i = obj.item;
+    let old_g = obj.group;
+    const item = $snapGroups[old_g].clients.splice(i,1)[0];
+    $snapGroups[new_g].clients = [...$snapGroups[new_g].clients,item];
+    setGroupClients($snapGroups[new_g].id, $snapGroups[new_g].clients.map(client => client.id))
+    hovering = null;
+  };
 
 </script>
 
@@ -237,6 +321,47 @@
 
   .field.is-grouped.is-grouped-multiline:not(:last-child) {
     margin-bottom: 0;
+  }
+
+  .field.has-addons .control:not(:first-child):not(:last-child) .button,
+  .field.has-addons .control:not(:first-child):not(:last-child) .input {
+    border-radius: 0;
+  }
+
+  .field.has-addons .control:first-child:not(:only-child) .button,
+  .field.has-addons .control:first-child:not(:only-child) .input {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  .field.has-addons .control:last-child:not(:only-child) .button,
+  .field.has-addons .control:last-child:not(:only-child) .input {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+  }
+
+  .field.has-addons .control .button:not([disabled]):hover,
+  .field.has-addons .control .input:not([disabled]):hover {
+    z-index: 2;
+  }
+
+  .field.has-addons .control .button:not([disabled]):focus, .field.has-addons .control .button:not([disabled]):active, .field.has-addons .control .input:not([disabled]):focus, .field.has-addons .control .input:not([disabled]):active {
+    z-index: 3;
+  }
+
+  .field.has-addons .control .button:not([disabled]):focus:hover, .field.has-addons .control .button:not([disabled]):active:hover, .field.has-addons .control .input:not([disabled]):focus:hover, .field.has-addons .control .input:not([disabled]):active:hover {
+    z-index: 4;
+  }
+
+  .hovering {
+    border: 1px solid orange;
+  }
+  .hovering * {
+    pointer-events: none; /* so that a child hover child is not a "dragleave" event */
+  }
+
+  .basket {
+    min-height: 24px;
   }
 
 </style>

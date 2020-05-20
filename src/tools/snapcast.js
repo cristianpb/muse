@@ -210,3 +210,16 @@ export const editClientName = (id, name) => {
   }
   snapcastWS.send(JSON.stringify(message));
 }
+
+export const setGroupClients = (groupId, clientsList) => {
+  const message = {
+    id:8,
+    jsonrpc:"2.0",
+    method:"Group.SetClients",
+    params:{
+      clients: clientsList,
+      id: groupId
+    }
+  }
+  snapcastWS.send(JSON.stringify(message));
+}
