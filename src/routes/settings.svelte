@@ -110,18 +110,31 @@
         {#if editLine === g}
           <input class="input"
                  type="text" 
-                 bind:value="{group.clients[g].name}" 
-                 on:input={() => editClientName(group.clients[g].id, group.clients[g].name)}
+                 bind:value="{client.name}" 
+                 on:input={() => editClientName(client.id, client.name)}
                  placeholder="Client name">
         {:else}
           <FontAwesomeIcon icon={faSatellite} class="icon is-small"/>
-          {client.name ? `${client.name} - ` : ''}{client.host}
+          {client.name ? client.name : client.host}
         {/if}
       </div>
     {/each}
   </div>
 {/each}
-
+{#if newGroup}
+  <div 
+    class="list is-hoverable basket"
+    on:drop|preventDefault={event => drop(event, null)}
+    ondragover="return false"
+    on:dragenter="{() => hovering = $snapGroups.length}"
+    on:dragleave="{() => hovering = null}"
+    class:hovering="{hovering === $snapGroups.length}"
+    >
+    <div class="list-item">
+      New Group 
+    </div>
+  </div>
+{/if}
 
 <script>
   import { onMount } from 'svelte';
@@ -142,12 +155,14 @@
   let hovering = false;
   let hoveringList = {};
   let editLine;
+  let newGroup;
 
   onMount(() => {
     snapcastHost = window.location.hostname
   })
 
   export function dragstart (ev, group, item) {
+    newGroup = true;
     ev.dataTransfer.effectAllowed = 'move';
     ev.dataTransfer.dropEffect = 'move';
     let obj = {group: group, item: item, id: ev.target.getAttribute('id')};
@@ -161,9 +176,14 @@
     let i = obj.item;
     let old_g = obj.group;
     const item = $snapGroups[old_g].clients.splice(i,1)[0];
-    $snapGroups[new_g].clients = [...$snapGroups[new_g].clients,item];
-    setGroupClients($snapGroups[new_g].id, $snapGroups[new_g].clients.map(client => client.id))
+    if (new_g) {
+      $snapGroups[new_g].clients = [...$snapGroups[new_g].clients,item];
+      setGroupClients($snapGroups[new_g].id, $snapGroups[new_g].clients.map(client => client.id))
+    } else {
+      setGroupClients($snapGroups[old_g].id, $snapGroups[old_g].clients.map(client => client.id))
+    }
     hovering = null;
+    newGroup = false;
   };
 
 </script>
