@@ -100,6 +100,9 @@ export function connectWS() {
         currentPlaytime.set(time_position)
       })
 
+      mopidyWS.on("event:volumeChanged", (event) => {
+        currentVolume.set(event.volume);
+      })
 
       mopidyWS.on("event:playbackStateChanged", (event) => {
         let { old_state, new_state } = event
@@ -132,6 +135,7 @@ export function connectWS() {
       });
 
       mopidyWS.on("error", (err) => {
+        console.log('[Mopidy]: error:', err);
         reject(err);
       });
 
