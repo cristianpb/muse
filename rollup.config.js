@@ -22,10 +22,11 @@ export default {
 		output: config.client.output(),
 		plugins: [
 			replace({
-				'process.browser': true,
-				'process.env.NODE_ENV': JSON.stringify(mode),
-			__VERSION__: process.env.npm_package_version,
-			}),
+        'process.browser': true,
+        'process.env.NODE_ENV': JSON.stringify(mode),
+        __VERSION__: process.env.npm_package_version,
+        __MOPIDY_HOST__: dev && process.env.MOPIDY_HOST ? process.env.MOPIDY_HOST : ''
+      }),
       sass({
         includePaths: ['src/scss', 'node_modules'],
         output: 'static/global.css',
@@ -85,6 +86,7 @@ export default {
 				'process.browser': false,
 				'process.env.NODE_ENV': JSON.stringify(mode),
         __VERSION__: process.env.npm_package_version,
+        __MOPIDY_HOST__: dev && process.env.MOPIDY_HOST ? process.env.MOPIDY_HOST : ''
 			}),
 			svelte({
 				generate: 'ssr',
@@ -111,6 +113,7 @@ export default {
 				'process.browser': true,
 				'process.env.NODE_ENV': JSON.stringify(mode),
         __VERSION__: process.env.npm_package_version,
+        __MOPIDY_HOST__: dev && process.env.MOPIDY_HOST ? process.env.MOPIDY_HOST : ''
 			}),
 			commonjs(),
 			!dev && terser()

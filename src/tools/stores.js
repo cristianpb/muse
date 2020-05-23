@@ -33,3 +33,5 @@ export const snapClientsEditVisibility = writable(false);
 export const albumImage = writable({});
 
 export const playlists = writable([]);
+
+export const mopidyHost = writable('__MOPIDY_HOST__');

@@ -1,7 +1,8 @@
 import Mopidy from "mopidy";
-import { mopidy, playlists, currentTrack, currentPlaytime, currentState, currentVolume, currentMute, totalPlaytime, currentRandom, currentConsume, currentRepeat, currentSingle } from './stores';
+import { mopidy, playlists, currentTrack, currentPlaytime, currentState, currentVolume, currentMute, totalPlaytime, currentRandom, currentConsume, currentRepeat, currentSingle, mopidyHost } from './stores';
 
 let mopidyWS;
+let mopidyHostLocal;
 let playlistsLocal;
 let currentPlaytimeLocal;
 let totalPlaytimeLocal;
@@ -9,6 +10,7 @@ let interval;
 let connecting = false
 
 mopidy.subscribe((value) => { mopidyWS = value });
+mopidyHost.subscribe((value) => { mopidyHostLocal = value });
 playlists.subscribe((value) => { playlistsLocal = value });
 currentPlaytime.subscribe((value) => { currentPlaytimeLocal = value });
 totalPlaytime.subscribe((value) => { totalPlaytimeLocal = value });
@@ -42,8 +44,9 @@ export function connectWS() {
       }
     } else {
       connecting = true;
+      const host = mopidyHostLocal ? mopidyHostLocal : window.location.hostname;
       mopidyWS = new Mopidy({
-        webSocketUrl: `ws://${window.location.hostname}:6680/mopidy/ws/`
+        webSocketUrl: `ws://${host}:6680/mopidy/ws/`,
       });
       mopidyWS.on("state:online", async () => {
         console.log('[Mopidy]: Connected');
