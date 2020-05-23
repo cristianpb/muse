@@ -240,7 +240,9 @@
   let newGroup;
 
   onMount(() => {
-    snapcastHost = window.location.hostname
+    snapcastHost = window.location.hostname;
+    $mopidyHost = $mopidyHost ? $mopidyHost : window.location.hostname;
+    $mopidyPort = $mopidyPort ? $mopidyPort : window.location.port;
   })
 
   export function dragstart (ev, group, item) {

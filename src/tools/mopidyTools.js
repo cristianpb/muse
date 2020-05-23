@@ -294,9 +294,11 @@ export const loadAlbumImageLocal = async (track) => {
   const protocol = mopidyProtocolLocal ? mopidyProtocolLocal : window.location.protocol;
   console.log("[Mopidy]: Local searching for ", track);
   const resultsSearch = await mopidyWS.library.search({'query': {'album': [track.album.name]}, 'uris': ['local:']})
-  const images = await mopidyWS.library.getImages({uris: resultsSearch[0].tracks.map(x => x.album.uri)});
-  console.log("[Mopidy]: Result ", Object.values(images));
-  if (images && Object.values(images) && Object.values(images).length > 0 && Object.values(images)[0].length > 0 && Object.values(images)[0][0].uri) {
-    return `http${protocol === 'https:' ? 's' : ''}://${host}:${port}${Object.values(images)[0][0].uri}`
+  if (resultsSearch.length > 0 && resultsSearch[0].tracks) {
+    const images = await mopidyWS.library.getImages({uris: resultsSearch[0].tracks.map(x => x.album.uri)});
+    console.log("[Mopidy]: Result ", Object.values(images));
+    if (images && Object.values(images) && Object.values(images).length > 0 && Object.values(images)[0].length > 0 && Object.values(images)[0][0].uri) {
+      return `http${protocol === 'https:' ? 's' : ''}://${host}:${port}${Object.values(images)[0][0].uri}`
+    }
   }
 }
