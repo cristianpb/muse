@@ -166,7 +166,7 @@
 <script>
   import { onMount } from 'svelte';
   import { flip } from 'svelte/animate';
-  import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState, mopidyHost, imageProvider } from '../tools/stores';
+  import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState, imageProvider } from '../tools/stores';
   import { convertSencondsToString, normalizeTime, getCurrentTlTrackList, setTrackTime, playTracklist, loadAlbumImageLocal } from '../tools/mopidyTools';
   import { loadAlbumImage }  from '../tools/lastfm';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte';
