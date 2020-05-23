@@ -139,7 +139,7 @@
 <script>
   import { onMount } from 'svelte';
   import { connectSnapcast } from '../tools/snapcast';
-  import { snapGroups,  snapcast } from '../tools/stores';
+  import { snapGroups } from '../tools/stores';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faSpinner,
@@ -167,7 +167,7 @@
     ev.dataTransfer.dropEffect = 'move';
     let obj = {group: group, item: item, id: ev.target.getAttribute('id')};
     ev.dataTransfer.setData('text/plain', JSON.stringify(obj));
-  };
+  }
 
   export function drop (ev, new_g) {
     ev.dataTransfer.dropEffect = 'move';
@@ -184,7 +184,7 @@
     }
     hovering = null;
     newGroup = false;
-  };
+  }
 
 </script>
 

@@ -57,12 +57,9 @@
 
 <script>
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
-  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility } from '../tools/stores';
+  import { snapGroups, snapClientsEditVisibility } from '../tools/stores';
   import {
-    faPlus,
-    faSpinner,
     faTimesCircle,
-    faCheck
   } from '@fortawesome/free-solid-svg-icons';
   import { editGroupName, editClientName } from '../tools/snapcast';
 

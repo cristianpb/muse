@@ -8,10 +8,10 @@ let totalPlaytimeLocal;
 let interval;
 let connecting = false
 
-const c = mopidy.subscribe((value) => { mopidyWS = value });
-const l = playlists.subscribe((value) => { playlistsLocal = value });
-const p = currentPlaytime.subscribe((value) => { currentPlaytimeLocal = value });
-const tt = totalPlaytime.subscribe((value) => { totalPlaytimeLocal = value });
+mopidy.subscribe((value) => { mopidyWS = value });
+playlists.subscribe((value) => { playlistsLocal = value });
+currentPlaytime.subscribe((value) => { currentPlaytimeLocal = value });
+totalPlaytime.subscribe((value) => { totalPlaytimeLocal = value });
 
 export function convertSencondsToString(ms) {
   let minutes = ~~(ms / 60000)
@@ -91,19 +91,19 @@ export function connectWS() {
       mopidyWS.on("event", (x) => console.log('[Mopidy]:', x));
 
       mopidyWS.on("event:trackPlaybackEnded", (event) => {
-        let { tl_track, time_position } = event
+        let { time_position } = event
         clearInterval(interval);
         currentPlaytime.set(time_position)
       })
 
       mopidyWS.on("event:trackPlaybackPaused", (event) => {
-        let { time_position, tl_track } = event
+        let { time_position } = event
         clearInterval(interval);
         currentPlaytime.set(time_position)
       })
 
       mopidyWS.on("event:trackPlaybackResumed", (event) => {
-        let { time_position, tl_track } = event
+        let { time_position } = event
         currentPlaytime.set(time_position)
         if (interval) {
           clearInterval(interval)
@@ -122,7 +122,7 @@ export function connectWS() {
       })
 
       mopidyWS.on("event:playbackStateChanged", (event) => {
-        let { old_state, new_state } = event
+        let { new_state } = event
         currentPlaytime.set(0)
         currentState.set(new_state)
         if (new_state == 'paused') {
@@ -141,7 +141,7 @@ export function connectWS() {
         }
       })
 
-      mopidyWS.on("event:trackPlaybackStarted", async (_) => {
+      mopidyWS.on("event:trackPlaybackStarted", async () => {
         currentPlaytime.set(0)
         const currentTrackTL = await upgradeCurrentTrack()
         const totalPlaytimeLocal = currentTrackTL.track.length

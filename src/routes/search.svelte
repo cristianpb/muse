@@ -97,7 +97,7 @@
          href="{null}"
          draggable={true} 
          on:dragstart={event => dragstart(event, idx)}
-         on:drop|preventDefault={event => drop(event, idx)}
+         on:drop|preventDefault={event => drop(event)}
          ondragover="return false"
          on:dragenter={() => hovering = idx}
          class:is-active={hovering === idx}
@@ -159,7 +159,7 @@
 
 <script>
   import { flip } from 'svelte/animate';
-  import { connectWS, playTrackSingle, addTrackNext, addTrackQueue, shufflePlayAllTracks, addTracksQueue } from '../tools/mopidyTools';
+  import { connectWS, playTrackSingle, addTrackNext, shufflePlayAllTracks, addTracksQueue } from '../tools/mopidyTools';
   import AddToPlaylist from '../components/AddToPlaylist.svelte';
   import { mopidy } from '../tools/stores';
   import { onMount } from 'svelte';
@@ -226,9 +226,8 @@
     }
   }
 
-  function drop(event, target) {
+  function drop(event) {
 		event.dataTransfer.dropEffect = 'move';
-    const start = parseInt(event.dataTransfer.getData("text/plain"));
     hovering = null
   }
 

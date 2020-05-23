@@ -174,13 +174,10 @@
     faAngleDown,
     faAngleUp,
     faPlayCircle,
-    faGripLines,
-    faRandom,
     faMinus,
     faCog
   } from '@fortawesome/free-solid-svg-icons';
 
-  let image;
   let tlTracklists = [];
   let hovering = false;
   let dropdownActivate;
@@ -192,7 +189,7 @@
     promise = loadCurrentTracklist()
   })
 
-  const unsubscribe = currentTrack.subscribe(async (myTrack) => {
+  currentTrack.subscribe(async (myTrack) => {
     if (myTrack && myTrack.track) {
       const localImage = await loadAlbumImageLocal(myTrack.track);
       $albumImage = `http://${window.location.hostname}:6680${localImage}`

@@ -3,12 +3,12 @@ import { snapcast, snapGroups } from '../tools/stores';
 let snapcastWS;
 let groupsLocal
 
-const c = snapGroups.subscribe((value) => { groupsLocal = value })
-const s = snapcast.subscribe((value) => { snapcastWS = value });
+snapGroups.subscribe((value) => { groupsLocal = value })
+snapcast.subscribe((value) => { snapcastWS = value });
 
 export function connectSnapcast(options) {
   return new Promise(function(resolve, reject) {
-    if (snapcastWS && !options && !option.reconnect) {
+    if (snapcastWS && !options && !options.reconnect) {
       resolve(snapcastWS)
     } else {
       const host = options && options.host ? options.host : window.location.hostname;
@@ -47,8 +47,8 @@ export function handleMessage (message) {
   console.log('[Snapcast]: ', data)
   if (data.result && data.result.server && data.result.server.groups) {
     const groupsRaw = data.result.server.groups //.map((x) => x.snapGroups.pop())
-    snapGroups.update(v => {
-      return groupsRaw.map(group => {
+    snapGroups.set(
+      groupsRaw.map(group => {
         return { 
           id: group.id,
           name: group.name,
@@ -65,57 +65,56 @@ export function handleMessage (message) {
           })
         }
       })
-    })
+    )
   } 
   if (data && data.method) {
     if (data.method === 'Client.OnDisconnect') {
       const id = data.params.client.id
-      snapGroups.update(v => {
-        return groupsLocal.map(group => {
+      snapGroups.set(
+        groupsLocal.map(group => {
           group.clients.forEach(client => {
             if (client.id === id) client.connected = false
           })
           return group
-        });
-      })
+        })
+      )
     } else if (data.method === 'Client.OnConnect') {
       const id = data.params.client.id
-      snapGroups.update(v => {
-        return groupsLocal.map(group => {
+      snapGroups.set(
+        groupsLocal.map(group => {
           group.clients.forEach(client => {
             if (client.id === id) client.connected = true
           })
           return group
-        });
-      })
+        })
+      )
     } else if (data.method === 'Client.OnNameChanged') {
       const id = data.params.id
-      snapGroups.update(v => {
-        return groupsLocal.map(group => {
+      snapGroups.set(
+        groupsLocal.map(group => {
           group.clients.forEach(client => {
             if (client.id === id) client.name = data.params.name
           })
           return group
-        });
-      })
+        })
+      )
     } else if (data.method === 'GrClient.OnNameChanged') {
       const id = data.params.id
-      snapGroups.update(v => {
-        return groupsLocal.map(group => {
-          if (group.id === id) client.name = data.params.name
+      snapGroups.set(
+        groupsLocal.map(group => {
+          if (group.id === id) group.client.name = data.params.name
           return group
-        });
-      })
+        })
+      )
     } else if (data.method === 'Client.OnVolumeChanged') {
       const id = data.params.id
-      snapGroups.update(v => {
-        return groupsLocal.map(group => {
+      snapGroups.set(groupsLocal.map(group => {
           group.clients.forEach(client => {
             if (client.id === id) client.volume = data.params.volume.percent
           })
           return group
-        });
-      })
+        })
+      )
     }
   }
 }
@@ -135,14 +134,14 @@ export function muteClient(clientId, muted) {
     }
   }
   snapcastWS.send(JSON.stringify(message));
-  snapGroups.update(v => {
-    return groupsLocal.map(group => {
+  snapGroups.set(
+    groupsLocal.map(group => {
       group.clients.forEach(client => {
         if (client.id == clientId) client.muted = !muted
       })
       return group
-    });
-  })
+    })
+  )
 }
 
 export function muteGroup(groupId, muted) {
@@ -157,15 +156,14 @@ export function muteGroup(groupId, muted) {
     }
   }
   snapcastWS.send(JSON.stringify(message));
-  snapGroups.update(v => {
-    return groupsLocal.map(group => {
+  snapGroups.set(groupsLocal.map(group => {
       group.muted = !muted
       if (group.id === groupId) {
         group.clients.forEach(client => client.muted = !muted)
       }
       return group
-    });
-  })
+    })
+  )
 }
 
 export function changeHandler(id, volume) {

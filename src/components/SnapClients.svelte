@@ -66,8 +66,7 @@
 {/if}
 
 <script charset="utf-8">
-  import { onMount } from 'svelte';
-  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility, snapcast } from '../tools/stores';
+  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility } from '../tools/stores';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faVolumeUp,

@@ -73,8 +73,8 @@
 
 <script>
 
-  import { mopidy, playlists } from '../../tools/stores';
-  import { connectWS, getPlaylists, getPlaylistTracks, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
+  import { playlists } from '../../tools/stores';
+  import { getPlaylists, getPlaylistTracks, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
   import { onMount } from 'svelte';
   import CreatePlalist from '../../components/CreatePlaylist.svelte';
   import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte';

@@ -163,7 +163,7 @@
   import { mopidy, playlists } from '../../tools/stores';
   import { flip } from 'svelte/animate';
   import { goto } from '@sapper/app';
-  import { connectWS, getPlaylists, getPlaylistTracks, playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
+  import { getPlaylists, getPlaylistTracks, playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
   import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte'
   import {
     faArrowLeft,
@@ -176,8 +176,7 @@
     faCheck,
     faMinus,
     faSave,
-    faRandom,
-    faGripLines
+    faRandom
   } from '@fortawesome/free-solid-svg-icons';
 
   const { page } = stores();
