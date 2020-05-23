@@ -190,7 +190,12 @@
 
   onMount(async () => {
     promise = loadCurrentTracklist()
-    loadAlbumImage()
+  })
+
+  const unsubscribe = currentTrack.subscribe(myTrack => {
+    if (myTrack) {
+      loadAlbumImage()
+    }
   })
 
   const loadCurrentTracklist = async () => {

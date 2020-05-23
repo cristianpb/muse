@@ -1,6 +1,5 @@
 import Mopidy from "mopidy";
 import { mopidy, playlists, currentTrack, currentPlaytime, currentState, currentVolume, currentMute, totalPlaytime, currentRandom, currentConsume, currentRepeat, currentSingle } from './stores';
-import { loadAlbumImage }  from './lastfm';
 
 let mopidyWS;
 let playlistsLocal;
@@ -125,7 +124,6 @@ export function connectWS() {
         const currentTrackTL = await upgradeCurrentTrack()
         const totalPlaytimeLocal = currentTrackTL.track.length
         totalPlaytime.set(currentTrackTL.track.length)
-        loadAlbumImage()
         if (!interval) {
           interval = setInterval(() => {
             if (currentPlaytimeLocal >= totalPlaytimeLocal) clearInterval(interval)
