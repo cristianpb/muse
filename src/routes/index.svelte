@@ -6,10 +6,10 @@
 
 {#if $currentTrack}
   <div class="card">
-    {#if $albumImage['#text']}
+    {#if $albumImage}
       <div class="card-image has-text-centered">
-        <figure class="image is-4by3">
-          <img src="{$albumImage['#text']}" alt="Album image">
+        <figure class="image">
+          <img src="{$albumImage}" width="480" height="480" alt="Album image">
         </figure>
       </div>
     {:else}
@@ -167,7 +167,7 @@
   import { onMount } from 'svelte';
   import { flip } from 'svelte/animate';
   import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState } from '../tools/stores';
-  import { convertSencondsToString, normalizeTime, getCurrentTlTrackList, setTrackTime, playTracklist } from '../tools/mopidyTools';
+  import { convertSencondsToString, normalizeTime, getCurrentTlTrackList, setTrackTime, playTracklist, loadAlbumImageLocal } from '../tools/mopidyTools';
   import { loadAlbumImage }  from '../tools/lastfm';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte';
   import {
@@ -192,9 +192,11 @@
     promise = loadCurrentTracklist()
   })
 
-  const unsubscribe = currentTrack.subscribe(myTrack => {
-    if (myTrack) {
-      loadAlbumImage()
+  const unsubscribe = currentTrack.subscribe(async (myTrack) => {
+    if (myTrack && myTrack.track) {
+      const localImage = await loadAlbumImageLocal(myTrack.track);
+      $albumImage = `http://${window.location.hostname}:6680${localImage}`
+      //$albumImage = await loadAlbumImage(myTrack.track);
     }
   })
 
