@@ -25,7 +25,8 @@ export default {
         'process.browser': true,
         'process.env.NODE_ENV': JSON.stringify(mode),
         __VERSION__: process.env.npm_package_version,
-        __MOPIDY_HOST__: dev && process.env.MOPIDY_HOST ? process.env.MOPIDY_HOST : ''
+        __MOPIDY_HOST__: dev && process.env.MOPIDY_HOST ? process.env.MOPIDY_HOST : '',
+        __MOPIDY_PORT__: dev && process.env.MOPIDY_PORT ? process.env.MOPIDY_PORT : ''
       }),
       sass({
         includePaths: ['src/scss', 'node_modules'],
@@ -86,7 +87,8 @@ export default {
 				'process.browser': false,
 				'process.env.NODE_ENV': JSON.stringify(mode),
         __VERSION__: process.env.npm_package_version,
-        __MOPIDY_HOST__: dev && process.env.MOPIDY_HOST ? process.env.MOPIDY_HOST : ''
+        __MOPIDY_HOST__: dev && process.env.MOPIDY_HOST ? process.env.MOPIDY_HOST : '',
+        __MOPIDY_PORT__: dev && process.env.MOPIDY_PORT ? process.env.MOPIDY_PORT : ''
 			}),
 			svelte({
 				generate: 'ssr',
@@ -113,7 +115,8 @@ export default {
 				'process.browser': true,
 				'process.env.NODE_ENV': JSON.stringify(mode),
         __VERSION__: process.env.npm_package_version,
-        __MOPIDY_HOST__: dev && process.env.MOPIDY_HOST ? process.env.MOPIDY_HOST : ''
+        __MOPIDY_HOST__: dev && process.env.MOPIDY_HOST ? process.env.MOPIDY_HOST : '',
+        __MOPIDY_PORT__: dev && process.env.MOPIDY_PORT ? process.env.MOPIDY_PORT : ''
 			}),
 			commonjs(),
 			!dev && terser()

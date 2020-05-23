@@ -1,8 +1,10 @@
 import Mopidy from "mopidy";
-import { mopidy, playlists, currentTrack, currentPlaytime, currentState, currentVolume, currentMute, totalPlaytime, currentRandom, currentConsume, currentRepeat, currentSingle, mopidyHost } from './stores';
+import { mopidy, playlists, currentTrack, currentPlaytime, currentState, currentVolume, currentMute, totalPlaytime, currentRandom, currentConsume, currentRepeat, currentSingle, mopidyHost, mopidyPort, mopidyProtocol } from './stores';
 
 let mopidyWS;
 let mopidyHostLocal;
+let mopidyPortLocal;
+let mopidyProtocolLocal;
 let playlistsLocal;
 let currentPlaytimeLocal;
 let totalPlaytimeLocal;
@@ -11,6 +13,8 @@ let connecting = false
 
 mopidy.subscribe((value) => { mopidyWS = value });
 mopidyHost.subscribe((value) => { mopidyHostLocal = value });
+mopidyPort.subscribe((value) => { mopidyPortLocal = value });
+mopidyProtocol.subscribe((value) => { mopidyProtocolLocal = value });
 playlists.subscribe((value) => { playlistsLocal = value });
 currentPlaytime.subscribe((value) => { currentPlaytimeLocal = value });
 totalPlaytime.subscribe((value) => { totalPlaytimeLocal = value });
@@ -30,9 +34,9 @@ export function convertPercentToSeconds(percent, total) {
   return ~~((total * percent) / 100)
 }
 
-export function connectWS() {
+export function connectWS(reconnect) {
   return new Promise(function(resolve, reject) {
-    if (mopidyWS) {
+    if (mopidyWS && !reconnect) {
       if (connecting) {
         console.log('[Mopidy]: Waiting for connection');
         setTimeout(() => {
@@ -45,8 +49,10 @@ export function connectWS() {
     } else {
       connecting = true;
       const host = mopidyHostLocal ? mopidyHostLocal : window.location.hostname;
+      const port = mopidyPortLocal ? mopidyPortLocal : window.location.port;
+      const protocol = mopidyProtocolLocal ? mopidyProtocolLocal : window.location.protocol;
       mopidyWS = new Mopidy({
-        webSocketUrl: `ws://${host}:6680/mopidy/ws/`,
+        webSocketUrl: `ws${protocol === 'https:' ? 's' : '' }://${host}:${port}/mopidy/ws/`,
       });
       mopidyWS.on("state:online", async () => {
         console.log('[Mopidy]: Connected');

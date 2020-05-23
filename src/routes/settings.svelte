@@ -139,6 +139,72 @@
 <br>
 <h2 class="subtitle">Mopidy server</h2>
 
+<div class="columns is-multiline">
+  <div class="column is-12-mobile is-4-desktop">
+    <div class="field">
+      <label class="label">Hostname</label>
+      <div class="control">
+        <input class="input is-rounded"
+               type="text" 
+               bind:value="{$mopidyHost}" 
+               placeholder="Hostname">
+      </div>
+    </div>
+  </div>
+
+  <div class="column is-12-mobile is-4-desktop">
+    <div class="field">
+      <label class="label">Port</label>
+      <div class="control">
+        <input class="input is-rounded"
+               type="text" 
+               bind:value="{$mopidyPort}" 
+               placeholder="Port">
+      </div>
+    </div>
+  </div>
+
+  <div class="column is-12-mobile is-4-desktop">
+    <label class="label">SSL</label>
+    <div class="control">
+      <div class="select">
+        <select bind:value={$mopidyProtocol}>
+          <option value="http">http</option>
+          <option value="https">https</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="column is-12-mobile is-6-desktop">
+    <div class="field is-grouped is-grouped-multiline">
+      <p class="control">
+        <a class="button" href="{null}" on:click={() => promiseMopidy = connectWS(true)}>Connect</a>
+      </p>
+      <p class="control">
+        {#if promiseMopidy}
+          {#await promiseMopidy}
+            <button class="button">
+              <FontAwesomeIcon icon={faSpinner} spin={true} class="icon"/>
+            </button>
+          {:then _}
+            <button class="button is-success" disabled>
+              Connected
+            </button>
+          {:catch error}
+            <button class="button is-danger" disabled>
+              {error.message}
+            </button>
+          {/await}
+        {/if}
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<hr>
+
 <label class="label">Image Provider</label>
 <div class="control">
   <div class="select">
@@ -153,7 +219,8 @@
 <script>
   import { onMount } from 'svelte';
   import { connectSnapcast } from '../tools/snapcast';
-  import { snapGroups, imageProvider } from '../tools/stores';
+  import { connectWS } from '../tools/mopidyTools';
+  import { snapGroups, imageProvider, mopidyHost, mopidyPort, mopidyProtocol } from '../tools/stores';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faSpinner,
@@ -163,6 +230,7 @@
   } from '@fortawesome/free-solid-svg-icons';
   import { editGroupName, editClientName, setGroupClients } from '../tools/snapcast';
   let promise;
+  let promiseMopidy;
   let snapcastHost = 'localhost'
   let snapcastPort = '1780'
   let snapcastSSL = ''

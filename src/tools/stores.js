@@ -36,4 +36,8 @@ export const playlists = writable([]);
 
 export const mopidyHost = writable('__MOPIDY_HOST__');
 
+export const mopidyPort = writable('__MOPIDY_PORT__');
+
+export const mopidyProtocol = writable('');
+
 export const imageProvider = writable('local');
