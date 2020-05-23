@@ -136,10 +136,24 @@
   </div>
 {/if}
 
+<br>
+<h2 class="subtitle">Mopidy server</h2>
+
+<label class="label">Image Provider</label>
+<div class="control">
+  <div class="select">
+    <select bind:value={$imageProvider}>
+      <option value="local">Local</option>
+      <option value="lastfm">LastFM</option>
+    </select>
+  </div>
+</div>
+
+
 <script>
   import { onMount } from 'svelte';
   import { connectSnapcast } from '../tools/snapcast';
-  import { snapGroups } from '../tools/stores';
+  import { snapGroups, imageProvider } from '../tools/stores';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faSpinner,
