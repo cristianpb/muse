@@ -61,15 +61,15 @@
           </div>
           <div class="dropdown-menu" id="dropdown-menu" role="menu">
             <div class="dropdown-content">
-              <a href="{null}" class="dropdown-item" on:click={playAllTracks}>
+              <a href="{null}" class="dropdown-item" on:click={_playTrackSingle(resultTracks)}>
                 <FontAwesomeIcon icon={faPlayCircle} class="icon is-small" />&nbsp;
                   Play All
               </a>
-              <a href="{null}" class="dropdown-item" on:click={shufflePlayAllTracks}>
+              <a href="{null}" class="dropdown-item" on:click={_shufflePlayAllTracks(resultTracks)}>
                 <FontAwesomeIcon icon={faRandom} class="icon is-small"/>&nbsp;
                   Shuffle & Play All
               </a>
-              <a href="{null}" class="dropdown-item" on:click={addTracksQueue}>
+              <a href="{null}" class="dropdown-item" on:click={_addTracksQueue(resultTracks)}>
                 <FontAwesomeIcon icon={faLevelDownAlt} class="icon is-small"/>&nbsp;
                   Add to queue
               </a>
@@ -102,8 +102,8 @@
          on:dragenter={() => hovering = idx}
          class:is-active={hovering === idx}
          >
-        <div class="columns is-mobile">
-          <div class="column"  on:click={handleDropdownActivation(idx + 1)} >
+        <div class="columns is-mobile" on:click={handleDropdownActivation(idx + 1)}>
+          <div class="column">
             {#if track.artists}
               {track.artists.map(x => x.name).join(', ')} - {track.name}
             {:else}
@@ -121,15 +121,15 @@
               </div>
               <div class="dropdown-menu" id="dropdown-menu" role="menu">
                 <div class="dropdown-content">
-                  <a href="{null}" class="dropdown-item" on:click={playTrackSingle(track.uri)}>
+                  <a href="{null}" class="dropdown-item" on:click={_playTrackSingle(track.uri)}>
                     <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"/>&nbsp;
                       Play now
                   </a>
-                  <a href={null} class="dropdown-item" on:click={addTrackNext(track.uri)}>
+                  <a href={null} class="dropdown-item" on:click={_addTrackNext(track.uri)}>
                     <FontAwesomeIcon icon={faArrowRight} class="icon is-small"/>&nbsp;
                       Play next
                   </a>
-                  <a href="{null}" class="dropdown-item" on:click={addTrackQueue(track.uri)}>
+                  <a href="{null}" class="dropdown-item" on:click={_addTrackQueue(track.uri)}>
                     <FontAwesomeIcon icon={faLevelDownAlt} class="icon is-small"/>&nbsp;
                       Add to queue
                   </a>
@@ -159,7 +159,7 @@
 
 <script>
   import { flip } from 'svelte/animate';
-  import { connectWS, playTrackSingle, addTrackNext, addTrackQueue } from '../tools/mopidyTools';
+  import { connectWS, playTrackSingle, addTrackNext, addTrackQueue, shufflePlayAllTracks, addTracksQueue } from '../tools/mopidyTools';
   import AddToPlaylist from '../components/AddToPlaylist.svelte';
   import { mopidy } from '../tools/stores';
   import { onMount } from 'svelte';
@@ -196,7 +196,7 @@
     }
   })
 
-  async function searchFunction() {
+  const searchFunction = async () => {
     resultTracks = []
     const urisRequest = selectedUris.map(x => x + ':')
     const res = await $mopidy.library.search({'query': {'any': [searchTerm]}, 'uris': [`${urisRequest}`]})
@@ -216,26 +216,6 @@
   const openAddListModal = (track) => {
     selectedTrack = track 
     showAddToPlaylistModal = !showAddToPlaylistModal
-  }
-
-  const playAllTracks = () => {
-    $mopidy.tracklist.clear()
-    $mopidy.tracklist.add([resultTracks])
-    $mopidy.playback.play()
-    showOptions = !showOptions
-  }
-
-  const shufflePlayAllTracks = () => {
-    $mopidy.tracklist.clear()
-    $mopidy.tracklist.add([resultTracks])
-    $mopidy.tracklist.shuffle()
-    $mopidy.playback.play()
-    showOptions = !showOptions
-  }
-
-  const addTracksQueue = () => {
-    $mopidy.tracklist.add([resultTracks])
-    showOptions = !showOptions
   }
 
   const handleDropdownActivation = (idx) => {
@@ -259,6 +239,30 @@
     event.dataTransfer.setData('text/plain', start);
   }
 
+  const _playTrackSingle = (track) => {
+    playTrackSingle(track)
+    dropdownActivate = null
+  }
+
+  const _addTrackNext = (uri) => {
+    addTrackNext(uri)
+    dropdownActivate = null
+  }
+
+  const _addTrackQueue = (uri) => {
+    addTracksQueue(uri)
+    dropdownActivate = null
+  }
+
+  const _shufflePlayAllTracks = (Tracks) => {
+    shufflePlayAllTracks(Tracks)
+    showOptions = !showOptions
+  }
+
+  const _addTracksQueue = (Tracks) => {
+    addTracksQueue(Tracks)
+    showOptions = !showOptions
+  }
 
 </script>
 

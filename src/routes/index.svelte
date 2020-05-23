@@ -167,7 +167,7 @@
   import { onMount } from 'svelte';
   import { flip } from 'svelte/animate';
   import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage } from '../tools/stores';
-  import { connectWS, convertSencondsToString, convertPercentToSeconds, normalizeTime, getCurrentTlTrackList } from '../tools/mopidyTools';
+  import { convertSencondsToString, normalizeTime, getCurrentTlTrackList, setTrackTime, playTracklist } from '../tools/mopidyTools';
   import { loadAlbumImage }  from '../tools/lastfm';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte';
   import {
@@ -202,25 +202,11 @@
     tlTracklists = await getCurrentTlTrackList()
   }
 
-  async function setTrackTime(currentPlaytimePercent) {
-    const ms = convertPercentToSeconds(currentPlaytimePercent, $totalPlaytime)
-    const changed = await $mopidy.playback.seek([ms])
-    $currentPlaytime = ms
-    console.log(changed, ms)
-    if (changed) {
-      console.log("set track time", currentPlaytimePercent)
-    }
-  }
-
-  async function removeTrack(tlTrack) {
+  const removeTrack = async (tlTrack) => {
     const res = await $mopidy.tracklist.remove({criteria: {uri: [tlTrack.track.uri]}})
     if (res.length > 0) {
       tlTracklists = tlTracklists.filter(x => x.track.uri != res[0].track.uri)
     }
-  }
-
-  async function playTracklist(tlTrack) {
-    $mopidy.playback.play([tlTrack])
   }
 
   function drop(event, target) {

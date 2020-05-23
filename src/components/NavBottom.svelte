@@ -319,7 +319,7 @@
     faRecycle
   } from '@fortawesome/free-solid-svg-icons';
   import { snapGroups, snapClientsVisibility, snapClientsEditVisibility, currentTrack, currentPlaytime, totalPlaytime, currentState, currentVolume, currentMute, mopidy, snapcast, currentRandom, currentConsume, currentRepeat, currentSingle } from '../tools/stores';
-  import { convertSencondsToString, normalizeTime, connectWS } from '../tools/mopidyTools';
+  import { convertSencondsToString, normalizeTime, setTrackTime, connectWS } from '../tools/mopidyTools';
   import { connectSnapcast, changeHandler } from '../tools/snapcast';
 
   let burgerState = false;
@@ -385,17 +385,6 @@
       $mopidy.tracklist.setSingle([true])
     }
     $currentSingle = !$currentSingle
-  }
-
-
-  const setTrackTime = async (currentPlaytimePercent) => {
-    const ms = convertPercentToSeconds(currentPlaytimePercent, $totalPlaytime)
-    const changed = await $mopidy.playback.seek([ms])
-    $currentPlaytime = ms
-    console.log(changed, ms)
-    if (changed) {
-      console.log("set track time", currentPlaytimePercent)
-    }
   }
 
   const trimNameMobile = (trackname) => {

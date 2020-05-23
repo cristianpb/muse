@@ -226,3 +226,29 @@ export async function addToQueuePlaylists(uri) {
   const playlistInfo = await getPlaylistTracks(uri)
   mopidyWS.tracklist.add([playlistInfo.tracks])
 }
+
+export const setTrackTime = async (currentPlaytimePercent) => {
+  const ms = convertPercentToSeconds(currentPlaytimePercent, totalPlaytimeLocal)
+  const changed = await mopidyWS.playback.seek([ms])
+  if (changed) {
+    console.log("[Mopidy]: Set track time", currentPlaytimePercent)
+    currentPlaytime.set(ms);
+  } else {
+    console.log('[Mopidy]: Failed tracktime change', changed, ms)
+  }
+}
+
+export const playTracklist = (tlTrack) => {
+  mopidyWS.playback.play([tlTrack])
+}
+
+export const shufflePlayAllTracks = (Tracks) => {
+  mopidyWS.tracklist.clear()
+  mopidyWS.tracklist.add([Tracks])
+  mopidyWS.tracklist.shuffle()
+  mopidyWS.playback.play()
+}
+
+export const addTracksQueue = (Tracks) => {
+  mopidyWS.tracklist.add([Tracks])
+}
