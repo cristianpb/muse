@@ -71,6 +71,9 @@ export function connectWS() {
           const totalPlaytimeLocal = currentTrackTL.track.length
           totalPlaytime.set(currentTrackTL.track.length)
           if (currentStateLocal === 'playing') {
+            if (interval) {
+              clearInterval(interval)
+            }
             interval = setInterval(() => {
               if (currentPlaytimeLocal >= totalPlaytimeLocal) {
                 clearInterval(interval)
@@ -99,16 +102,35 @@ export function connectWS() {
         currentPlaytime.set(time_position)
       })
 
+      mopidyWS.on("event:trackPlaybackResumed", (event) => {
+        let { time_position, tl_track } = event
+        currentPlaytime.set(time_position)
+        if (interval) {
+          clearInterval(interval)
+        }
+        interval = setInterval(() => {
+          if (currentPlaytimeLocal >= totalPlaytimeLocal) {
+            clearInterval(interval)
+          } else {
+            currentPlaytime.update(v => v + 1000)
+          }
+        }, 1000);
+      })
+
       mopidyWS.on("event:volumeChanged", (event) => {
         currentVolume.set(event.volume);
       })
 
       mopidyWS.on("event:playbackStateChanged", (event) => {
         let { old_state, new_state } = event
+        currentPlaytime.set(0)
         currentState.set(new_state)
         if (new_state == 'paused') {
           clearInterval(interval);
         } if (new_state == 'playing') {
+          if (interval) {
+            clearInterval(interval)
+          }
           interval = setInterval(() => {
             if (currentPlaytimeLocal >= totalPlaytimeLocal) {
               clearInterval(interval)
@@ -124,12 +146,16 @@ export function connectWS() {
         const currentTrackTL = await upgradeCurrentTrack()
         const totalPlaytimeLocal = currentTrackTL.track.length
         totalPlaytime.set(currentTrackTL.track.length)
-        if (!interval) {
-          interval = setInterval(() => {
-            if (currentPlaytimeLocal >= totalPlaytimeLocal) clearInterval(interval)
-            currentPlaytime.update(v => v + 1000)
-          }, 1000);
+        if (interval) {
+          clearInterval(interval)
         }
+        interval = setInterval(() => {
+          if (currentPlaytimeLocal >= totalPlaytimeLocal) {
+            clearInterval(interval) 
+          } else {
+            currentPlaytime.update(v => v + 1000)
+          }
+        }, 1000);
       });
 
       mopidyWS.on("error", (err) => {

@@ -259,9 +259,9 @@
         {/if}
       </a>
 
-      {#if $currentTrack.track}
+      {#if $currentTrack.track && $currentPlaytime && $totalPlaytime}
         <div class="navbar-item">
-          <div class="columns is-mobile">
+          <div class="columns is-mobile is-gapless">
             <div 
               title="current time: {convertSencondsToString($currentPlaytime)}"
               data-toggle="tooltip"
@@ -269,20 +269,18 @@
               {convertSencondsToString($currentPlaytime)}
             </div>
             <div class="column">
-              {#if ($currentPlaytime && $totalPlaytime)}
-                <div 
-                  title="time: {convertSencondsToString($currentPlaytime)}"
-                  data-toggle="tooltip"
-                  class="navbar-item">
-                  <input 
-                    type="range"
-                    min="0" 
-                    max="100" 
-                    bind:value="{currentPlaytimePercent}" 
-                    on:change="{setTrackTime(currentPlaytimePercent)}"
-                    class="slider">
-                </div>
-              {/if}
+              <div 
+                title="time: {convertSencondsToString($currentPlaytime)}"
+                data-toggle="tooltip"
+                class="navbar-item">
+                <input 
+                  type="range"
+                  min="0" 
+                  max="100" 
+                  bind:value="{currentPlaytimePercent}" 
+                  on:change="{setTrackTime(currentPlaytimePercent)}"
+                  class="slider">
+              </div>
             </div>
             <div 
               title="total time: {convertSencondsToString($totalPlaytime)}"

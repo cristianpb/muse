@@ -31,13 +31,13 @@
         </div>
       </div>
 
+      {#if $currentPlaytime && $totalPlaytime}
       <div class="content">
         <div class="columns is-mobile">
           <div class="column is-narrow">
             {convertSencondsToString($currentPlaytime)}
           </div>
           <div class="column">
-            {#if ($currentPlaytime && $totalPlaytime)}
               <input 
                 type="range"
                 min="0" 
@@ -45,13 +45,13 @@
                 bind:value="{currentPlaytimePercent}" 
                 on:change="{setTrackTime(currentPlaytimePercent)}"
                 class="slider">
-            {/if}
           </div>
           <div class="column is-narrow">
             {convertSencondsToString($totalPlaytime)}
           </div>
         </div>
       </div>
+      {/if}
     </div>
     {/if}
   </div>
@@ -73,7 +73,7 @@
         <div class="column"  on:click={handleDropdownActivation(tlTrack.tlid)}>
           {tlTrack.track.name}
           {#if index === $currentTrack.index}
-              &nbsp;<FontAwesomeIcon icon={faCog} spin={true} class="icon is-small"/>
+              &nbsp;<FontAwesomeIcon icon={faCog} spin={$currentState == 'playing' ? true : false} class="icon is-small"/>
           {/if}
         </div>
         <div class="column is-narrow">
@@ -166,7 +166,7 @@
 <script>
   import { onMount } from 'svelte';
   import { flip } from 'svelte/animate';
-  import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage } from '../tools/stores';
+  import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState } from '../tools/stores';
   import { convertSencondsToString, normalizeTime, getCurrentTlTrackList, setTrackTime, playTracklist } from '../tools/mopidyTools';
   import { loadAlbumImage }  from '../tools/lastfm';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte';
