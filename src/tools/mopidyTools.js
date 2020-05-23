@@ -288,6 +288,6 @@ export const loadAlbumImageLocal = async (track) => {
   const images = await mopidyWS.library.getImages({uris: resultsSearch[0].tracks.map(x => x.album.uri)});
   console.log("[Mopidy]: Result ", Object.values(images));
   if (images && Object.values(images) && Object.values(images).length > 0 && Object.values(images)[0].length > 0 && Object.values(images)[0][0].uri) {
-    return Object.values(images)[0][0].uri
+    return `http://${mopidyHostLocal}:${mopidyPortLocal}${Object.values(images)[0][0].uri}`
   }
 }

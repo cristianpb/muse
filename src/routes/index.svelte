@@ -192,8 +192,7 @@
   currentTrack.subscribe(async (myTrack) => {
     if (myTrack && myTrack.track) {
       if ($imageProvider === 'local') {
-        const localImage = await loadAlbumImageLocal(myTrack.track);
-        $albumImage = `http://${$mopidyHost}:6680${localImage}`
+        $albumImage = await loadAlbumImageLocal(myTrack.track);
       } else if ($imageProvider === 'lastfm') {
         $albumImage = await loadAlbumImage(myTrack.track);
       }
