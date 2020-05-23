@@ -33,9 +33,9 @@ export function connectWS() {
   return new Promise(function(resolve, reject) {
     if (mopidyWS) {
       if (connecting) {
-        console.log('Waiting for connection');
+        console.log('[Mopidy]: Waiting for connection');
         setTimeout(() => {
-          console.log('mopidy:already connected');
+          console.log('[Mopidy]: Already connected');
           resolve(mopidyWS)
         }, 1000)
       } else {
@@ -47,7 +47,7 @@ export function connectWS() {
         webSocketUrl: `ws://${window.location.hostname}:6680/mopidy/ws/`,
       });
       mopidyWS.on("state:online", async () => {
-        console.log('mopidy: connected');
+        console.log('[Mopidy]: Connected');
 
         const currentTrackTL = await upgradeCurrentTrack()
         currentPlaytimeLocal = await mopidyWS.playback.getTimePosition()
@@ -85,8 +85,8 @@ export function connectWS() {
         resolve(mopidyWS);
       })
 
-      mopidyWS.on("state", console.log);
-      mopidyWS.on("event", console.log);
+      mopidyWS.on("state", (x) => console.log('[Mopidy]:', x));
+      mopidyWS.on("event", (x) => console.log('[Mopidy]:', x));
 
       mopidyWS.on("event:trackPlaybackEnded", (event) => {
         let { tl_track, time_position } = event
