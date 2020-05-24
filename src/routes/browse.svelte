@@ -40,9 +40,9 @@
       <a href={null} class="list-item" >
         <div class="columns is-mobile">
           <div class="column" on:click={() => promise = browserUri(result, idx, 'avance')}>
-        {result.name}
+            {result.name}
           </div>
-          {#if result.uri.indexOf('md5') > -1 || result.type === 'track'}
+          {#if ['album', 'track', 'artist'].indexOf(result.type) > -1}
           <div class="column is-narrow" on:click={() => handleDropdownActivation(idx)}>
             {#if options == idx}
               <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
