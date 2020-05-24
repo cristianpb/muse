@@ -277,15 +277,29 @@ export const playTracklist = (tlTrack) => {
   mopidyWS.playback.play([tlTrack])
 }
 
-export const shufflePlayAllTracks = (Tracks) => {
+export const playAllTracks = (uris) => {
   mopidyWS.tracklist.clear()
-  mopidyWS.tracklist.add([Tracks])
+  mopidyWS.tracklist.add({ uris })
+  mopidyWS.playback.play()
+}
+
+export const shufflePlayAllTracks = (Tracks, uris) => {
+  mopidyWS.tracklist.clear()
+  if (Tracks) {
+    mopidyWS.tracklist.add([Tracks])
+  } else if (uris) {
+    mopidyWS.tracklist.add({ uris })
+  }
   mopidyWS.tracklist.shuffle()
   mopidyWS.playback.play()
 }
 
-export const addTracksQueue = (Tracks) => {
-  mopidyWS.tracklist.add([Tracks])
+export const addTracksQueue = (Tracks, uris) => {
+  if (Tracks) {
+    mopidyWS.tracklist.add([Tracks])
+  } else if (uris) {
+    mopidyWS.tracklist.add({ uris })
+  }
 }
 
 export const loadAlbumImageLocal = async (track) => {

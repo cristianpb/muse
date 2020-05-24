@@ -40,4 +40,4 @@ export const mopidyPort = writable('__MOPIDY_PORT__');
 
 export const mopidyProtocol = writable('');
 
-export const imageProvider = writable('local');
+export const imageProvider = writable('lastfm');

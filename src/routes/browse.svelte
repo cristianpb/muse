@@ -4,23 +4,60 @@
 
 <h1 class="title">Browse
 </h1>
-            
-<nav class="breadcrumb" aria-label="breadcrumbs">
-  <ul>
-    <li>
-      <a href="{null}" on:click={() => promise = goToRoot()}>
-      Root
-      </a>
-    </li>
-    {#each browsePath as pathElement, idx}
-      <li>
-        <a href="{null}" on:click={() => promise = browserUri(pathElement, idx, 'back')}>
-        {pathElement.name}
+
+<div class="columns is-mobile">
+  <div class="column">
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <ul>
+        <li>
+          <a href="{null}" on:click={() => promise = goToRoot()}>
+            Root
+          </a>
+        </li>
+        {#each browsePath as pathElement, idx}
+          <li>
+            <a href="{null}" on:click={() => promise = browserUri(pathElement, idx, 'back')}>
+              {pathElement.name}
+            </a>
+          </li>
+        {/each}
+      </ul>
+    </nav>
+  </div>
+  {#if results.some(result => ['track'].indexOf(result.type) > -1)}
+  <div class="column is-narrow">
+    <div class="dropdown is-right" class:is-active={showOptions} >
+      <div class="dropdown-trigger" on:click={() => showOptions = !showOptions}>
+      {#if showOptions}
+        <a href="{null}" class="button">
+          <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
         </a>
-      </li>
-    {/each}
-  </ul>
-</nav>
+      {:else}
+        <a href="{null}" class="button">
+          <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+        </a>
+      {/if}
+      </div>
+      <div class="dropdown-menu" id="dropdown-menu" role="menu">
+        <div class="dropdown-content">
+          <a href="{null}" class="dropdown-item" on:click={playAllTracks(results.map(result => result.uri))}>
+            <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"  />&nbsp;&nbsp;
+            Play now
+          </a>
+          <a href="{null}" class="dropdown-item" on:click={shufflePlayAllTracks(null, results.map(result => result.uri))}>
+            <FontAwesomeIcon icon={faRandom} class="icon is-small"/>&nbsp;&nbsp;
+            Play shuffle
+          </a>
+          <a href="{null}" class="dropdown-item" on:click={addTracksQueue(null, results.map(result => result.uri))}>
+            <FontAwesomeIcon icon={faLevelDownAlt} class="icon is-small"/>&nbsp;&nbsp;
+            Add to queue
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {/if}
+</div>
 
 {#if promise}
   <div class="list is-hoverable">
@@ -86,7 +123,7 @@
 <script>
   import { onMount } from 'svelte';
   import { mopidy } from '../tools/stores';
-  import { connectWS, playTrackSingle, addTrackNext, addTrackQueue  } from '../tools/mopidyTools';
+  import { connectWS, playTrackSingle, addTrackNext, addTrackQueue, addTracksQueue, shufflePlayAllTracks, playAllTracks } from '../tools/mopidyTools';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte';
   import {
     faSpinner,
@@ -94,13 +131,15 @@
     faAngleUp,
     faPlayCircle,
     faArrowRight,
-    faLevelDownAlt
+    faLevelDownAlt,
+    faRandom
   } from '@fortawesome/free-solid-svg-icons';
 
   let browsePath = [];
   let results = [];
   let promise;
   let options;
+  let showOptions = false;
 
   onMount(async () => {
     $mopidy = await connectWS()
