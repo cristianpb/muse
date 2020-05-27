@@ -9,6 +9,12 @@ import pkg from './package.json';
 import builtins from 'rollup-plugin-node-builtins';
 import { sass as sv_sass } from 'svelte-preprocess-sass'
 import sass from 'rollup-plugin-sass';
+import postcss from 'postcss'
+
+const purgecss = require("@fullhuman/postcss-purgecss")({
+  content: ["./src/**/*.svelte", "./src/**/*.html"],
+  defaultExtractor: content => content.match(/[A-Za-z0-9-_:/]+/g) || []
+});
 
 const mode = process.env.NODE_ENV;
 const dev = mode === 'development';
@@ -31,6 +37,9 @@ export default {
       sass({
         includePaths: ['src/scss', 'node_modules'],
         output: 'static/global.css',
+        processor: css => postcss(...(mode === "production" ? [purgecss] : []))
+        .process(css)
+        .then(result => result.css),
         options: {
           outputStyle: 'compressed',
           sourceMap: false,
