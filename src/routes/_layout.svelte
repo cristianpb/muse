@@ -6,10 +6,6 @@
   export let segment;
 </script>
 
-<svelte:head>
-  <style src="../scss/global.scss"></style>
-</svelte:head>
-
 <style>
   main {
     position: relative;
