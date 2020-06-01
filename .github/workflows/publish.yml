@@ -40,6 +40,7 @@ jobs:
           export APP_VERSION=$(git describe --tags --always)
           sed -i -E "s/version = (.*)/version = ${APP_VERSION:1}/"  setup.cfg
           sed -i -E "s/version\": \"(.*)\"/version\": \"${APP_VERSION:1}\"/"  package.json;
+          sed -i -E "0,/version\": \"(.*)\"/s//version\": \"${APP_VERSION:1}\"/"  package-lock.json;
       - name: 🏗 Build html
         run: NODE_ENV=production npm run export
       - name: 🚀 Deploy to GitHub pages
