@@ -7,7 +7,6 @@ import { terser } from 'rollup-plugin-terser';
 import config from 'sapper/config/rollup.js';
 import pkg from './package.json';
 import builtins from 'rollup-plugin-node-builtins';
-import { sass as sv_sass } from 'svelte-preprocess-sass'
 import sass from 'rollup-plugin-sass';
 import postcss from 'postcss'
 
@@ -47,12 +46,6 @@ export default {
       }),
 			svelte({
 				dev,
-        // Prepare scss
-        preprocess: {
-          style: sv_sass({
-            includePaths: ['src/scss', 'node_modules']
-          })
-        },
 				hydratable: true,
 				emitCss: true
 			}),
