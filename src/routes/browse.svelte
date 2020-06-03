@@ -151,7 +151,9 @@
       options = null
       results = await $mopidy.library.browse({uri: result.uri});
       if (location === 'back') {
-        browsePath = [result];
+        const idxResult = browsePath.indexOf(result)
+        const newPath = browsePath.slice(0, idxResult + 1)
+        browsePath = newPath
       } else if (location === 'avance') {
         browsePath = [...browsePath, result];
       }
