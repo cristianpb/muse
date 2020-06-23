@@ -117,6 +117,7 @@
         no results
       </a>
     {/each}
+    <SvelteInfiniteScroll threshold={100} window={true} on:loadMore={() => page++} />
   </div>
 {/if}
 
@@ -134,22 +135,37 @@
     faLevelDownAlt,
     faRandom
   } from '@fortawesome/free-solid-svg-icons';
+  import SvelteInfiniteScroll from "svelte-infinite-scroll";
 
   let browsePath = [];
+  let allResults = [];
   let results = [];
   let promise;
   let options;
   let showOptions = false;
 
+  
+  let page = 0;
+  let size = 20;
+  $: results = [
+    ...(page > 0 ? results : []),
+    ...allResults.splice(size * page, size * (page + 1) - 1)
+  ];
+
   onMount(async () => {
     $mopidy = await connectWS()
-    results = await $mopidy.library.browse({uri: null})
+    page = 0
+    allResults = await $mopidy.library.browse({uri: null})
   })
 
   const browserUri = async (result, idx, location) => {
     if (['directory', 'artist', 'album'].indexOf(result.type) > -1) {
       options = null
-      results = await $mopidy.library.browse({uri: result.uri});
+      page = 0
+      allResults = await $mopidy.library.browse({uri: result.uri});
+      console.log("res", allResults);
+      // const images = await $mopidy.library.getImages({uris: results.map(x => x.uri)});
+      // console.log("ima", images);
       if (location === 'back') {
         const idxResult = browsePath.indexOf(result)
         const newPath = browsePath.slice(0, idxResult + 1)
@@ -171,7 +187,8 @@
   }
 
   const goToRoot = async () => {
-    results = await $mopidy.library.browse({uri: null})
+    page = 0
+    allResults = await $mopidy.library.browse({uri: null})
     browsePath = [];
   }
   

@@ -58,7 +58,7 @@
 {/if}
 
 <div class="list is-hoverable">
-  {#each tlTracklists as tlTrack, index (tlTrack.tlid)}
+  {#each results as tlTrack, index (tlTrack.tlid)}
     <a class="list-item" 
        animate:flip={{ duration: 300 }}
        href="{null}"
@@ -120,6 +120,7 @@
       {/if}
     {/if}
   {/each}
+  <SvelteInfiniteScroll threshold={100} window={true} on:loadMore={() => page++} />
 </div>
 
 <div class="columns">
@@ -177,11 +178,22 @@
     faMinus,
     faCog
   } from '@fortawesome/free-solid-svg-icons';
+  import SvelteInfiniteScroll from "svelte-infinite-scroll";
 
-  let tlTracklists = [];
+  //let tlTracklists = [];
   let hovering = false;
   let dropdownActivate;
   let promise;
+
+  let results = [];
+  let tlTracklists = [];
+  let page = 0;
+  let size = 20;
+  $: results = [
+    ...results,
+    ...tlTracklists.splice(size * page, size * (page + 1) - 1)
+  ];
+
 
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
@@ -200,12 +212,14 @@
   })
 
   const loadCurrentTracklist = async () => {
+    page = 0
     tlTracklists = await getCurrentTlTrackList()
   }
 
   const removeTrack = async (tlTrack) => {
     const res = await $mopidy.tracklist.remove({criteria: {uri: [tlTrack.track.uri]}})
     if (res.length > 0) {
+      page = 0
       tlTracklists = tlTracklists.filter(x => x.track.uri != res[0].track.uri)
     }
   }
@@ -223,6 +237,7 @@
       newTracklist.splice(start + 1, 1);
       $mopidy.tracklist.move({start: target, end: start, to_position: target + 1})
     }
+    page = 0
     tlTracklists = newTracklist
     if (start === $currentTrack.index) {
       $currentTrack.index = target
