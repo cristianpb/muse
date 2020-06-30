@@ -50,6 +50,7 @@ jobs:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           publish_branch: gh-pages
           publish_dir: ./__sapper__/export/muse
+          force_orphan: true
       - name: 🐍 Build Python package
         run: |
           cp  -r ./__sapper__/export/muse/* mopidy_muse/static
