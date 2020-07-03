@@ -229,7 +229,11 @@ export async function getCurrentTlTrackList() {
 
 export function playTrackSingle(uri) {
   mopidyWS.tracklist.clear()
-  mopidyWS.tracklist.add({uris:[uri]})
+  if (Array.isArray(uri)) {
+    mopidyWS.tracklist.add({tracks: uri})
+  } else { 
+    mopidyWS.tracklist.add({uris:[uri]})
+  }
   mopidyWS.playback.play()
 }
 
