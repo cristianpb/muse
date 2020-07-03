@@ -9,6 +9,9 @@ export HOST_MUSIC_DIRECTORY=${APP_PATH}/data/music
 export HOST_PLAYLIST_DIRECTORY=${APP_PATH}/data/playlists
 export HOST_SNAPCAST_TEMP=/tmp/snapcast-mopidy
 
+dummy		    := $(shell touch artifacts)
+include ./artifacts
+
 up:
 	docker-compose up --build
 
@@ -39,3 +42,6 @@ mopidy-local-scan:
 
 clean:
 	rm -rf __sapper__/export dist
+
+dev:
+	npm run dev
