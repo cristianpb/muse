@@ -72,7 +72,7 @@
 {/if}
 
 {#if results.length > 0}
-  <div class="list is-hoverable">
+  <div use:clickOutside on:click_outside={() => options = null} class="list is-hoverable">
     {#each results as result, idx}
       <a href={null} class="list-item" >
         <div class="columns is-mobile">
@@ -123,6 +123,7 @@
 <script>
   import { onMount } from 'svelte';
   import { mopidy } from '../tools/stores';
+  import { clickOutside } from '../tools/clickOutside';
   import { connectWS, playTrackSingle, addTrackNext, addTrackQueue, addTracksQueue, shufflePlayAllTracks, playAllTracks } from '../tools/mopidyTools';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte';
   import {

@@ -90,8 +90,8 @@
 
 <AddToPlaylist showAddToPlaylistModal={showAddToPlaylistModal} track={selectedTrack}/>
 {#if resultTracks.length > 0}
-  <div class="list is-hoverable">
-    {#each resultTracks as track, idx (idx)}
+  <div use:clickOutside on:click_outside={() => dropdownActivate = null} class="list is-hoverable">
+    {#each resultTracks as track, idx (idx + 1)}
       <a class="list-item" 
          animate:flip={{ duration: 300 }}
          href="{null}"
@@ -102,7 +102,7 @@
          on:dragenter={() => hovering = idx}
          class:is-active={hovering === idx}
          >
-        <div class="columns is-mobile" on:click={handleDropdownActivation(idx + 1)}>
+        <div class="columns is-mobile" on:click={handleDropdownActivation(idx)}>
           <div class="column">
             {#if track.artists}
               {track.artists.map(x => x.name).join(', ')} - {track.name}
@@ -111,9 +111,9 @@
             {/if}
           </div>
           <div class="column is-narrow">
-            <div class:is-active={dropdownActivate == idx + 1} class="dropdown is-right is-up" >
+            <div class:is-active={dropdownActivate == idx} class="dropdown is-right is-up" >
               <div class="dropdown-trigger">
-                {#if dropdownActivate == idx + 1 }
+                {#if dropdownActivate == idx}
                   <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
                 {:else}
                   <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
@@ -162,6 +162,7 @@
   import { connectWS, playTrackSingle, addTrackNext, shufflePlayAllTracks, addTracksQueue } from '../tools/mopidyTools';
   import AddToPlaylist from '../components/AddToPlaylist.svelte';
   import { mopidy } from '../tools/stores';
+  import { clickOutside } from '../tools/clickOutside';
   import { onMount } from 'svelte';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
@@ -239,28 +240,29 @@
   }
 
   const _playTrackSingle = (track) => {
-    playTrackSingle(track)
     dropdownActivate = null
+    showOptions = false
+    playTrackSingle(track)
   }
 
   const _addTrackNext = (uri) => {
-    addTrackNext(uri)
     dropdownActivate = null
+    addTrackNext(uri)
   }
 
   const _addTrackQueue = (uri) => {
-    addTracksQueue(uri)
     dropdownActivate = null
+    addTracksQueue(uri)
   }
 
   const _shufflePlayAllTracks = (Tracks) => {
+    showOptions = false
     shufflePlayAllTracks(Tracks)
-    showOptions = !showOptions
   }
 
   const _addTracksQueue = (Tracks) => {
+    showOptions = false
     addTracksQueue(Tracks)
-    showOptions = !showOptions
   }
 
 </script>

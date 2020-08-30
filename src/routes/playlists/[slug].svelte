@@ -90,7 +90,7 @@
 </div>
 
 
-<div class="list is-hoverable">
+<div use:clickOutside on:click_outside={() => dropdownActivate = null} class="list is-hoverable">
   {#await promise}
     <p class="list-item">
       <FontAwesomeIcon icon={faSpinner} class="icon is-24" spin={true}/>
@@ -161,6 +161,7 @@
   import { stores } from "@sapper/app";
   import { onMount } from 'svelte';
   import { mopidy, playlists } from '../../tools/stores';
+  import { clickOutside } from '../../tools/clickOutside';
   import { flip } from 'svelte/animate';
   import { goto } from '@sapper/app';
   import { getPlaylists, getPlaylistTracks, playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';

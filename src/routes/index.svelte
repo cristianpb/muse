@@ -57,7 +57,7 @@
   </div>
 {/if}
 
-<div class="list is-hoverable">
+<div use:clickOutside on:click_outside={() => dropdownActivate = null} class="list is-hoverable">
   {#each tlTracklists as tlTrack, index (tlTrack.tlid)}
     <a class="list-item" 
        animate:flip={{ duration: 300 }}
@@ -87,7 +87,7 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu" role="menu">
               <div class="dropdown-content">
-                <a href="{null}" class="dropdown-item" on:click={playTracklist(tlTrack)}>
+                <a href="{null}" class="dropdown-item" on:click={handlePlayTracklist(tlTrack)}>
                   <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"/>&nbsp;
                   Play
                 </a>
@@ -169,6 +169,7 @@
   import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState, imageProvider } from '../tools/stores';
   import { convertSencondsToString, normalizeTime, getCurrentTlTrackList, setTrackTime, playTracklist, loadAlbumImageLocal } from '../tools/mopidyTools';
   import { loadAlbumImage }  from '../tools/lastfm';
+  import { clickOutside } from '../tools/clickOutside';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte';
   import {
     faAngleDown,
@@ -203,8 +204,14 @@
     tlTracklists = await getCurrentTlTrackList()
   }
 
+  const handlePlayTracklist = (tlTrack) => {
+    playTracklist(tlTrack)
+    dropdownActivate = null
+  }
+
   const removeTrack = async (tlTrack) => {
     const res = await $mopidy.tracklist.remove({criteria: {uri: [tlTrack.track.uri]}})
+    dropdownActivate = null
     if (res.length > 0) {
       tlTracklists = tlTracklists.filter(x => x.track.uri != res[0].track.uri)
     }

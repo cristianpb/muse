@@ -11,7 +11,7 @@
 
 <CreatePlalist {showCreatePlaylistModal} />
 
-<div class="list is-hoverable">
+<div use:clickOutside on:click_outside={() => options = null} class="list is-hoverable">
   {#if promise}
     {#await promise}
       <p class="list-item">
@@ -35,9 +35,13 @@
               {/await}
             </div>
             <div class="column is-narrow">
-              <div class="dropdown is-right is-up" class:is-active={playlist.visibility} >
-                <div class="dropdown-trigger" on:click={() => playlist.visibility = !playlist.visibility}>
-                <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+              <div class="dropdown is-right is-up" class:is-active={options == i} >
+                <div class="dropdown-trigger" on:click={() => handleDropdownActivation(i)}>
+                {#if options == i}
+                  <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+                {:else}
+                  <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+                {/if}
                 </div>
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                   <div class="dropdown-content">
@@ -75,11 +79,13 @@
 
   import { playlists } from '../../tools/stores';
   import { getPlaylists, getPlaylistTracks, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
+  import { clickOutside } from '../../tools/clickOutside';
   import { onMount } from 'svelte';
   import CreatePlalist from '../../components/CreatePlaylist.svelte';
   import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte';
   import {
     faAngleDown,
+    faAngleUp,
     faPlayCircle,
     faRandom,
     faGripLines,
@@ -88,6 +94,7 @@
   } from '@fortawesome/free-solid-svg-icons';
 
   let promise;
+  let options;
   let showCreatePlaylistModal = false;
 
   onMount(async () => {
@@ -96,6 +103,14 @@
 
   const loadPlaylists = async () => {
     $playlists = await getPlaylists()
+  }
+
+  const handleDropdownActivation = (idx) => {
+    if (options == idx) {
+      options = null
+    } else {
+      options = idx
+    }
   }
 
 </script>
