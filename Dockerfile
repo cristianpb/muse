@@ -30,7 +30,7 @@ COPY MANIFEST.in ./
 COPY README.md ./
 COPY pyproject.toml ./
 ADD ./mopidy_muse ./mopidy_muse
-RUN pip3 install -e .
+RUN pip3 install .
 
 EXPOSE 6680
 CMD ["mopidy"]

@@ -64,6 +64,9 @@ jobs:
           #    user: __token__
           #    password: ${{ secrets.test_pypi_password }}
           #    repository_url: https://test.pypi.org/legacy/
+      - name: 🐳 Build docker image
+        run: |
+          make start
       - name: Publish package 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@master
         if: startsWith(github.event.ref, 'refs/tags')
