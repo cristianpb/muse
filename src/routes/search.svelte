@@ -177,7 +177,7 @@
   } from '@fortawesome/free-solid-svg-icons';
 
   let dropMenuActive = false;
-  let selectedUris = ['local'];
+  let selectedUris = [];
   let hideUris = ['http', 'https', 'mms', 'rtmp', 'rtmps', 'rtsp', 'file']
   let uris = [];
   let promise;
@@ -194,6 +194,7 @@
     const urisResult = await $mopidy.getUriSchemes()
     if (urisResult) {
       uris = urisResult.filter(x => hideUris.indexOf(x) === -1)
+      selectedUris = uris
     }
   })
 
