@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 export APP=mopidy-muse
 export APP_PATH := $(shell pwd)
 export APP_VERSION := $(shell git describe --tags --always --abbrev=0)
@@ -19,6 +21,9 @@ include ./artifacts
 snapserver-start:
 	docker-compose up -d snapserver
 
+snapserver-stop:
+	docker-compose down snapserver
+
 mopidy-start:
 	docker-compose up --build -d
 	@timeout=30 ; ret=1 ;\
@@ -34,6 +39,12 @@ mopidy-start:
 
 mopidy-dev:
 	docker-compose up --build -d --force-recreate
+
+mopidy-stop:
+	docker-compose down --remove-orphan
+
+build-docker-mopidy:
+	docker build -f Dockerfile -t cristianpb/mopidy-base:${APP_VERSION_CUT}  --target base .
 
 build-docker:
 	docker-compose build

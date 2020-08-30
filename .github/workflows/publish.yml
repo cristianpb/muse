@@ -106,3 +106,20 @@ jobs:
           git add package.json setup.cfg
           git commit -m "⬆ Upgrade package version files"
           git push origin HEAD:master
+  docker-mopidy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build docker mopidy base
+        run: make build-docker-mopidy
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: cristianpb/mopidy-base
+          tags: latest
+          target: base
