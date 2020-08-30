@@ -52,7 +52,7 @@ export function connectWS(reconnect) {
       const port = mopidyPortLocal ? mopidyPortLocal : window.location.port;
       const protocol = mopidyProtocolLocal ? mopidyProtocolLocal : window.location.protocol;
       mopidyWS = new Mopidy({
-        webSocketUrl: `ws${protocol === 'https:' ? 's' : '' }://${host}:${port}/mopidy/ws/`,
+        webSocketUrl: `ws${protocol === 'https' ? 's' : '' }://${host}:${port}/mopidy/ws/`,
       });
       mopidyWS.on("state:online", async () => {
         console.log('[Mopidy]: Connected');
