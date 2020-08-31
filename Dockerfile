@@ -12,11 +12,15 @@ RUN  apt-get install -y \
          gstreamer1.0-plugins-good \
          gstreamer1.0-plugins-bad \
          gstreamer1.0-plugins-ugly \
-         gstreamer1.0-tools
-RUN  pip3 install Mopidy-TuneIn Mopidy-Local
+         gstreamer1.0-tools && \
+         rm -rf /var/lib/apt/lists/* && \
+         apt-get purge --auto-remove && \
+         apt-get clean
+RUN  pip3 install --no-cache-dir Mopidy-TuneIn Mopidy-Local
 
 ##########################################################
-FROM base as muse
+#FROM base as muse
+FROM cristianpb/mopidy-base as muse
 ARG app_path
 
 # Base dir /app
@@ -30,7 +34,10 @@ COPY MANIFEST.in ./
 COPY README.md ./
 COPY pyproject.toml ./
 ADD ./mopidy_muse ./mopidy_muse
-RUN pip3 install .
+
+#VOLUME /${app_path}/mopidy_muse/static
+
+RUN pip3 install --no-clean --no-use-pep517 -e .
 
 EXPOSE 6680
 CMD ["mopidy"]
