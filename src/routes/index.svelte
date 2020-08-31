@@ -166,7 +166,7 @@
 <script>
   import { onMount } from 'svelte';
   import { flip } from 'svelte/animate';
-  import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState, imageProvider } from '../tools/stores';
+  import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState, imageProvider, mopidyHost, mopidyPort, mopidySSL } from '../tools/stores';
   import { convertSencondsToString, normalizeTime, getCurrentTlTrackList, setTrackTime, playTracklist, loadAlbumImageLocal } from '../tools/mopidyTools';
   import { loadAlbumImage }  from '../tools/lastfm';
   import { clickOutside } from '../tools/clickOutside';
@@ -187,6 +187,11 @@
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
   onMount(async () => {
+    const res = await fetch('/muse/config')
+    const config = await res.json()
+    $mopidyHost = config.mopidy && config.mopidy.host ? config.mopidy.host : window.location.hostname;
+    $mopidyPort = config.mopidy && config.mopidy.port ? config.mopidy.port : window.location.port;
+    $mopidySSL = config.mopidy && config.mopidy.ssl ? config.mopidy.ssl : window.location.protocol === 'https:' ? true : false;
     promise = loadCurrentTracklist()
   })
 
