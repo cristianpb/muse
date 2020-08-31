@@ -316,7 +316,7 @@
     faRedo,
     faRecycle
   } from '@fortawesome/free-solid-svg-icons';
-  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility, currentTrack, currentPlaytime, totalPlaytime, currentState, currentVolume, currentMute, mopidy, snapcast, currentRandom, currentConsume, currentRepeat, currentSingle } from '../tools/stores';
+  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility, currentTrack, currentPlaytime, totalPlaytime, currentState, currentVolume, currentMute, mopidy, snapcast, currentRandom, currentConsume, currentRepeat, currentSingle, mopidyHost, mopidyPort, mopidySSL } from '../tools/stores';
   import { convertSencondsToString, normalizeTime, setTrackTime, connectWS } from '../tools/mopidyTools';
   import { connectSnapcast, changeHandler } from '../tools/snapcast';
 
@@ -324,9 +324,13 @@
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
   onMount(async () => {
+    const config = await fetch('/muse/config')
+    $mopidyHost = config.mopidy && config.mopidy.host ? config.mopidy.host : window.location.hostname;
+    $mopidyPort = config.mopidy && config.mopidy.port ? config.mopidy.port : window.location.port;
+    $mopidySSL = config.mopidy && config.mopidy.ssl ? config.mopidy.ssl : window.location.protocol === 'https:' ? true : false;
     $mopidy = await connectWS()
     try {
-      $snapcast = await connectSnapcast()
+      $snapcast = await connectSnapcast(config.snapcast)
     } catch(e) {
       console.log('[Snapcast]: catch error:', e);
     }

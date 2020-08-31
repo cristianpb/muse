@@ -168,9 +168,9 @@
     <label class="label">SSL</label>
     <div class="control">
       <div class="select">
-        <select bind:value={$mopidyProtocol}>
-          <option value="http">http</option>
-          <option value="https">https</option>
+        <select bind:value={$mopidySSL}>
+          <option value="">http</option>
+          <option value="1">https</option>
         </select>
       </div>
     </div>
@@ -220,7 +220,7 @@
   import { onMount } from 'svelte';
   import { connectSnapcast } from '../tools/snapcast';
   import { connectWS } from '../tools/mopidyTools';
-  import { snapGroups, imageProvider, mopidyHost, mopidyPort, mopidyProtocol } from '../tools/stores';
+  import { snapGroups, imageProvider, mopidyHost, mopidyPort, mopidySSL } from '../tools/stores';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faSpinner,
@@ -243,6 +243,7 @@
     snapcastHost = window.location.hostname;
     $mopidyHost = $mopidyHost ? $mopidyHost : window.location.hostname;
     $mopidyPort = $mopidyPort ? $mopidyPort : window.location.port;
+    $mopidySSL = $mopidySSL ? $mopidySSL : window.location.protocol === 'https:' ? "1" : "";
   })
 
   export function dragstart (ev, group, item) {

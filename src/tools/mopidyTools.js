@@ -1,10 +1,10 @@
 import Mopidy from "mopidy";
-import { mopidy, playlists, currentTrack, currentPlaytime, currentState, currentVolume, currentMute, totalPlaytime, currentRandom, currentConsume, currentRepeat, currentSingle, mopidyHost, mopidyPort, mopidyProtocol } from './stores';
+import { mopidy, playlists, currentTrack, currentPlaytime, currentState, currentVolume, currentMute, totalPlaytime, currentRandom, currentConsume, currentRepeat, currentSingle, mopidyHost, mopidyPort, mopidySSL } from './stores';
 
 let mopidyWS;
 let mopidyHostLocal;
 let mopidyPortLocal;
-let mopidyProtocolLocal;
+let mopidySSLLocal;
 let playlistsLocal;
 let currentPlaytimeLocal;
 let totalPlaytimeLocal;
@@ -14,7 +14,7 @@ let connecting = false
 mopidy.subscribe((value) => { mopidyWS = value });
 mopidyHost.subscribe((value) => { mopidyHostLocal = value });
 mopidyPort.subscribe((value) => { mopidyPortLocal = value });
-mopidyProtocol.subscribe((value) => { mopidyProtocolLocal = value });
+mopidySSL.subscribe((value) => { mopidySSLLocal = value });
 playlists.subscribe((value) => { playlistsLocal = value });
 currentPlaytime.subscribe((value) => { currentPlaytimeLocal = value });
 totalPlaytime.subscribe((value) => { totalPlaytimeLocal = value });
@@ -50,9 +50,9 @@ export function connectWS(reconnect) {
       connecting = true;
       const host = mopidyHostLocal ? mopidyHostLocal : window.location.hostname;
       const port = mopidyPortLocal ? mopidyPortLocal : window.location.port;
-      const protocol = mopidyProtocolLocal ? mopidyProtocolLocal : window.location.protocol;
+      const protocol = mopidySSLLocal ? mopidySSLLocal : window.location.protocol === 'https:' ? true : false;
       mopidyWS = new Mopidy({
-        webSocketUrl: `ws${protocol === 'https' ? 's' : '' }://${host}:${port}/mopidy/ws/`,
+        webSocketUrl: `ws${ protocol ? 's' : '' }://${host}:${port}/mopidy/ws/`,
       });
       mopidyWS.on("state:online", async () => {
         console.log('[Mopidy]: Connected');
@@ -309,14 +309,14 @@ export const addTracksQueue = (Tracks, uris) => {
 export const loadAlbumImageLocal = async (track) => {
   const host = mopidyHostLocal ? mopidyHostLocal : window.location.hostname;
   const port = mopidyPortLocal ? mopidyPortLocal : window.location.port;
-  const protocol = mopidyProtocolLocal ? mopidyProtocolLocal : window.location.protocol;
+  const protocol = mopidySSLLocal ? mopidySSLLocal : window.location.protocol === 'https:' ? true : false;
   console.log("[Mopidy]: Local searching for ", track);
   const resultsSearch = await mopidyWS.library.search({'query': {'album': [track.album.name]}, 'uris': ['local:']})
   if (resultsSearch.length > 0 && resultsSearch[0].tracks) {
     const images = await mopidyWS.library.getImages({uris: resultsSearch[0].tracks.map(x => x.album.uri)});
     console.log("[Mopidy]: Result ", Object.values(images));
     if (images && Object.values(images) && Object.values(images).length > 0 && Object.values(images)[0].length > 0 && Object.values(images)[0][0].uri) {
-      return `http${protocol === 'https:' ? 's' : ''}://${host}:${port}${Object.values(images)[0][0].uri}`
+      return `http${protocol ? 's' : ''}://${host}:${port}${Object.values(images)[0][0].uri}`
     }
   }
 }
