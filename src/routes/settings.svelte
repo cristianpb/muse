@@ -10,7 +10,7 @@
       <div class="control">
         <input class="input is-rounded"
                type="text" 
-               bind:value="{snapcastHost}" 
+               bind:value="{$snapcastHost}" 
                placeholder="Hostname">
       </div>
     </div>
@@ -22,7 +22,7 @@
       <div class="control">
         <input class="input is-rounded"
                type="text" 
-               bind:value="{snapcastPort}" 
+               bind:value="{$snapcastPort}" 
                placeholder="Port">
       </div>
     </div>
@@ -32,7 +32,7 @@
     <label class="label">SSL</label>
     <div class="control">
       <div class="select">
-        <select bind:value={snapcastSSL}>
+        <select bind:value={$snapcastSSL}>
           <option value="">http</option>
           <option value="1">https</option>
         </select>
@@ -43,7 +43,7 @@
   <div class="column is-12-mobile is-6-desktop">
     <div class="field is-grouped is-grouped-multiline">
       <p class="control">
-        <a class="button" href="{null}" on:click={() => promise = connectSnapcast({host: snapcastHost, port: snapcastPort, ssl: snapcastSSL})}>Connect</a>
+        <a class="button" href="{null}" on:click={() => promise = connectSnapcast()}>Connect</a>
       </p>
       <p class="control">
     {#if promise}
@@ -220,7 +220,7 @@
   import { onMount } from 'svelte';
   import { connectSnapcast } from '../tools/snapcast';
   import { connectWS } from '../tools/mopidyTools';
-  import { snapGroups, imageProvider, mopidyHost, mopidyPort, mopidySSL } from '../tools/stores';
+  import { snapGroups, imageProvider, mopidyHost, mopidyPort, mopidySSL, snapcastHost, snapcastPort, snapcastSSL } from '../tools/stores';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faSpinner,
@@ -231,19 +231,18 @@
   import { editGroupName, editClientName, setGroupClients } from '../tools/snapcast';
   let promise;
   let promiseMopidy;
-  let snapcastHost = 'localhost'
-  let snapcastPort = '1780'
-  let snapcastSSL = ''
   let hovering = false;
   let hoveringList = {};
   let editLine;
   let newGroup;
 
   onMount(() => {
-    snapcastHost = window.location.hostname;
     $mopidyHost = $mopidyHost ? $mopidyHost : window.location.hostname;
     $mopidyPort = $mopidyPort ? $mopidyPort : window.location.port;
     $mopidySSL = $mopidySSL ? $mopidySSL : window.location.protocol === 'https:' ? "1" : "";
+    $snapcastHost = $snapcastHost ? $snapcastHost : window.location.hostname;
+    $snapcastPort = $snapcastPort ? $snapcastPort : window.location.port;
+    $snapcastSSL = $snapcastSSL ? $snapcastSSL : window.location.protocol === 'https:' ? "1" : "";
   })
 
   export function dragstart (ev, group, item) {

@@ -316,7 +316,7 @@
     faRedo,
     faRecycle
   } from '@fortawesome/free-solid-svg-icons';
-  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility, currentTrack, currentPlaytime, totalPlaytime, currentState, currentVolume, currentMute, mopidy, snapcast, currentRandom, currentConsume, currentRepeat, currentSingle, mopidyHost, mopidyPort, mopidySSL } from '../tools/stores';
+  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility, currentTrack, currentPlaytime, totalPlaytime, currentState, currentVolume, currentMute, mopidy, snapcast, currentRandom, currentConsume, currentRepeat, currentSingle, mopidyHost, mopidyPort, mopidySSL, snapcastHost, snapcastPort, snapcastSSL } from '../tools/stores';
   import { convertSencondsToString, normalizeTime, setTrackTime, connectWS } from '../tools/mopidyTools';
   import { connectSnapcast, changeHandler } from '../tools/snapcast';
 
@@ -329,9 +329,12 @@
     $mopidyHost = config.mopidy && config.mopidy.host ? config.mopidy.host : window.location.hostname;
     $mopidyPort = config.mopidy && config.mopidy.port ? config.mopidy.port : window.location.port;
     $mopidySSL = config.mopidy && config.mopidy.ssl ? config.mopidy.ssl : window.location.protocol === 'https:' ? true : false;
+    $snapcastHost = config.snapcast && config.snapcast.host ? config.snapcast.host : window.location.hostname;
+    $snapcastPort = config.snapcast && config.snapcast.port ? config.snapcast.port : window.location.port;
+    $snapcastSSL = config.snapcast && config.snapcast.ssl ? config.snapcast.ssl : window.location.protocol === 'https:' ? true : false;
     $mopidy = await connectWS()
     try {
-      $snapcast = await connectSnapcast(config.snapcast)
+      $snapcast = await connectSnapcast()
     } catch(e) {
       console.log('[Snapcast]: catch error:', e);
     }

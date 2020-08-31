@@ -1,19 +1,25 @@
-import { snapcast, snapGroups } from '../tools/stores';
+import { snapcast, snapGroups, snapcastHost, snapcastPort, snapcastSSL } from '../tools/stores';
 
 let snapcastWS;
-let groupsLocal
+let groupsLocal;
+let snapcastHostLocal;
+let snapcastPortLocal;
+let snapcastSSLLocal;
 
 snapGroups.subscribe((value) => { groupsLocal = value })
 snapcast.subscribe((value) => { snapcastWS = value });
+snapcastHost.subscribe((value) => { snapcastHostLocal = value });
+snapcastPort.subscribe((value) => { snapcastPortLocal = value });
+snapcastSSL.subscribe((value) => { snapcastSSLLocal = value });
 
-export function connectSnapcast(options) {
+export function connectSnapcast(reconnect) {
   return new Promise(function(resolve, reject) {
-    if (snapcastWS && !options && !options.reconnect) {
+    if (snapcastWS && !reconnect) {
       resolve(snapcastWS)
     } else {
-      const host = options && options.host ? options.host : window.location.hostname;
-      const port = options && options.port ? options.port : '1780';
-      const ssl = options && options.ssl ? 's' : '';
+      const host = snapcastHostLocal ? snapcastHostLocal : window.location.hostname;
+      const port = snapcastPortLocal ? snapcastPortLocal : window.location.port;
+      const ssl = snapcastSSLLocal ? snapcastSSLLocal : window.location.protocol === 'https:' ? 's' : '';
       snapcastWS = new WebSocket(`ws${ssl}://${host}:${port}/jsonrpc`);
 
       /* Error Event Handler */
