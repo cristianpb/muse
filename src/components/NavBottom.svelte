@@ -324,7 +324,8 @@
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
   onMount(async () => {
-    const config = await fetch('/muse/config')
+    const res = await fetch('/muse/config')
+    const config = await res.json()
     $mopidyHost = config.mopidy && config.mopidy.host ? config.mopidy.host : window.location.hostname;
     $mopidyPort = config.mopidy && config.mopidy.port ? config.mopidy.port : window.location.port;
     $mopidySSL = config.mopidy && config.mopidy.ssl ? config.mopidy.ssl : window.location.protocol === 'https:' ? true : false;
