@@ -68,6 +68,16 @@ build-python: build-html
 		${DOCKER_USERNAME}/${APP}:${APP_VERSION} \
 		python3 setup.py sdist bdist_wheel
 
+mopidy-docker:
+	docker run --rm \
+		-v ${APP_PATH}/mopidy_muse/mopidy.conf:/root/.config/mopidy/mopidy.conf \
+		-v ${HOST_MUSIC_DIRECTORY}:/var/lib/mopidy/media \
+		-v ${HOST_PLAYLIST_DIRECTORY}:/var/lib/mopidy/playlists \
+		-v ${HOST_SNAPCAST_TEMP}:/tmp \
+		-p 6680:6680 \
+		${DOCKER_USERNAME}/mopidy-muse \
+		mopidy
+
 mopidy-local-scan:
 	docker exec -it ${APP} mopidy local scan
 

@@ -1,6 +1,6 @@
 # Muse <img src="https://cristianpb.github.io/muse/icon.png" align="right" width="200" />
 
-![PyPI](https://img.shields.io/pypi/v/Mopidy-Muse) ![PyPI - Downloads](https://img.shields.io/pypi/dm/Mopidy-Muse?label=PyPi%20downloads) [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fcristianpb%2Fmuse%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/cristianpb/muse/goto?ref=master)
+![PyPI](https://img.shields.io/pypi/v/Mopidy-Muse) ![PyPI - Downloads](https://img.shields.io/pypi/dm/Mopidy-Muse?label=PyPi%20downloads) [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fcristianpb%2Fmuse%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/cristianpb/muse/goto?ref=master) ![Docker Pulls](https://img.shields.io/docker/pulls/cristianpb/mopidy-muse)
 
 A mopidy player with snapcast support
 
@@ -25,6 +25,8 @@ Checkout a detailled description at [this blog post](https://cristianpb.github.i
 
 ## Installation
 
+### Python 
+
 Install by running:
 
 ```bash
@@ -36,6 +38,27 @@ Before starting Mopidy, you must add configuration for Mopidy-Muse to your Mopid
 ```conf
 [muse]
 enabled = true
+# the following are optional values
+mopidy_host = localhost
+mopidy_port = 6680
+mopidy_ssl = false
+snapcast_host = localhost
+snapcast_port = 1780
+snapcast_ssl = false
+```
+
+### Docker installation
+
+Using docker compose:
+
+```bash
+make start
+```
+
+Using docker run command:
+
+```bash
+make mopidy-docker
 ```
 
 ## Project resources
