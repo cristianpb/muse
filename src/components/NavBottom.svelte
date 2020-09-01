@@ -330,7 +330,7 @@
     $mopidyPort = config.mopidy && config.mopidy.port ? config.mopidy.port : window.location.port;
     $mopidySSL = config.mopidy && config.mopidy.ssl ? Boolean(config.mopidy.ssl).toString() : window.location.protocol === 'https:' ? 'true' : 'false';
     $snapcastHost = config.snapcast && config.snapcast.host ? config.snapcast.host : window.location.hostname;
-    $snapcastPort = config.snapcast && config.snapcast.port ? config.snapcast.port : window.location.port;
+    $snapcastPort = config.snapcast && config.snapcast.port ? config.snapcast.port : 1780;
     $snapcastSSL = config.snapcast && config.snapcast.ssl ? Boolean(config.snapcast.ssl).toString() : window.location.protocol === 'https:' ? 'true' : 'false';
     $mopidy = await connectWS()
     try {
