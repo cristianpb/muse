@@ -38,12 +38,12 @@ export const mopidyHost = writable('__MOPIDY_HOST__');
 
 export const mopidyPort = writable('__MOPIDY_PORT__');
 
-export const mopidySSL = writable(false);
+export const mopidySSL = writable('');
 
 export const snapcastHost = writable('');
 
 export const snapcastPort = writable('');
 
-export const snapcastSSL = writable(false);
+export const snapcastSSL = writable('');
 
 export const imageProvider = writable('lastfm');

@@ -191,7 +191,7 @@
     const config = await res.json()
     $mopidyHost = config.mopidy && config.mopidy.host ? config.mopidy.host : window.location.hostname;
     $mopidyPort = config.mopidy && config.mopidy.port ? config.mopidy.port : window.location.port;
-    $mopidySSL = config.mopidy && config.mopidy.ssl ? config.mopidy.ssl : window.location.protocol === 'https:' ? true : false;
+    $mopidySSL = config.mopidy && config.mopidy.ssl ? Boolean(config.mopidy.ssl).toString() : window.location.protocol === 'https:' ? 'true' : 'false';
     promise = loadCurrentTracklist()
   })
 

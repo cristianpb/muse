@@ -328,10 +328,10 @@
     const config = await res.json()
     $mopidyHost = config.mopidy && config.mopidy.host ? config.mopidy.host : window.location.hostname;
     $mopidyPort = config.mopidy && config.mopidy.port ? config.mopidy.port : window.location.port;
-    $mopidySSL = config.mopidy && config.mopidy.ssl ? config.mopidy.ssl : window.location.protocol === 'https:' ? true : false;
+    $mopidySSL = config.mopidy && config.mopidy.ssl ? Boolean(config.mopidy.ssl).toString() : window.location.protocol === 'https:' ? 'true' : 'false';
     $snapcastHost = config.snapcast && config.snapcast.host ? config.snapcast.host : window.location.hostname;
     $snapcastPort = config.snapcast && config.snapcast.port ? config.snapcast.port : window.location.port;
-    $snapcastSSL = config.snapcast && config.snapcast.ssl ? config.snapcast.ssl : window.location.protocol === 'https:' ? true : false;
+    $snapcastSSL = config.snapcast && config.snapcast.ssl ? Boolean(config.snapcast.ssl).toString() : window.location.protocol === 'https:' ? 'true' : 'false';
     $mopidy = await connectWS()
     try {
       $snapcast = await connectSnapcast()

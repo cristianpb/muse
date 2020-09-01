@@ -33,8 +33,8 @@
     <div class="control">
       <div class="select">
         <select bind:value={$snapcastSSL}>
-          <option value="">http</option>
-          <option value="1">https</option>
+          <option value="false">http</option>
+          <option value="true">https</option>
         </select>
       </div>
     </div>
@@ -169,8 +169,8 @@
     <div class="control">
       <div class="select">
         <select bind:value={$mopidySSL}>
-          <option value="">http</option>
-          <option value="1">https</option>
+          <option value="false">http</option>
+          <option value="true">https</option>
         </select>
       </div>
     </div>
