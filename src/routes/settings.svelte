@@ -43,7 +43,7 @@
   <div class="column is-12-mobile is-6-desktop">
     <div class="field is-grouped is-grouped-multiline">
       <p class="control">
-        <a class="button" href="{null}" on:click={() => promise = connectSnapcast()}>Connect</a>
+        <a class="button" href="{null}" on:click={() => promise = connectSnapcast(true)}>Connect</a>
       </p>
       <p class="control">
     {#if promise}
