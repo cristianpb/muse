@@ -71,7 +71,7 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
           repository: cristianpb/mopidy-muse
           tags: latest
           target: muse
@@ -127,7 +127,8 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
           repository: cristianpb/mopidy-base
           tags: latest
           target: base
+          dockerfile: Dockerfile-base
