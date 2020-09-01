@@ -44,7 +44,7 @@ mopidy-stop:
 	docker-compose down --remove-orphan
 
 build-docker-mopidy:
-	docker build -f Dockerfile -t cristianpb/mopidy-base:${APP_VERSION_CUT}  --target base .
+	docker build -f Dockerfile-base -t cristianpb/mopidy-base:${APP_VERSION_CUT}  --target base .
 
 build-docker:
 	docker-compose build
