@@ -19,8 +19,8 @@ export function connectSnapcast(reconnect) {
     } else {
       const host = snapcastHostLocal ? snapcastHostLocal : window.location.hostname;
       const port = snapcastPortLocal ? snapcastPortLocal : window.location.port;
-      const ssl = snapcastSSLLocal ? snapcastSSLLocal : window.location.protocol === 'https:' ? 's' : '';
-      snapcastWS = new WebSocket(`ws${ssl}://${host}:${port}/jsonrpc`);
+      const protocol = snapcastSSLLocal ? snapcastSSLLocal : window.location.protocol === 'https:' ? 'true' : 'false';
+      snapcastWS = new WebSocket(`ws${ protocol === 'true' ? 's' : '' }://${host}:${port}/jsonrpc`);
 
       /* Error Event Handler */
       snapcastWS.onerror = (e) => {

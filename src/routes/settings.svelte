@@ -239,10 +239,10 @@
   onMount(() => {
     $mopidyHost = $mopidyHost ? $mopidyHost : window.location.hostname;
     $mopidyPort = $mopidyPort ? $mopidyPort : window.location.port;
-    $mopidySSL = $mopidySSL ? $mopidySSL : window.location.protocol === 'https:' ? "1" : "";
+    $mopidySSL = $mopidySSL ? $mopidySSL : window.location.protocol === 'https:' ? 'true' : 'false';
     $snapcastHost = $snapcastHost ? $snapcastHost : window.location.hostname;
     $snapcastPort = $snapcastPort ? $snapcastPort : window.location.port;
-    $snapcastSSL = $snapcastSSL ? $snapcastSSL : window.location.protocol === 'https:' ? "1" : "";
+    $snapcastSSL = $snapcastSSL ? $snapcastSSL : window.location.protocol === 'https:' ? 'true' : 'false';
   })
 
   export function dragstart (ev, group, item) {
