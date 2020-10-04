@@ -1,25 +1,30 @@
 import Mopidy from "mopidy";
+import type { Mopidy as MopidyType } from '../types/mopidy.d';
 import { mopidy, playlists, currentTrack, currentPlaytime, currentState, currentVolume, currentMute, totalPlaytime, currentRandom, currentConsume, currentRepeat, currentSingle, mopidyHost, mopidyPort, mopidySSL } from './stores';
 
-let mopidyWS;
-let mopidyHostLocal;
-let mopidyPortLocal;
-let mopidySSLLocal;
-let playlistsLocal;
-let currentPlaytimeLocal;
-let totalPlaytimeLocal;
-let interval;
+let mopidyWS: MopidyType;
+let mopidyHostLocal: string;
+let mopidyPortLocal: string;
+let mopidySSLLocal: 'true'|'false'|'';
+let playlistsLocal: RefExtended[];
+let currentPlaytimeLocal: number;
+let totalPlaytimeLocal: number;
+let interval: any;
 let connecting = false
 
 mopidy.subscribe((value) => { mopidyWS = value });
 mopidyHost.subscribe((value) => { mopidyHostLocal = value });
-mopidyPort.subscribe((value) => { mopidyPortLocal = value });
-mopidySSL.subscribe((value) => { mopidySSLLocal = value });
+mopidyPort.subscribe((value: string) => { mopidyPortLocal = value });
+mopidySSL.subscribe((value: 'true'|'false') => { mopidySSLLocal = value });
 playlists.subscribe((value) => { playlistsLocal = value });
 currentPlaytime.subscribe((value) => { currentPlaytimeLocal = value });
 totalPlaytime.subscribe((value) => { totalPlaytimeLocal = value });
 
-export function convertSencondsToString(ms) {
+interface RefExtended extends Mopidy.Ref {
+  slug: string
+}
+
+export function convertSencondsToString(ms: number) {
   let minutes = ~~(ms / 60000)
   let seconds = `${~~((ms / 1000) % 60)}`
   return `${minutes}:${seconds.padStart(2, '0')}`
@@ -34,7 +39,7 @@ export function convertPercentToSeconds(percent, total) {
   return ~~((total * percent) / 100)
 }
 
-export function connectWS(reconnect) {
+export function connectWS(reconnect?: string): Promise<MopidyType>{
   return new Promise(function(resolve, reject) {
     if (mopidyWS && !reconnect) {
       if (connecting) {
@@ -97,23 +102,23 @@ export function connectWS(reconnect) {
       })
 
       mopidyWS.on("state", (x) => console.log('[Mopidy]:', x));
-      mopidyWS.on("event", (x) => console.log('[Mopidy]:', x));
+      // mopidyWS.on("event", (x) => console.log('[Mopidy]:', x));
 
       mopidyWS.on("event:trackPlaybackEnded", (event) => {
-        let { time_position } = event
+        let { timePosition } = event
         clearInterval(interval);
-        currentPlaytime.set(time_position)
+        currentPlaytime.set(timePosition)
       })
 
       mopidyWS.on("event:trackPlaybackPaused", (event) => {
-        let { time_position } = event
+        let { timePosition } = event
         clearInterval(interval);
-        currentPlaytime.set(time_position)
+        currentPlaytime.set(timePosition)
       })
 
       mopidyWS.on("event:trackPlaybackResumed", (event) => {
-        let { time_position } = event
-        currentPlaytime.set(time_position)
+        let { timePosition } = event
+        currentPlaytime.set(timePosition)
         if (interval) {
           clearInterval(interval)
         }
@@ -167,7 +172,7 @@ export function connectWS(reconnect) {
         }, 1000);
       });
 
-      mopidyWS.on("error", (err) => {
+      mopidyWS.on('websocket:error', (err: any) => {
         console.log('[Mopidy]: error:', err);
         reject(err);
       });
@@ -178,14 +183,12 @@ export function connectWS(reconnect) {
 }
 
 export const upgradeCurrentTrack = async () => {
-  const currentTrackTL = await mopidyWS.playback.getCurrentTlTrack()
+  let currentTrackTL = await mopidyWS.playback.getCurrentTlTrack()
   if (currentTrackTL) {
-    const currentTrackRaw = await mopidyWS.library.lookup([[currentTrackTL.track.uri]])
-    const currentIndex = await mopidyWS.tracklist.index()
-    currentTrackTL.track = Object.values(currentTrackRaw)[0][0]
-    currentTrackTL.index = currentIndex
-    currentTrack.set(currentTrackTL);
-    return currentTrackTL
+    const currentTrackRaw = await mopidyWS.library.lookup({ uris: [currentTrackTL.track.uri]})
+    const currentIndex = await mopidyWS.tracklist.index({})
+    currentTrack.set({...currentTrackTL, track: Object.values(currentTrackRaw)[0][0], index: currentIndex});
+    return {...currentTrackTL, track:  Object.values(currentTrackRaw)[0][0], index: currentIndex}
   }
 }
 
@@ -193,14 +196,13 @@ export async function getPlaylists() {
   mopidyWS = await connectWS()
   const playlistsRaw = await mopidyWS.playlists.asList()
   playlistsLocal = playlistsRaw.map(playlistRaw => {
-    playlistRaw.slug = playlistRaw.name
-    return playlistRaw
+    return {...playlistRaw, slug: playlistRaw.name}
   })
   return playlistsLocal
 }
 
-export async function getPlaylistTracks(uri) {
-  const playlistsTracks = await mopidyWS.playlists.lookup([uri]) 
+export async function getPlaylistTracks(uri: string) {
+  const playlistsTracks = await mopidyWS.playlists.lookup({uri})
   if (playlistsTracks) {
     return playlistsTracks
   } else {
@@ -227,48 +229,48 @@ export async function getCurrentTlTrackList() {
   }
 }
 
-export function playTrackSingle(uri) {
+export function playTrackSingle(uri: string) {
   mopidyWS.tracklist.clear()
   if (Array.isArray(uri)) {
     mopidyWS.tracklist.add({tracks: uri})
   } else { 
     mopidyWS.tracklist.add({uris:[uri]})
   }
-  mopidyWS.playback.play()
+  mopidyWS.playback.play({})
 }
 
-export async function addTrackNext(uri) {
-  const index = await mopidyWS.tracklist.index()
+export async function addTrackNext(uri: string) {
+  const index = await mopidyWS.tracklist.index({})
   mopidyWS.tracklist.add({at_position: index + 1, uris:[uri]})
 }
 
-export async function addTrackQueue(uri) {
+export async function addTrackQueue(uri: string) {
   mopidyWS.tracklist.add({uris:[uri]})
 }
 
-export async function playPlaylist(uri) {
+export async function playPlaylist(uri: string) {
   const playlistInfo = await getPlaylistTracks(uri)
   mopidyWS.tracklist.clear()
-  mopidyWS.tracklist.add([playlistInfo.tracks])
-  mopidyWS.playback.play()
+  mopidyWS.tracklist.add({tracks: playlistInfo.tracks})
+  mopidyWS.playback.play({})
 }
 
-export async function shufflePlaylist(uri) {
+export async function shufflePlaylist(uri: string) {
   const playlistInfo = await getPlaylistTracks(uri)
   mopidyWS.tracklist.clear()
-  mopidyWS.tracklist.add([playlistInfo.tracks])
-  mopidyWS.tracklist.shuffle()
-  mopidyWS.playback.play()
+  mopidyWS.tracklist.add({tracks: playlistInfo.tracks})
+  mopidyWS.tracklist.shuffle({})
+  mopidyWS.playback.play({})
 }
 
-export async function addToQueuePlaylists(uri) {
+export async function addToQueuePlaylists(uri: string) {
   const playlistInfo = await getPlaylistTracks(uri)
-  mopidyWS.tracklist.add([playlistInfo.tracks])
+  mopidyWS.tracklist.add({tracks: playlistInfo.tracks})
 }
 
-export const setTrackTime = async (currentPlaytimePercent) => {
+export const setTrackTime = async (currentPlaytimePercent: number) => {
   const ms = convertPercentToSeconds(currentPlaytimePercent, totalPlaytimeLocal)
-  const changed = await mopidyWS.playback.seek([ms])
+  const changed = await mopidyWS.playback.seek({time_position: ms})
   if (changed) {
     console.log("[Mopidy]: Set track time", currentPlaytimePercent)
     currentPlaytime.set(ms);
@@ -277,30 +279,30 @@ export const setTrackTime = async (currentPlaytimePercent) => {
   }
 }
 
-export const playTracklist = (tlTrack) => {
-  mopidyWS.playback.play([tlTrack])
+export const playTracklist = (tlTrack: MopidyType.models.TlTrack) => {
+  mopidyWS.playback.play({track: tlTrack})
 }
 
-export const playAllTracks = (uris) => {
+export const playAllTracks = (uris: string[]) => {
   mopidyWS.tracklist.clear()
   mopidyWS.tracklist.add({ uris })
-  mopidyWS.playback.play()
+  mopidyWS.playback.play({})
 }
 
 export const shufflePlayAllTracks = (Tracks, uris) => {
   mopidyWS.tracklist.clear()
   if (Tracks) {
-    mopidyWS.tracklist.add([Tracks])
+    mopidyWS.tracklist.add({tracks: Tracks})
   } else if (uris) {
     mopidyWS.tracklist.add({ uris })
   }
-  mopidyWS.tracklist.shuffle()
-  mopidyWS.playback.play()
+  mopidyWS.tracklist.shuffle({})
+  mopidyWS.playback.play({})
 }
 
 export const addTracksQueue = (Tracks, uris) => {
   if (Tracks) {
-    mopidyWS.tracklist.add([Tracks])
+    mopidyWS.tracklist.add({tracks: Tracks})
   } else if (uris) {
     mopidyWS.tracklist.add({ uris })
   }
@@ -313,7 +315,9 @@ export const loadAlbumImageLocal = async (track) => {
   console.log("[Mopidy]: Local searching for ", track);
   const resultsSearch = await mopidyWS.library.search({'query': {'album': [track.album.name]}, 'uris': ['local:']})
   if (resultsSearch.length > 0 && resultsSearch[0].tracks) {
-    const images = await mopidyWS.library.getImages({uris: resultsSearch[0].tracks.map(x => x.album.uri)});
+    //const uris = resultsSearch[0].tracks.map(track => track.album.uri)
+    const uris = []
+    const images = await mopidyWS.library.getImages({uris});
     console.log("[Mopidy]: Result ", Object.values(images));
     if (images && Object.values(images) && Object.values(images).length > 0 && Object.values(images)[0].length > 0 && Object.values(images)[0][0].uri) {
       return `http${protocol ? 's' : ''}://${host}:${port}${Object.values(images)[0][0].uri}`
