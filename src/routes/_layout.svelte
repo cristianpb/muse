@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Nav from '../components/Nav.svelte';
   import NavBottom from '../components/NavBottom.svelte';
   import SnapClients from '../components/SnapClients.svelte';
