@@ -7,14 +7,13 @@
   <div class="column is-12-mobile is-4-desktop">
     <div class="field">
       <div class="control">
-        <label class="label">
-          Hostname
+        <label class="label" for="snapcastHost">Hostname</label>
           <input class="input is-rounded"
+                 id="snapcastHost"
                  type="text" 
                  bind:value="{$snapcastHost}" 
                  placeholder="Hostname"
                  >
-        </label>
       </div>
     </div>
   </div>
@@ -22,25 +21,24 @@
   <div class="column is-12-mobile is-4-desktop">
     <div class="field">
       <div class="control">
-        <label class="label">Port
+        <label class="label" for="snapcastPort">Port</label>
         <input class="input is-rounded"
+               id="snapcastPort"
                type="text" 
                bind:value="{$snapcastPort}" 
                placeholder="Port">
-        </label>
       </div>
     </div>
   </div>
 
   <div class="column is-12-mobile is-4-desktop">
     <div class="control">
+      <label class="label" for="snapcastSSL">SSL</label>
       <div class="select">
-        <label class="label">SSL
-          <select bind:value={$snapcastSSL}>
+          <select bind:value={$snapcastSSL} id="snapcastSSL">
             <option value="false">http</option>
             <option value="true">https</option>
           </select>
-        </label>
       </div>
     </div>
   </div>
@@ -148,12 +146,12 @@
   <div class="column is-12-mobile is-4-desktop">
     <div class="field">
       <div class="control">
-        <label class="label">Hostname
+        <label class="label" for="mopidyHost">Hostname</label>
           <input class="input is-rounded"
+                 id="mopidyHost"
                  type="text" 
                  bind:value="{$mopidyHost}" 
                  placeholder="Hostname">
-        </label>
       </div>
     </div>
   </div>
@@ -161,12 +159,12 @@
   <div class="column is-12-mobile is-4-desktop">
     <div class="field">
       <div class="control">
-        <label class="label">Port
+        <label class="label" for="mopidyPort">Port</label>
           <input class="input is-rounded"
+                 id="mopidyPort"
                  type="text" 
                  bind:value="{$mopidyPort}" 
                  placeholder="Port">
-        </label>
       </div>
     </div>
   </div>
@@ -174,12 +172,11 @@
   <div class="column is-12-mobile is-4-desktop">
     <div class="control">
       <div class="select">
-        <label class="label">SSL
-          <select bind:value={$mopidySSL}>
+        <label class="label" for="mopidySSL">SSL</label>
+          <select bind:value={$mopidySSL} id="mopidySSL">
             <option value="false">http</option>
             <option value="true">https</option>
           </select>
-        </label>
       </div>
     </div>
   </div>
