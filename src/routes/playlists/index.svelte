@@ -75,7 +75,7 @@
   {/if}
 </div>
 
-<script>
+<script lang="ts">
 
   import { playlists } from '../../tools/stores';
   import { getPlaylists, getPlaylistTracks, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';

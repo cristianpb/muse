@@ -6,36 +6,41 @@
 <div class="columns is-multiline">
   <div class="column is-12-mobile is-4-desktop">
     <div class="field">
-      <label class="label">Hostname</label>
       <div class="control">
-        <input class="input is-rounded"
-               type="text" 
-               bind:value="{$snapcastHost}" 
-               placeholder="Hostname">
+        <label class="label">
+          Hostname
+          <input class="input is-rounded"
+                 type="text" 
+                 bind:value="{$snapcastHost}" 
+                 placeholder="Hostname"
+                 >
+        </label>
       </div>
     </div>
   </div>
 
   <div class="column is-12-mobile is-4-desktop">
     <div class="field">
-      <label class="label">Port</label>
       <div class="control">
+        <label class="label">Port
         <input class="input is-rounded"
                type="text" 
                bind:value="{$snapcastPort}" 
                placeholder="Port">
+        </label>
       </div>
     </div>
   </div>
 
   <div class="column is-12-mobile is-4-desktop">
-    <label class="label">SSL</label>
     <div class="control">
       <div class="select">
-        <select bind:value={$snapcastSSL}>
-          <option value="false">http</option>
-          <option value="true">https</option>
-        </select>
+        <label class="label">SSL
+          <select bind:value={$snapcastSSL}>
+            <option value="false">http</option>
+            <option value="true">https</option>
+          </select>
+        </label>
       </div>
     </div>
   </div>
@@ -142,36 +147,39 @@
 <div class="columns is-multiline">
   <div class="column is-12-mobile is-4-desktop">
     <div class="field">
-      <label class="label">Hostname</label>
       <div class="control">
-        <input class="input is-rounded"
-               type="text" 
-               bind:value="{$mopidyHost}" 
-               placeholder="Hostname">
+        <label class="label">Hostname
+          <input class="input is-rounded"
+                 type="text" 
+                 bind:value="{$mopidyHost}" 
+                 placeholder="Hostname">
+        </label>
       </div>
     </div>
   </div>
 
   <div class="column is-12-mobile is-4-desktop">
     <div class="field">
-      <label class="label">Port</label>
       <div class="control">
-        <input class="input is-rounded"
-               type="text" 
-               bind:value="{$mopidyPort}" 
-               placeholder="Port">
+        <label class="label">Port
+          <input class="input is-rounded"
+                 type="text" 
+                 bind:value="{$mopidyPort}" 
+                 placeholder="Port">
+        </label>
       </div>
     </div>
   </div>
 
   <div class="column is-12-mobile is-4-desktop">
-    <label class="label">SSL</label>
     <div class="control">
       <div class="select">
-        <select bind:value={$mopidySSL}>
-          <option value="false">http</option>
-          <option value="true">https</option>
-        </select>
+        <label class="label">SSL
+          <select bind:value={$mopidySSL}>
+            <option value="false">http</option>
+            <option value="true">https</option>
+          </select>
+        </label>
       </div>
     </div>
   </div>
@@ -205,13 +213,14 @@
 
 <hr>
 
-<label class="label">Image Provider</label>
 <div class="control">
   <div class="select">
-    <select bind:value={$imageProvider}>
-      <option value="local">Local</option>
-      <option value="lastfm">LastFM</option>
-    </select>
+    <label class="label">Image Provider
+      <select bind:value={$imageProvider}>
+        <option value="local">Local</option>
+        <option value="lastfm">LastFM</option>
+      </select>
+    </label>
   </div>
 </div>
 
