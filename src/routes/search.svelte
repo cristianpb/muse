@@ -149,7 +149,7 @@
   {#if promise}
     {#await promise}
       <p class="list-item">loading ...</p>
-    {:then number}
+    {:then}
       <a class="list-item" href="{null}">no tracks found</a>
     {:catch error}
       <p class="list-item" style="color: red">{error.message}</p>

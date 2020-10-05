@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let segment;
+  export let segment: string;
   let burgerState = false;
 </script>
 

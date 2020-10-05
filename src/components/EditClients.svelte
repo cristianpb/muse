@@ -11,13 +11,14 @@
       <div class="columns is-multiline">
         {#each $snapGroups as group}
           <div class="column is-12">
-            <label class="label">Group ID: {group.id}</label>
             <div class="field has-addons">
               <div class="control is-expanded">
-                <input class="input"
-                       type="text" 
-                       bind:value="{group.name}" 
-                       placeholder="Group name">
+                <label class="label">Group ID: {group.id}
+                  <input class="input"
+                         type="text" 
+                         bind:value="{group.name}" 
+                         placeholder="Group name">
+                </label>
               </div>
               <div class="control">
                 <div class="button is-info" 
@@ -29,13 +30,14 @@
           {#each group.clients as client, idx}
             <div class="columns is-mobile">
               <div class="column is-12">
-                <label class="label">Client ID: {client.id}</label>
                 <div class="field has-addons">
                   <div class="control is-expanded">
-                    <input class="input"
-                           type="text" 
-                           bind:value="{group.clients[idx].name}" 
-                           placeholder="Client name">
+                    <label class="label">Client ID: {client.id}
+                      <input class="input"
+                             type="text" 
+                             bind:value="{group.clients[idx].name}" 
+                             placeholder="Client name">
+                    </label>
                   </div>
                   <div class="control">
                     <div class="button is-info" 
@@ -184,6 +186,7 @@
     flex-direction: column;
     max-height: calc(100vh - 40px);
     overflow: hidden;
+    overflow-y: visible;
     -ms-overflow-y: visible;
   }
 

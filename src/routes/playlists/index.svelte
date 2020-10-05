@@ -45,15 +45,15 @@
                 </div>
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                   <div class="dropdown-content">
-                    <a href="{null}" class="dropdown-item" on:click={playPlaylist(playlist.uri)}>
+                    <a href="{null}" class="dropdown-item" on:click={() => playPlaylist(playlist.uri)}>
                       <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"/>&nbsp;
                         Play
                     </a>
-                    <a href="{null}" class="dropdown-item" on:click={shufflePlaylist(playlist.uri)}>
+                    <a href="{null}" class="dropdown-item" on:click={() => shufflePlaylist(playlist.uri)}>
                       <FontAwesomeIcon icon={faRandom} class="icon is-small"/>&nbsp;
                         Shuffle
                     </a>
-                    <a href="{null}" class="dropdown-item" on:click={addToQueuePlaylists(playlist.uri)}>
+                    <a href="{null}" class="dropdown-item" on:click={() => addToQueuePlaylists(playlist.uri)}>
                       <FontAwesomeIcon icon={faGripLines} class="icon is-small"/>&nbsp;
                         Add to queue
                     </a>
@@ -76,7 +76,6 @@
 </div>
 
 <script lang="ts">
-
   import { playlists } from '../../tools/stores';
   import { getPlaylists, getPlaylistTracks, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
   import { clickOutside } from '../../tools/clickOutside';
@@ -93,8 +92,8 @@
     faSpinner
   } from '@fortawesome/free-solid-svg-icons';
 
-  let promise;
-  let options;
+  let promise: any;
+  let options: number;
   let showCreatePlaylistModal = false;
 
   onMount(async () => {
@@ -105,7 +104,7 @@
     $playlists = await getPlaylists()
   }
 
-  const handleDropdownActivation = (idx) => {
+  const handleDropdownActivation = (idx: number) => {
     if (options == idx) {
       options = null
     } else {

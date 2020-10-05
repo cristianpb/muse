@@ -3,7 +3,7 @@
   import NavBottom from '../components/NavBottom.svelte';
   import SnapClients from '../components/SnapClients.svelte';
 
-  export let segment;
+  export let segment: string;
 </script>
 
 <style>

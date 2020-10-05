@@ -7,10 +7,10 @@
 >
   <path fill="currentColor" d="{path}" />
 </svg>
-<script>
-  export let icon;
+<script lang="ts">
+  export let icon: any;
   export let spin=false;
-  let path = [];
+  let path: string;
   let classes = "";
   let viewBox = "";
   $: viewBox = "0 0 " + icon.icon[0] + " " + icon.icon[1];

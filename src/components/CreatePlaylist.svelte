@@ -8,8 +8,9 @@
       </a>
     </header>
     <section class="modal-card-body">
-      <label class="label">Name</label>
-      <input class="input" type="text" bind:value={playlistName} name="playlist name" id="playlist name"/>
+      <label class="label">Name
+        <input class="input" type="text" bind:value={playlistName} name="playlist name" id="playlist name"/>
+      </label>
     </section>
     <footer class="modal-card-foot">
       <button class="button is-success" on:click={handlePlaylistCreate}>Save changes</button>
@@ -35,7 +36,7 @@
   <button class="modal-close is-large" aria-label="close" on:click={() => showCreatePlaylistModal = !showCreatePlaylistModal}></button>
 </div>
 
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { mopidy } from '../tools/stores';
   import { connectWS } from '../tools/mopidyTools';
@@ -47,9 +48,9 @@
   } from '@fortawesome/free-solid-svg-icons';
 
   let playlistName = '';
-  let createPlaylistPromise;
+  let createPlaylistPromise: any;
 
-  export let showCreatePlaylistModal;
+  export let showCreatePlaylistModal: boolean;
 
   onMount(async () => {
     $mopidy = await connectWS()
@@ -190,6 +191,7 @@
     flex-direction: column;
     max-height: calc(100vh - 40px);
     overflow: hidden;
+    overflow-y: visible;
     -ms-overflow-y: visible;
   }
 

@@ -107,7 +107,7 @@
     {#if promise && $mopidy && $mopidy._webSocket.readyState == 1}
       {#await promise}
         <p class="list-item">loading songs...</p>
-      {:then number}
+      {:then}
         <p class="list-item">no tracks playing</p>
       {:catch error}
         <p class="list-item" style="color: red">{error.message}</p>

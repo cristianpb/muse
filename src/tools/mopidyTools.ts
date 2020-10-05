@@ -255,7 +255,7 @@ export async function playPlaylist(uri: string) {
   mopidyWS.playback.play({})
 }
 
-export async function shufflePlaylist(uri: string) {
+export async function shufflePlaylist(uri: string): Promise<any> {
   const playlistInfo = await getPlaylistTracks(uri)
   mopidyWS.tracklist.clear()
   mopidyWS.tracklist.add({tracks: playlistInfo.tracks})

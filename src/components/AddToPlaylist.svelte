@@ -9,11 +9,11 @@
     </header>
     <section class="modal-card-body">
       {#if track}
-      <label class="label">Add {track.name} to a playlist</label>
+        <p class="label">Add {track.name} to a playlist</p>
       {/if}
       
       <div class="list is-hoverable">
-        {#each $playlists as playlist, i}
+        {#each $playlists as playlist}
           <div class="list-item">
             <div class="columns is-mobile">
               <div class="column">
@@ -61,7 +61,7 @@
   <button class="modal-close is-large" aria-label="close" on:click={() => showAddToPlaylistModal = !showAddToPlaylistModal}></button>
 </div>
 
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { mopidy, playlists } from '../tools/stores';
   import { connectWS, getPlaylists, getPlaylistTracks } from '../tools/mopidyTools';
@@ -73,17 +73,17 @@
     faCheck
   } from '@fortawesome/free-solid-svg-icons';
 
-  export let showAddToPlaylistModal;
-  export let track;
+  export let showAddToPlaylistModal: boolean;
+  export let track: any;
 
-  let savePlaylistPromise
+  let savePlaylistPromise: any
 
   onMount(async () => {
     $mopidy = await connectWS()
     $playlists = await getPlaylists()
   })
 
-  const handleClickSave = (playlist) => {
+  const handleClickSave = (playlist): any => {
     savePlaylistPromise = addTrackToPlaylist(playlist)
   }
 
@@ -224,6 +224,7 @@
     flex-direction: column;
     max-height: calc(100vh - 40px);
     overflow: hidden;
+    overflow-y: visible;
     -ms-overflow-y: visible;
   }
 
