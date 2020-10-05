@@ -83,11 +83,11 @@
     $playlists = await getPlaylists()
   })
 
-  const handleClickSave = (playlist): any => {
+  const handleClickSave = (playlist: any): any => {
     savePlaylistPromise = addTrackToPlaylist(playlist)
   }
 
-  const addTrackToPlaylist = async (playlistInfo) => {
+  const addTrackToPlaylist = async (playlistInfo: any) => {
     if (playlistInfo.tracks) {
       playlistInfo.tracks.push(track)
     } else {

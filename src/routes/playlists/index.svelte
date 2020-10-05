@@ -11,7 +11,10 @@
 
 <CreatePlalist {showCreatePlaylistModal} />
 
+<!---
 <div use:clickOutside on:click_outside={() => options = null} class="list is-hoverable">
+--->
+<div use:clickOutside class="list is-hoverable">
   {#if promise}
     {#await promise}
       <p class="list-item">
