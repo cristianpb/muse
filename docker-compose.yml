@@ -1,12 +1,14 @@
 version: '3.4'
 services:
-  #snapclient:
-  #  image: ivdata/snapclient
-  #  environment:
-  #    HOST: snapserver
-  #  devices:
-  #    - /dev/snd/
-  #  command: /bin/bash -c /usr/bin/snapclient -h snapserver -s 1
+  snapclient:
+    image: ivdata/snapclient
+    container_name: ${APP}-snapclient
+    environment:
+      HOST: snapserver
+    devices:
+      - /dev/snd
+      - /dev/bus/usb
+    command: /bin/bash -c /usr/bin/snapclient -h snapserver -s 1
   snapserver:
     image: jaedb/snapserver
     container_name: ${APP}-snapserver

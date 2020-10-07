@@ -18,11 +18,17 @@ export MOPIDY_PORT=6680
 dummy		    := $(shell touch artifacts)
 include ./artifacts
 
+snapclient-start:
+	docker-compose up -d snapclient
+
+snapclient-stop:
+	docker-compose stop snapclient
+
 snapserver-start:
 	docker-compose up -d snapserver
 
 snapserver-stop:
-	docker-compose down snapserver
+	docker-compose stop snapserver
 
 mopidy-start:
 	docker-compose up --build -d
@@ -87,5 +93,5 @@ clean:
 sapper-dev:
 	npm run dev
 
-start: mopidy-start snapserver-start
+start: mopidy-start snapserver-start snapclient-start
 	@sleep 2 && docker-compose logs
