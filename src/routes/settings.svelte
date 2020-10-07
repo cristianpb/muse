@@ -53,9 +53,9 @@
         <button class="button">
           <FontAwesomeIcon icon={faSpinner} spin={true} class="icon"/>
         </button>
-      {:then _}
+      {:then result}
         <button class="button is-success" disabled>
-          Connected
+          {result}
         </button>
       {:catch error}
         <button class="button is-danger" disabled>

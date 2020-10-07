@@ -15,7 +15,8 @@ snapcastSSL.subscribe((value) => { snapcastSSLLocal = value });
 export function connectSnapcast(reconnect) {
   return new Promise(function(resolve, reject) {
     if (snapcastWS && !reconnect) {
-      resolve(snapcastWS)
+      snapcast.set(snapcastWS)
+      resolve("Connected")
     } else {
       const host = snapcastHostLocal ? snapcastHostLocal : window.location.hostname;
       const port = snapcastPortLocal ? snapcastPortLocal : window.location.port;
@@ -37,7 +38,8 @@ export function connectSnapcast(reconnect) {
           method: 'Server.GetStatus',
         }
         snapcastWS.send(JSON.stringify(message));
-        resolve(snapcastWS)
+        snapcast.set(snapcastWS)
+        resolve("Connected")
       };
 
       snapcastWS.onmessage = (message) => {
