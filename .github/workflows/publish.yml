@@ -29,7 +29,9 @@ jobs:
       - name: Install node requirements
         run: npm ci
       - name: 🚨 Check lint
-        run: npm run lint
+        run: |
+          npm run lint
+          npm run validate
       - name: ⬆ Bump version files
         if: startsWith(github.event.ref, 'refs/tags')
         run: |
