@@ -63,7 +63,7 @@ jobs:
           #    repository_url: https://test.pypi.org/legacy/
       - name: 🐳 Build Docker image
         run: |
-          make start
+          make mopidy-start
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
         if: startsWith(github.event.ref, 'refs/tags')

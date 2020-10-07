@@ -31,7 +31,7 @@ snapserver-stop:
 	docker-compose stop snapserver
 
 mopidy-start:
-	docker-compose up --build -d
+	docker-compose up --build -d mopidy
 	@timeout=30 ; ret=1 ;\
 		until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do\
 			(docker exec -i ${USE_TTY} ${APP} curl -s --fail -X GET http://localhost:${MOPIDY_PORT}/muse/config > /dev/null) ;\
@@ -95,3 +95,8 @@ sapper-dev:
 
 start: mopidy-start snapserver-start snapclient-start
 	@sleep 2 && docker-compose logs
+
+stop: mopidy-stop snapserver-stop snapclient-stop
+	@echo all components stopped
+
+down: stop
