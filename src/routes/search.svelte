@@ -11,42 +11,25 @@
   <div class="column is-narrow">
     <div class="columns is-mobile">
       <div class="column">
-        <div class:is-active={dropMenuActive} class="dropdown">
-          <div class="dropdown-trigger"  on:click={() => dropMenuActive = !dropMenuActive}>
-            <button class="button is-link" aria-haspopup="true" aria-controls="dropdown-menu-sources">
-              <span>Sources</span>
-              {#if dropMenuActive}
-                <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+        <div class="tags">
+          {#each uris as uri}
+            <span class="tag" class:is-primary="{selectedUris[uri]}" on:click="{() => selectedUris[uri] = !selectedUris[uri]}">
+              {#if uri in uriIcons}
+                <FontAwesomeIcon icon={uriIcons[uri]} class="icon is-small"/> &nbsp; {uri}
               {:else}
-                <FontAwesomeIcon icon={faAngleDown} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
+                <FontAwesomeIcon icon={faMusic} class="icon is-small"/> &nbsp; {uri}
               {/if}
-            </button>
-          </div>
-          <div class="dropdown-menu" id="dropdown-menu-sources" role="menu">
-            <div class="dropdown-content">
-              {#each uris as uri}
-              <a href="{null}" class="dropdown-item">
-                <label class="checkbox">
-                  <input bind:group={selectedUris} value={uri} type="checkbox">
-                  {uri}
-                </label>
-              </a>
-              {:else}
-              <a href="{null}" class="dropdown-item">
-                loading
-              </a>
-              {/each}
-            </div>
-          </div>
+            </span>
+          {/each}
         </div>
       </div>
-      <div class="column">
+      <div class="column is-narrow">
         <button on:click={searchFunction} class="button">
           <FontAwesomeIcon icon={faSearch} class="icon"/>
         </button>
       </div>
       {#if resultTracks.length > 0}
-      <div class="column">
+      <div class="column is-narrow">
         <div class="dropdown is-right"  class:is-active={showOptions}>
           <div class="dropdown-trigger" on:click={() => showOptions = !showOptions}>
             {#if showOptions}
@@ -174,11 +157,21 @@
     faAngleUp,
     faPlus,
     faRandom,
+    faDatabase,
+    faPodcast,
+    faFish,
+    faGuitar,
+    faMusic
   } from '@fortawesome/free-solid-svg-icons';
 
-  let dropMenuActive = false;
-  let selectedUris = [];
-  let hideUris = ['http', 'https', 'mms', 'rtmp', 'rtmps', 'rtsp', 'file']
+  let selectedUris = {};
+  let hideUris = ['http', 'https', 'mms', 'rtmp', 'rtmps', 'rtsp', 'podcast+file', 'podcast+http', 'podcast+https']
+  let uriIcons = {
+    local: faDatabase,
+    podcast: faPodcast,
+    subidy: faFish,
+    tunein: faGuitar
+  }
   let uris = [];
   let promise;
   let showAddToPlaylistModal = false;
@@ -194,13 +187,13 @@
     const urisResult = await $mopidy.getUriSchemes()
     if (urisResult) {
       uris = urisResult.filter(x => hideUris.indexOf(x) === -1)
-      selectedUris = uris
+      uris.forEach(uri => selectedUris[uri] = true)
     }
   })
 
   const searchFunction = async () => {
     resultTracks = []
-    const urisRequest = selectedUris.map(x => x + ':')
+    const urisRequest = Object.entries(selectedUris).filter(x => x[1]).map(x => `${x[0]}:`)
     const res = await $mopidy.library.search({'query': {'any': [searchTerm]}, 'uris': [`${urisRequest}`]})
     if (res && res.length > 0) {
       let { tracks } = res.pop()
@@ -334,23 +327,46 @@
     width: 100%;
   }
 
-  .checkbox input {
-    cursor: pointer;
+  .tags {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 
-  .checkbox {
-    cursor: pointer;
-    display: inline-block;
-    line-height: 1.25;
-    position: relative;
+  .tags .tag {
+    margin-bottom: 0.5rem;
   }
 
-  .checkbox input {
-    cursor: pointer;
+  .tags .tag:not(:last-child) {
+    margin-right: 0.5rem;
   }
 
-  .checkbox:hover {
-    color: #363636;
+  .tags:last-child {
+    margin-bottom: -0.5rem;
   }
 
+  .tags:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+
+  .tag:not(body) {
+    align-items: center;
+    background-color: whitesmoke;
+    border-radius: 4px;
+    color: #4a4a4a;
+    display: inline-flex;
+    font-size: 0.75rem;
+    height: 2em;
+    justify-content: center;
+    line-height: 1.5;
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+    white-space: nowrap;
+  }
+
+  .tag:not(body).is-primary {
+    background-color: #DA9C20;
+    color: #fff;
+  }
 </style>
