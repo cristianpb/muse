@@ -8,7 +8,7 @@
       </a>
     </header>
     <section class="modal-card-body">
-      <label class="label">Name</label>
+      <label class="label" for="playlist name">Name</label>
       <input class="input" type="text" bind:value={playlistName} name="playlist name" id="playlist name"/>
     </section>
     <footer class="modal-card-foot">
@@ -190,6 +190,7 @@
     flex-direction: column;
     max-height: calc(100vh - 40px);
     overflow: hidden;
+    overflow-y: visible;
     -ms-overflow-y: visible;
   }
 

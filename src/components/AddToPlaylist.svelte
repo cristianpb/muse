@@ -9,11 +9,11 @@
     </header>
     <section class="modal-card-body">
       {#if track}
-      <label class="label">Add {track.name} to a playlist</label>
+      <p class="label">Add {track.name} to a playlist</p>
       {/if}
       
       <div class="list is-hoverable">
-        {#each $playlists as playlist, i}
+        {#each $playlists as playlist}
           <div class="list-item">
             <div class="columns is-mobile">
               <div class="column">
@@ -224,6 +224,7 @@
     flex-direction: column;
     max-height: calc(100vh - 40px);
     overflow: hidden;
+    overflow-y: visible;
     -ms-overflow-y: visible;
   }
 

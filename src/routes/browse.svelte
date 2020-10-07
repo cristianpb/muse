@@ -223,20 +223,4 @@
     justify-content: flex-start;
   }
 
-  .breadcrumb.has-arrow-separator li + li::before {
-    content: "\02192";
-  }
-
-  .breadcrumb.has-bullet-separator li + li::before {
-    content: "\02022";
-  }
-
-  .breadcrumb.has-dot-separator li + li::before {
-    content: "\000b7";
-  }
-
-  .breadcrumb.has-succeeds-separator li + li::before {
-    content: "\0227B";
-  }
-
 </style>
