@@ -128,7 +128,7 @@ export function handleMessage (message) {
 }
 
 export function muteClient(clientId, muted) {
-  console.log(`Muted ${clientId} - ${muted}`);
+  console.log(`[Snapcast]: ${muted ? 'Unmute': 'Mute'} client ${clientId}`);
   let message = {
     id:8,
     jsonrpc:"2.0",
@@ -145,7 +145,10 @@ export function muteClient(clientId, muted) {
   snapGroups.set(
     groupsLocal.map(group => {
       group.clients.forEach(client => {
-        if (client.id == clientId) client.muted = !muted
+        if (client.id == clientId) {
+          client.volume = muted ? 10 : 0
+          client.muted = !muted
+        }
       })
       return group
     })
@@ -153,7 +156,7 @@ export function muteClient(clientId, muted) {
 }
 
 export function muteGroup(groupId, muted) {
-  console.log(`Muted ${groupId} - ${muted}`);
+  console.log(`[Snapcast]: ${muted ? 'Unmute': 'Mute'} group ${groupId}`);
   let message = {
     id:8,
     jsonrpc:"2.0",

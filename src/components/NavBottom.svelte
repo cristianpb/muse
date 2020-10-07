@@ -47,7 +47,7 @@
       <span aria-hidden="true"></span>
     </a>
   </div>
-  <div id="navMenu" class="navbar-menu" class:is-active={burgerState}>
+  <div id="navMenu" class="navbar-menu" class:is-active={burgerState}  transition:slide >
     <div class="navbar-end">
 
       {#if $snapGroups.length > 0}
@@ -66,9 +66,18 @@
         {#each $snapGroups as group}
         {#each group.clients as client, idx}
           <div class="navbar-item  is-hidden-desktop">
+            <span>
+            {client.name ? client.name : client.host}
+            </span>
             <div class="columns is-mobile">
-              <div class="column is-narrow">
-                {client.name ? client.name : client.host}
+              <div class="column is-narrow" on:click={() => muteClient(client.id, client.muted)}>
+                <a class="navbar-item small-separation" href="{null}">
+                  {#if client.muted}
+                    <FontAwesomeIcon icon={faVolumeMute} class="icon"/>
+                  {:else}
+                    <FontAwesomeIcon icon={faVolumeUp} class="icon"/>
+                  {/if}
+                </a>
               </div>
               {#if client.connected}
                 <div class="column">
@@ -297,6 +306,7 @@
 
 <script>
   import { onMount } from 'svelte';
+  import { slide } from 'svelte/transition';
   import FontAwesomeIcon from './FontAwesomeIcon.svelte'
   import {
     faCaretRight,
@@ -314,7 +324,7 @@
   } from '@fortawesome/free-solid-svg-icons';
   import { snapGroups, snapClientsVisibility, snapClientsEditVisibility, currentTrack, currentPlaytime, totalPlaytime, currentState, currentVolume, currentMute, mopidy, currentRandom, currentConsume, currentRepeat, currentSingle, mopidyHost, mopidyPort, mopidySSL, snapcastHost, snapcastPort, snapcastSSL } from '../tools/stores';
   import { convertSencondsToString, normalizeTime, setTrackTime, connectWS } from '../tools/mopidyTools';
-  import { connectSnapcast, changeHandler } from '../tools/snapcast';
+  import { connectSnapcast, changeHandler, muteClient } from '../tools/snapcast';
 
   let config;
   let burgerState = false;
@@ -434,6 +444,10 @@
     border-radius: 50%;
     background: #DA9C20;
     cursor: pointer;
+  }
+
+  .small-separation {
+    padding: 0.1rem 0.75rem;
   }
 
 </style>
