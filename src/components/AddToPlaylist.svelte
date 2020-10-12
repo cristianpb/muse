@@ -79,7 +79,9 @@
   let savePlaylistPromise
 
   onMount(async () => {
-    $mopidy = await connectWS()
+    // $mopidy = await connectWS()
+    const message = await connectWS()
+    console.log("in playlist", message);
     $playlists = await getPlaylists()
   })
 

@@ -11,17 +11,31 @@
   <div class="column is-narrow">
     <div class="columns is-mobile">
       <div class="column">
-        <div class="tags">
-          {#each uris as uri}
-            <span class="tag" class:is-primary="{selectedUris[uri]}" on:click="{() => selectedUris[uri] = !selectedUris[uri]}">
-              {#if uri in uriIcons}
-                <FontAwesomeIcon icon={uriIcons[uri]} class="icon is-small"/> &nbsp; {uri}
-              {:else}
-                <FontAwesomeIcon icon={faMusic} class="icon is-small"/> &nbsp; {uri}
-              {/if}
-            </span>
-          {/each}
-        </div>
+        {#await promiseLoading}
+          {#if mopidyConnectionStatus}
+            <button class="button" disabled>
+              Loading sources &nbsp;&nbsp;&nbsp;
+              <FontAwesomeIcon icon={faSpinner} spin={true} class="icon"/>
+            </button>
+          {:else}
+            <button class="button" disabled>
+              Connecting to mopidy &nbsp;&nbsp;&nbsp;&nbsp;
+              <FontAwesomeIcon icon={faSpinner} spin={true} class="icon"/>
+            </button>
+          {/if}
+        {:then}
+          <div class="tags">
+            {#each uris as uri}
+              <span class="tag" class:is-primary="{selectedUris[uri]}" on:click="{() => selectedUris[uri] = !selectedUris[uri]}">
+                {#if uri in uriIcons}
+                  <FontAwesomeIcon icon={uriIcons[uri]} class="icon is-small"/> &nbsp; {uri}
+                {:else}
+                  <FontAwesomeIcon icon={faMusic} class="icon is-small"/> &nbsp; {uri}
+                {/if}
+              </span>
+            {/each}
+          </div>
+        {/await}
       </div>
       <div class="column is-narrow">
         <button on:click={searchFunction} class="button">
@@ -161,7 +175,8 @@
     faPodcast,
     faFish,
     faGuitar,
-    faMusic
+    faMusic,
+    faSpinner
   } from '@fortawesome/free-solid-svg-icons';
 
   let selectedUris = {};
@@ -174,6 +189,7 @@
   }
   let uris = [];
   let promise;
+  let promiseLoading;
   let showAddToPlaylistModal = false;
   let showOptions = false;
   let selectedTrack;
@@ -181,15 +197,21 @@
   let resultTracks = [];
   let hovering = false;
   let searchTerm = '';
+  let mopidyConnectionStatus;
 
   onMount(async () => {
-    $mopidy = await connectWS()
+    promiseLoading = loadUris()
+  })
+
+  const loadUris = async () => {
+    mopidyConnectionStatus = await connectWS()
+    console.log('in search', mopidyConnectionStatus);
     const urisResult = await $mopidy.getUriSchemes()
     if (urisResult) {
       uris = urisResult.filter(x => hideUris.indexOf(x) === -1)
       uris.forEach(uri => selectedUris[uri] = true)
     }
-  })
+  }
 
   const searchFunction = async () => {
     resultTracks = []

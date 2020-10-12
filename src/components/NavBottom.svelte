@@ -341,7 +341,9 @@
     $snapcastHost = config && config.snapcast && config.snapcast.host ? config.snapcast.host : $snapcastHost ? $snapcastHost : window.location.hostname;
     $snapcastPort = config && config.snapcast && config.snapcast.port ? config.snapcast.port : $snapcastPort ? $snapcastPort : 1780;
     $snapcastSSL = config && config.snapcast && config.snapcast.ssl ? Boolean(config.snapcast.ssl).toString() : $snapcastSSL ? $snapcastSSL : window.location.protocol === 'https:' ? 'true' : 'false';
-    $mopidy = await connectWS()
+    // $mopidy = await connectWS()
+    const message = await connectWS()
+    console.log("in navbottom", message);
     try {
       await connectSnapcast()
     } catch(e) {

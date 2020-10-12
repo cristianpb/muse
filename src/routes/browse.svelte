@@ -143,7 +143,9 @@
   let showOptions = false;
 
   onMount(async () => {
-    $mopidy = await connectWS()
+    // $mopidy = await connectWS()
+    const message = await connectWS()
+    console.log("in browser", message);
     results = await $mopidy.library.browse({uri: null})
   })
 

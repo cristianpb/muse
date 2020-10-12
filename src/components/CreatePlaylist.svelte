@@ -52,7 +52,9 @@
   export let showCreatePlaylistModal;
 
   onMount(async () => {
-    $mopidy = await connectWS()
+    //$mopidy = await connectWS()
+    const message = await connectWS()
+    console.log("in create playlist", message);
   })
 
   const createPlaylist = async () => {

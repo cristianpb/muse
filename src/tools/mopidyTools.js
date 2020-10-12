@@ -34,67 +34,60 @@ export function convertPercentToSeconds(percent, total) {
   return ~~((total * percent) / 100)
 }
 
-export function connectWS(reconnect) {
-  return new Promise(function(resolve, reject) {
-    if (mopidyWS && !reconnect) {
-      if (connecting) {
-        console.log('[Mopidy]: Waiting for connection');
-        setTimeout(() => {
-          console.log('[Mopidy]: Already connected');
-          resolve(mopidyWS)
-        }, 1000)
-      } else {
-        resolve(mopidyWS)
-      }
-    } else {
-      connecting = true;
-      const host = mopidyHostLocal ? mopidyHostLocal : window.location.hostname;
-      const port = mopidyPortLocal ? mopidyPortLocal : window.location.port;
-      const protocol = mopidySSLLocal ? mopidySSLLocal : window.location.protocol === 'https:' ? 'true' : 'false';
-      mopidyWS = new Mopidy({
-        webSocketUrl: `ws${ protocol === 'true' ? 's' : '' }://${host}:${port}/mopidy/ws/`,
-      });
-      mopidyWS.on("state:online", async () => {
-        console.log('[Mopidy]: Connected');
+let promiseConnecting;
 
-        const currentTrackTL = await upgradeCurrentTrack()
-        currentPlaytimeLocal = await mopidyWS.playback.getTimePosition()
-        const currentStateLocal = await mopidyWS.playback.getState()
-        const currentVolumeLocal = await mopidyWS.mixer.getVolume()
-        const currentMuteLocal = await mopidyWS.mixer.getMute()
-        const currentRandomLocal = await mopidyWS.tracklist.getRandom()
-        const currentConsumeLocal = await mopidyWS.tracklist.getConsume()
-        const currentRepeatLocal = await mopidyWS.tracklist.getRepeat()
-        const currentSingleLocal = await mopidyWS.tracklist.getSingle()
+const connectingFunction = () => {
+  return new Promise((resolve, reject) => {
+    connecting = true;
+    const host = mopidyHostLocal ? mopidyHostLocal : window.location.hostname;
+    const port = mopidyPortLocal ? mopidyPortLocal : window.location.port;
+    const protocol = mopidySSLLocal ? mopidySSLLocal : window.location.protocol === 'https:' ? 'true' : 'false';
+    mopidyWS = new Mopidy({
+      webSocketUrl: `ws${ protocol === 'true' ? 's' : '' }://${host}:${port}/mopidy/ws/`,
+    });
+    mopidyWS.on("state:online", async () => {
+      console.log('[Mopidy]: Connected', mopidyWS);
 
-        currentPlaytime.set(currentPlaytimeLocal);
-        currentState.set(currentStateLocal);
-        currentVolume.set(currentVolumeLocal);
-        currentMute.set(currentMuteLocal);
-        currentRandom.set(currentRandomLocal);
-        currentConsume.set(currentConsumeLocal);
-        currentRepeat.set(currentRepeatLocal);
-        currentSingle.set(currentSingleLocal);
+      const currentTrackTL = await upgradeCurrentTrack()
+      currentPlaytimeLocal = await mopidyWS.playback.getTimePosition()
+      const currentStateLocal = await mopidyWS.playback.getState()
+      const currentVolumeLocal = await mopidyWS.mixer.getVolume()
+      const currentMuteLocal = await mopidyWS.mixer.getMute()
+      const currentRandomLocal = await mopidyWS.tracklist.getRandom()
+      const currentConsumeLocal = await mopidyWS.tracklist.getConsume()
+      const currentRepeatLocal = await mopidyWS.tracklist.getRepeat()
+      const currentSingleLocal = await mopidyWS.tracklist.getSingle()
 
-        if (currentTrackTL) {
-          const totalPlaytimeLocal = currentTrackTL.track.length
-          totalPlaytime.set(currentTrackTL.track.length)
-          if (currentStateLocal === 'playing') {
-            if (interval) {
-              clearInterval(interval)
-            }
-            interval = setInterval(() => {
-              if (currentPlaytimeLocal >= totalPlaytimeLocal) {
-                clearInterval(interval)
-              } else {
-                currentPlaytime.update(v => v + 1000)
-              }
-            }, 1000);
+      currentPlaytime.set(currentPlaytimeLocal);
+      currentState.set(currentStateLocal);
+      currentVolume.set(currentVolumeLocal);
+      currentMute.set(currentMuteLocal);
+      currentRandom.set(currentRandomLocal);
+      currentConsume.set(currentConsumeLocal);
+      currentRepeat.set(currentRepeatLocal);
+      currentSingle.set(currentSingleLocal);
+
+      if (currentTrackTL) {
+        const totalPlaytimeLocal = currentTrackTL.track.length
+        totalPlaytime.set(currentTrackTL.track.length)
+        if (currentStateLocal === 'playing') {
+          if (interval) {
+            clearInterval(interval)
           }
+          interval = setInterval(() => {
+            if (currentPlaytimeLocal >= totalPlaytimeLocal) {
+              clearInterval(interval)
+            } else {
+              currentPlaytime.update(v => v + 1000)
+            }
+          }, 1000);
         }
-        connecting = false
-        resolve(mopidyWS);
-      })
+      }
+      connecting = false
+      mopidy.set(mopidyWS)
+      resolve('Connected')
+      //resolve(mopidyWS);
+    })
 
       mopidyWS.on("state", (x) => console.log('[Mopidy]:', x));
       mopidyWS.on("event", (x) => console.log('[Mopidy]:', x));
@@ -171,10 +164,33 @@ export function connectWS(reconnect) {
         console.log('[Mopidy]: error:', err);
         reject(err);
       });
+  })
+}
 
+export function connectWS(reconnect) {
+  // return new Promise(function(resolve, reject) {
+    if (mopidyWS && !reconnect) {
+      if (connecting) {
+        console.log("connecting", promiseConnecting);
+        // resolve('Connecting')
+        return promiseConnecting
+        // console.log('[Mopidy]: Waiting for connection');
+        //setTimeout(() => {
+        //  console.log('[Mopidy]: Already connected');
+        //  resolve(mopidyWS)
+        //}, 1000)
+      } else {
+        // resolve('Connected')
+        console.log("already connected");
+        return promiseConnecting
+        // resolve('Connected')
+        //resolve(mopidyWS)
+      }
+    } else {
+      promiseConnecting = connectingFunction()
+      return promiseConnecting
     }
-
-  });
+  // });
 }
 
 export const upgradeCurrentTrack = async () => {
@@ -190,7 +206,9 @@ export const upgradeCurrentTrack = async () => {
 }
 
 export async function getPlaylists() {
-  mopidyWS = await connectWS()
+  // mopidyWS = await connectWS()
+  const message = await connectWS()
+  console.log("getting playlists", message);
   const playlistsRaw = await mopidyWS.playlists.asList()
   playlistsLocal = playlistsRaw.map(playlistRaw => {
     playlistRaw.slug = playlistRaw.name
@@ -218,7 +236,9 @@ export async function getCurrentTrackList() {
 }
 
 export async function getCurrentTlTrackList() {
-  mopidyWS = await connectWS()
+  // mopidyWS = await connectWS()
+  const message = await connectWS()
+  console.log("get curren tracklist", message);
   const currentTrackList = await mopidyWS.tracklist.getTlTracks()
   if (currentTrackList) {
     return currentTrackList

@@ -104,7 +104,7 @@
       </div>
     </a>
   {:else}
-    {#if promise && $mopidy && $mopidy._webSocket.readyState == 1}
+    {#if promise}
       {#await promise}
         <p class="list-item">loading songs...</p>
       {:then}
@@ -188,6 +188,7 @@
 
   onMount(async () => {
     promise = loadCurrentTracklist()
+    // && $mopidy && $mopidy._webSocket.readyState == 1
   })
 
   currentTrack.subscribe(async (myTrack) => {
