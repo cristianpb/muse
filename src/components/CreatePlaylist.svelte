@@ -37,8 +37,8 @@
 
 <script>
   import { onMount } from 'svelte';
-  import { mopidy } from '../tools/stores';
-  import { connectWS } from '../tools/mopidyTools';
+  import { mopidy, playlists } from '../tools/stores';
+  import { connectWS, getPlaylists } from '../tools/mopidyTools';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faCheck,
@@ -51,16 +51,17 @@
 
   export let showCreatePlaylistModal;
 
-  onMount(async () => {
-    //$mopidy = await connectWS()
-    const message = await connectWS()
-    console.log("in create playlist", message);
+  onMount(() => {
+    connectWS()
   })
 
   const createPlaylist = async () => {
     const res = await $mopidy.playlists.create({name: playlistName})
     if (res) {
-      setTimeout(() => { showCreatePlaylistModal = !showCreatePlaylistModal }, 1500)
+      setTimeout(async () => { 
+        $playlists = await getPlaylists()
+        showCreatePlaylistModal = !showCreatePlaylistModal
+      }, 500)
       return true
     } else {
       return false
