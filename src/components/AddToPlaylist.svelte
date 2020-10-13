@@ -98,6 +98,7 @@
     const res = await $mopidy.playlists.save({playlist: playlistInfo})
     if (res) {
       $playlists = await getPlaylists()
+      showAddToPlaylistModal = !showAddToPlaylistModal
       return true
     } else {
       return false
