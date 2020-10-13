@@ -62,9 +62,17 @@
 {#if promise}
   <div class="list is-hoverable">
     {#await promise}
-      <p class="list-item">
-        <FontAwesomeIcon icon={faSpinner} class="icon is-24" spin={true}/>
-      </p>
+      {#if mopidyConnectionStatus}
+        <p class="list-item">
+          Loading sources &nbsp;&nbsp;&nbsp;
+          <FontAwesomeIcon icon={faSpinner} spin={true} class="icon"/>
+        </p>
+      {:else}
+        <p class="list-item">
+          Connecting to mopidy &nbsp;&nbsp;&nbsp;&nbsp;
+          <FontAwesomeIcon icon={faSpinner} class="icon is-24" spin={true}/>
+        </p>
+      {/if}
     {:catch error}
       <p class="list-item" style="color: red">{error.message}</p>
     {/await}
@@ -141,13 +149,16 @@
   let promise;
   let options;
   let showOptions = false;
+  let mopidyConnectionStatus;
 
   onMount(async () => {
-    // $mopidy = await connectWS()
-    const message = await connectWS()
-    console.log("in browser", message);
-    results = await $mopidy.library.browse({uri: null})
+    promise = loadUris()
   })
+
+  const loadUris = async () => {
+    mopidyConnectionStatus = await connectWS()
+    results = await $mopidy.library.browse({uri: null})
+  }
 
   const browserUri = async (result, idx, location) => {
     if (['directory', 'artist', 'album'].indexOf(result.type) > -1) {
