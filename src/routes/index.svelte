@@ -9,13 +9,13 @@
     {#if $albumImage}
       <div class="card-image has-text-centered">
         <figure class="image">
-          <img src="{$albumImage}" width="480" height="480" alt="Album">
+          <img src="{$albumImage}" width="240" height="240" alt="Album">
         </figure>
       </div>
     {:else}
       <div class="card-image has-text-centered">
         <figure class="image is-1by1">
-          <img src="{process.env.NODE_ENV === 'development' ? '' : '/muse'}/icon.svg" alt="Placeholder" width="128" height="128">
+          <img src="{process.env.NODE_ENV === 'development' ? '' : '/muse'}/icon.svg" alt="Placeholder" width="240" height="240">
         </figure>
       </div>
     {/if}
@@ -188,7 +188,6 @@
 
   onMount(async () => {
     promise = loadCurrentTracklist()
-    // && $mopidy && $mopidy._webSocket.readyState == 1
   })
 
   currentTrack.subscribe(async (myTrack) => {
