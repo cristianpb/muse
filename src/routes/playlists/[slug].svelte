@@ -1,3 +1,4 @@
+<DeletePlaylist deletePlaylistConfirmation={deletePlaylistConfirmation} selectedPlaylist={selectedPlaylist} />
 <div class="columns">
   <div class="column">
     <h1 class="title">{slug.replace('-',' ')}</h1>
@@ -76,20 +77,6 @@
   </div>
 </div>
 
-<div class="modal" class:is-active={deletePlaylistConfirmation}  >
-  <div class="modal-background"  on:click={() => deletePlaylistConfirmation = !deletePlaylistConfirmation}></div>
-  <div class="modal-content has-text-centered">
-    <p class="title">
-      Delete playlist
-    </p>
-    <button class="button" on:click={deletePlaylist(selectedPlaylist.uri)}>
-      Yes
-    </button>
-  </div>
-  <button class="modal-close is-large" aria-label="close" on:click={() => deletePlaylistConfirmation = !deletePlaylistConfirmation}></button>
-</div>
-
-
 <div use:clickOutside on:click_outside={() => dropdownActivate = null} class="list is-hoverable">
   {#await promise}
     <p class="list-item">
@@ -164,6 +151,7 @@
   import { clickOutside } from '../../tools/clickOutside';
   import { flip } from 'svelte/animate';
   import { goto } from '@sapper/app';
+  import DeletePlaylist from '../../components/DeletePlaylist.svelte';
   import { getPlaylists, getPlaylistTracks, playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
   import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte'
   import {
@@ -256,93 +244,3 @@
   }
 
 </script>
-
-<style>
-  .modal-close {
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    background-color: rgba(10, 10, 10, 0.2);
-    border: none;
-    border-radius: 290486px;
-    cursor: pointer;
-    pointer-events: auto;
-    display: inline-block;
-    flex-grow: 0;
-    flex-shrink: 0;
-    font-size: 0;
-    height: 20px;
-    max-height: 20px;
-    max-width: 20px;
-    min-height: 20px;
-    min-width: 20px;
-    outline: none;
-    position: relative;
-    vertical-align: top;
-    width: 20px;
-  }
-
-  .modal-close::before, .modal-close::after {
-    background-color: white;
-    content: "";
-    display: block;
-    left: 50%;
-    position: absolute;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%) rotate(45deg);
-    transform-origin: center center;
-  }
-
-  .modal-close::before {
-    height: 2px;
-    width: 50%;
-  }
-
-  .modal-close::after {
-    height: 50%;
-    width: 2px;
-  }
-
-  .modal-close:hover, .modal-close:focus {
-    background-color: rgba(10, 10, 10, 0.3);
-  }
-
-  .modal-close:active {
-    background-color: rgba(10, 10, 10, 0.4);
-  }
-
-  .is-large.modal-close {
-    height: 32px;
-    max-height: 32px;
-    max-width: 32px;
-    min-height: 32px;
-    min-width: 32px;
-    width: 32px;
-  }
-
-  .modal {
-    align-items: center;
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    overflow: hidden;
-    position: fixed;
-    z-index: 40;
-  }
-
-  .modal.is-active {
-    display: flex;
-  }
-
-  .modal-background {
-    background-color: rgba(10, 10, 10, 0.86);
-  }
-
-  .modal-close {
-    background: none;
-    height: 40px;
-    position: fixed;
-    right: 20px;
-    top: 20px;
-    width: 40px;
-  }
-</style>
