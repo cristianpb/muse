@@ -48,7 +48,7 @@
     </a>
   </div>
   <div id="navMenu" class="navbar-menu" class:is-active={burgerState}  transition:slide >
-    <div class="navbar-end">
+    <div class="navbar-end  scroll-style">
 
       {#if $snapGroups.length > 0}
         <a 
@@ -450,6 +450,11 @@
 
   .small-separation {
     padding: 0.1rem 0.75rem;
+  }
+
+  .scroll-style {
+    max-height: 450px;
+    overflow-y: scroll;
   }
 
 </style>
