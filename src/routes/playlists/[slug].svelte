@@ -150,7 +150,6 @@
   import { mopidy, playlists } from '../../tools/stores';
   import { clickOutside } from '../../tools/clickOutside';
   import { flip } from 'svelte/animate';
-  import { goto } from '@sapper/app';
   import DeletePlaylist from '../../components/DeletePlaylist.svelte';
   import { getPlaylists, getPlaylistTracks, playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
   import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte'
@@ -223,16 +222,6 @@
     let newPlaylist = playlistsTracks.tracks
     newPlaylist = newPlaylist.filter(x => x.uri != uri);
     playlistsTracks.tracks = newPlaylist
-  }
-
-  const deletePlaylist = async (uri) => {
-    const res = await $mopidy.playlists.delete({uri})
-    if (res) {
-      deletePlaylistConfirmation = !deletePlaylistConfirmation
-      setTimeout(() => { goto('playlists'); }, 1000)
-    } else {
-      console.log("Error: no laylist remove")
-    }
   }
 
   const handleDropdownActivation = (index) => {

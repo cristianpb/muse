@@ -59,7 +59,8 @@
     const res = await $mopidy.playlists.create({name: playlistName})
     if (res) {
       setTimeout(async () => { 
-        $playlists = await getPlaylists()
+        const playlistsLocal = await getPlaylists()
+        playlists.set(playlistsLocal)
         showCreatePlaylistModal = !showCreatePlaylistModal
       }, 500)
       return true
