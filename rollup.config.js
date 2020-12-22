@@ -65,10 +65,12 @@ export default {
 			legacy && babel({
 				extensions: ['.js', '.mjs', '.html', '.svelte'],
         babelHelpers: 'runtime',
-				exclude: ['node_modules/@babel/**'],
+        exclude: [ 'node_modules/@babel/**', 'node_modules/core-js/**' ],
 				presets: [
 					['@babel/preset-env', {
-						targets: '> 0.25%, not dead'
+            targets: '> 0.25%, not dead',
+            useBuiltIns: 'usage',
+            corejs: 3
 					}]
 				],
 				plugins: [
