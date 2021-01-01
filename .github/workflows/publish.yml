@@ -32,14 +32,8 @@ jobs:
         run: |
           npm run lint
           npm run validate
-      - name: ⬆ Bump version files
-        if: startsWith(github.event.ref, 'refs/tags')
-        run: |
-          export APP_VERSION=$(git describe --tags --always)
-          sed -i -E "s/version = (.*)/version = ${APP_VERSION:1}/"  setup.cfg
-          npm --no-git-tag-version version ${APP_VERSION}
       - name: 🏗 Build html
-        run: NODE_ENV=production npm run export
+        run: make build-html
       - name: 🚀 Deploy to GitHub pages
         if: startsWith(github.event.ref, 'refs/tags') || github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v3
@@ -49,18 +43,14 @@ jobs:
           publish_dir: ./__sapper__/export/muse
           force_orphan: true
       - name: 🐍 Build Python package
-        run: |
-          cp  -r ./__sapper__/export/muse/* mopidy_muse/static
-          python3 -m pip install  --upgrade setuptools wheel
-          python3 setup.py sdist bdist_wheel
-
-          #- name: Publish package 📦 to Test PyPI
-          #  uses: pypa/gh-action-pypi-publish@master
-          #  if: startsWith(github.event.ref, 'refs/tags')
-          #  with:
-          #    user: __token__
-          #    password: ${{ secrets.test_pypi_password }}
-          #    repository_url: https://test.pypi.org/legacy/
+        run: make build-python
+        #- name: Publish package 📦 to Test PyPI
+        #  uses: pypa/gh-action-pypi-publish@master
+        #  if: startsWith(github.event.ref, 'refs/tags')
+        #  with:
+        #    user: __token__
+        #    password: ${{ secrets.test_pypi_password }}
+        #    repository_url: https://test.pypi.org/legacy/
       - name: 🐳 Build Docker image
         run: |
           make mopidy-start

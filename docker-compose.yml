@@ -38,3 +38,4 @@ services:
       - ${HOST_MUSIC_DIRECTORY}:/var/lib/mopidy/music
       - ${HOST_PLAYLIST_DIRECTORY}:/var/lib/mopidy/playlists
       - ${HOST_SNAPCAST_TEMP}:/tmp
+      - ${APP_PATH}/dist:/${APP}/dist
