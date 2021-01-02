@@ -123,8 +123,8 @@
           <div class="column">
               <input class="input"
                      type="text" 
-                     bind:value="{client.name}" 
-                     on:input={() => editClientName(client.id, client.name)}
+                     bind:value="{group.clients[i].name}" 
+                     on:input={() => editClientName(group.clients[i].id, group.clients[i].name)}
                      placeholder="Client name">
           </div>
           <div class="column is-narrow" on:click="{deleteClient(client.id)}">
