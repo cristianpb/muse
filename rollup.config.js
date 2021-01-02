@@ -10,6 +10,7 @@ import pkg from './package.json';
 import builtins from 'rollup-plugin-node-builtins';
 import sass from 'rollup-plugin-sass';
 import postcss from 'postcss'
+import rolluppluginiconifysvg from 'rollup-plugin-iconify-svg';
 
 const purgecss = require("@fullhuman/postcss-purgecss")({
   content: ["./src/**/*.svelte", "./src/**/*.html"],
@@ -31,6 +32,9 @@ export default {
 		input: config.client.input(),
 		output: config.client.output(),
 		plugins: [
+      rolluppluginiconifysvg({
+        targets: [{ src: 'src/routes', dest: 'src/tools/icons.js' }]
+      }),
 			replace({
         'process.browser': true,
         'process.env.NODE_ENV': JSON.stringify(mode),
@@ -88,6 +92,10 @@ export default {
 
     preserveEntrySignatures: false,
 		onwarn,
+    watch: {
+      clearScreen: false,
+      exclude:['src/tools/icons.js']
+    }
 	},
 
 	server: {

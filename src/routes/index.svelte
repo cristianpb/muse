@@ -4,6 +4,8 @@
 
 <h1 class="title">Now playing</h1>
 
+{@html icons["fa:random"]}
+
 {#if $currentTrack}
   <div class="card">
     {#if $albumImage}
@@ -166,6 +168,7 @@
 <script>
   import { onMount } from 'svelte';
   import { flip } from 'svelte/animate';
+  import icons from "../tools/icons.js"; // this is the 'dest' file which the plugin has generated
   import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState } from '../tools/stores';
   import { convertSencondsToString, normalizeTime, getCurrentTlTrackList, setTrackTime, playTracklist, loadAlbumImage } from '../tools/mopidyTools';
   import { clickOutside } from '../tools/clickOutside';
