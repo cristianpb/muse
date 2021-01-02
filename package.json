@@ -1,7 +1,7 @@
 {
   "name": "Mopidy-Muse",
   "description": "Mopidy web interface with snapcast support",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "scripts": {
     "lint": "eslint . --ignore-pattern dist --ext .js,.svelte --fix",
     "dev": "sapper dev",
