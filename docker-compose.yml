@@ -20,7 +20,7 @@ services:
       - ${HOST_SNAPCAST_TEMP}:/tmp
       #- ./snapcast/snapserver.conf:/etc/default/snapserver.conf
   mopidy:
-    image: ${DOCKER_USERNAME}/${APP}:${APP_VERSION}
+    image: ${DOCKER_USERNAME}/${APP}:${APP_VERSION_CUT}
     container_name: ${APP}
     build:
       context: .

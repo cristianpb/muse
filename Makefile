@@ -6,7 +6,7 @@ export APP_VERSION := $(shell git describe --tags --always)
 export PACKAGE_VERSION := $(shell node -p -e "require('./package.json').version")
 # findstring should check for regex
 export APP_VERSION_SAFE = $(if $(findstring v0,$(APP_VERSION)),$(APP_VERSION),$(PACKAGE_VERSION)-$(APP_VERSION))
-export APP_VERSION_CUT=$(subst v,,$(APP_VERSION))
+export APP_VERSION_CUT=$(subst v,,$(APP_VERSION_SAFE))
 export USE_TTY := $(shell test -t 1 && USE_TTY="-t")
 
 export DOCKER_USERNAME=cristianpb
@@ -45,9 +45,6 @@ mopidy-start:
 			((timeout--)); sleep 1 ;\
 		done ;\
 	echo -e "mopidy started in $$((30 - timeout)) seconds"; exit $$ret
-
-mopidy-dev:
-	docker-compose up --build -d --force-recreate
 
 mopidy-stop:
 	docker-compose down --remove-orphan
