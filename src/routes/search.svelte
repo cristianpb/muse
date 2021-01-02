@@ -180,7 +180,7 @@
   } from '@fortawesome/free-solid-svg-icons';
 
   let selectedUris = {};
-  let hideUris = ['http', 'https', 'mms', 'rtmp', 'rtmps', 'rtsp', 'podcast+file', 'podcast+http', 'podcast+https']
+  let hideUris = ['http', 'https', 'file', 'mms', 'rtmp', 'rtmps', 'rtsp', 'podcast+file', 'podcast+http', 'podcast+https']
   let uriIcons = {
     local: faDatabase,
     podcast: faPodcast,
@@ -209,6 +209,7 @@
     const urisResult = await $mopidy.getUriSchemes()
     if (urisResult) {
       uris = urisResult.filter(x => hideUris.indexOf(x) === -1)
+      console.log("UIS", uris);
       uris.forEach(uri => selectedUris[uri] = true)
     }
   }
