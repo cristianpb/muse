@@ -80,14 +80,15 @@
          >
          <div class="columns is-mobile">
            <div class="column">
+             <b>Group {group.name ? `${group.name} - ` : ''}{group.id}</b>
+           </div>
+           <div class="column">
              {#if editLine === g}
                <input class="input"
                       type="text" 
                       bind:value="{group.name}" 
                       on:input={() => editGroupName(group.id, group.name)}
                       placeholder="Group name">
-             {:else}
-               <b>Group {group.name ? `${group.name} - ` : ''}{group.id}</b>
              {/if}
            </div>
            {#if editLine === g}
@@ -109,20 +110,28 @@
         on:mouseleave={() => hoveringList = {}}
         class:is-active={hoveringList.group === g && hoveringList.client === i}
         id = {client.id}>
-        {#if editLine === g}
-          <input class="input"
-                 type="text" 
-                 bind:value="{client.name}" 
-                 on:input={() => editClientName(client.id, client.name)}
-                 placeholder="Client name">
-        {:else}
-          {#if client.connected}
-            <FontAwesomeIcon icon={faSatellite} class="icon is-small"/>
-          {:else}
-            <FontAwesomeIcon icon={faUnlink} class="icon is-small"/>
+        <div class="columns is-mobile">
+          <div class="column">
+            {#if client.connected}
+              <FontAwesomeIcon icon={faSatellite} class="icon is-small"/>
+            {:else}
+              <FontAwesomeIcon icon={faUnlink} class="icon is-small"/>
+            {/if}
+            {client.name ? client.name : client.host}
+          </div>
+          {#if editLine === g}
+          <div class="column">
+              <input class="input"
+                     type="text" 
+                     bind:value="{client.name}" 
+                     on:input={() => editClientName(client.id, client.name)}
+                     placeholder="Client name">
+          </div>
+          <div class="column is-narrow" on:click="{deleteClient(client.id)}">
+            <FontAwesomeIcon icon={faTrash} class="icon"/>
+          </div>
           {/if}
-          {client.name ? client.name : client.host}
-        {/if}
+        </div>
       </div>
     {/each}
   </div>
@@ -214,7 +223,6 @@
 <hr>
 
 <script>
-  import { connectSnapcast } from '../tools/snapcast';
   import { connectWS } from '../tools/mopidyTools';
   import { snapGroups, mopidyHost, mopidyPort, mopidySSL, snapcastHost, snapcastPort, snapcastSSL } from '../tools/stores';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
@@ -223,9 +231,10 @@
     faSatellite,
     faEdit,
     faCheckCircle,
-    faUnlink
+    faUnlink,
+    faTrash
   } from '@fortawesome/free-solid-svg-icons';
-  import { editGroupName, editClientName, setGroupClients } from '../tools/snapcast';
+  import { connectSnapcast, editGroupName, editClientName, setGroupClients, deleteClient } from '../tools/snapcast';
   let promise;
   let promiseMopidy;
   let hovering = false;

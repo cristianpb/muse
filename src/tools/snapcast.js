@@ -50,31 +50,36 @@ export function connectSnapcast(reconnect) {
   });
 }
 
+const updateServer = (groupsRaw) => {
+  snapGroups.set(
+    groupsRaw.map(group => {
+      return { 
+        id: group.id,
+        name: group.name,
+        muted: group.muted,
+        clients: group.clients.map(client => {
+          return {
+            id: client.id,
+            host: client.host.name,
+            name: client.config.name,
+            volume: client.config.volume.percent,
+            connected: client.connected,
+            muted: client.config.volume.muted,
+          }
+        })
+      }
+    })
+  )
+}
+
+
 export function handleMessage (message) {
   const data = JSON.parse(message.data)
   console.log('[Snapcast]: ', data)
   if (data.result && data.result.server && data.result.server.groups) {
     const groupsRaw = data.result.server.groups //.map((x) => x.snapGroups.pop())
-    snapGroups.set(
-      groupsRaw.map(group => {
-        return { 
-          id: group.id,
-          name: group.name,
-          muted: group.muted,
-          clients: group.clients.map(client => {
-            return {
-              id: client.id,
-              host: client.host.name,
-              name: client.config.name,
-              volume: client.config.volume.percent,
-              connected: client.connected,
-              muted: client.config.volume.muted,
-            }
-          })
-        }
-      })
-    )
-  } 
+    updateServer(groupsRaw)
+  }
   if (data && data.method) {
     if (data.method === 'Client.OnDisconnect') {
       const id = data.params.client.id
@@ -123,6 +128,9 @@ export function handleMessage (message) {
           return group
         })
       )
+    } else if (data.method === 'Server.OnUpdate') {
+      const groupsRaw = data.params.server.groups //.map((x) => x.snapGroups.pop())
+      updateServer(groupsRaw)
     }
   }
 }
@@ -229,6 +237,16 @@ export const setGroupClients = (groupId, clientsList) => {
       clients: clientsList,
       id: groupId
     }
+  }
+  snapcastWS.send(JSON.stringify(message));
+}
+
+export const deleteClient = (id) => {
+  const message = {
+    id:8,
+    jsonrpc: "2.0",
+    method: "Server.DeleteClient",
+    params: {id}
   }
   snapcastWS.send(JSON.stringify(message));
 }
