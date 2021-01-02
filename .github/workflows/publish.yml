@@ -79,11 +79,14 @@ jobs:
           push: true
           tags: cristianpb/mopidy-muse:latest
           target: muse
+      - run: |
+          mkdir package
+          tar xvzf dist/Mopidy-Muse*.tar.gz -C package --strip-components=1
       - name: 🍱 Upload package artifact
         uses: actions/upload-artifact@v2
         with:
           name: Mopidy-Muse.tar.gz
-          path: dist/Mopidy-Muse*.tar.gz
+          path: package/*
 
   releasing:
     name: Publish release
