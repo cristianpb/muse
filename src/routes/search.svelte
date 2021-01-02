@@ -209,7 +209,6 @@
     const urisResult = await $mopidy.getUriSchemes()
     if (urisResult) {
       uris = urisResult.filter(x => hideUris.indexOf(x) === -1)
-      console.log("UIS", uris);
       uris.forEach(uri => selectedUris[uri] = true)
     }
   }
@@ -269,7 +268,7 @@
 
   const _addTrackQueue = (uri) => {
     dropdownActivate = null
-    addTracksQueue(uri)
+    addTracksQueue(null, [uri])
   }
 
   const _shufflePlayAllTracks = (Tracks) => {
