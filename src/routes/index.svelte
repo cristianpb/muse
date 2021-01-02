@@ -33,9 +33,9 @@
 
       {#if $currentPlaytime && $totalPlaytime}
       <div class="content">
-        <div class="columns is-mobile">
+        <div class="columns is-mobile is-gapless">
           <div class="column is-narrow">
-            {convertSencondsToString($currentPlaytime)}
+            {convertSencondsToString($currentPlaytime)}&nbsp;
           </div>
           <div class="column">
               <input 
@@ -47,7 +47,7 @@
                 class="slider">
           </div>
           <div class="column is-narrow">
-            {convertSencondsToString($totalPlaytime)}
+            &nbsp;{convertSencondsToString($totalPlaytime)}
           </div>
         </div>
       </div>
