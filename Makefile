@@ -3,6 +3,9 @@ SHELL := /bin/bash
 export APP=mopidy-muse
 export APP_PATH := $(shell pwd)
 export APP_VERSION := $(shell git describe --tags --always)
+export PACKAGE_VERSION := $(shell node -p -e "require('./package.json').version")
+# findstring should check for regex
+export APP_VERSION_SAFE = $(if $(findstring v0,$(APP_VERSION)),$(APP_VERSION),$(PACKAGE_VERSION)-$(APP_VERSION))
 export APP_VERSION_CUT=$(subst v,,$(APP_VERSION))
 export USE_TTY := $(shell test -t 1 && USE_TTY="-t")
 
@@ -50,10 +53,10 @@ mopidy-stop:
 	docker-compose down --remove-orphan
 
 build-docker-mopidy:
-	docker build -f Dockerfile-base -t cristianpb/mopidy-base:${APP_VERSION_CUT}  --target base .
+	docker build -f Dockerfile-base -t cristianpb/mopidy-base:${PACKAGE_VERSION}  --target base .
 
 __sapper__/export/muse:
-	npm --no-git-tag-version --allow-same-version version ${APP_VERSION}
+	npm --no-git-tag-version --allow-same-version version ${APP_VERSION_SAFE}
 	NODE_ENV=production npm run export
 
 build-html: __sapper__/export/muse
