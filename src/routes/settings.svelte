@@ -116,7 +116,11 @@
                  on:input={() => editClientName(client.id, client.name)}
                  placeholder="Client name">
         {:else}
-          <FontAwesomeIcon icon={faSatellite} class="icon is-small"/>
+          {#if client.connected}
+            <FontAwesomeIcon icon={faSatellite} class="icon is-small"/>
+          {:else}
+            <FontAwesomeIcon icon={faUnlink} class="icon is-small"/>
+          {/if}
           {client.name ? client.name : client.host}
         {/if}
       </div>
@@ -218,7 +222,8 @@
     faSpinner,
     faSatellite,
     faEdit,
-    faCheckCircle
+    faCheckCircle,
+    faUnlink
   } from '@fortawesome/free-solid-svg-icons';
   import { editGroupName, editClientName, setGroupClients } from '../tools/snapcast';
   let promise;
