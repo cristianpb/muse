@@ -209,21 +209,10 @@
 
 <hr>
 
-<label class="label" for="imageProvider">Image Provider</label>
-<div class="control">
-  <div class="select">
-    <select bind:value={$imageProvider} id="imageProvider">
-      <option value="local">Local</option>
-      <option value="lastfm">LastFM</option>
-    </select>
-  </div>
-</div>
-
-
 <script>
   import { connectSnapcast } from '../tools/snapcast';
   import { connectWS } from '../tools/mopidyTools';
-  import { snapGroups, imageProvider, mopidyHost, mopidyPort, mopidySSL, snapcastHost, snapcastPort, snapcastSSL } from '../tools/stores';
+  import { snapGroups, mopidyHost, mopidyPort, mopidySSL, snapcastHost, snapcastPort, snapcastSSL } from '../tools/stores';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faSpinner,

@@ -326,17 +326,20 @@ export const addTracksQueue = (Tracks, uris) => {
   }
 }
 
-export const loadAlbumImageLocal = async (track) => {
-  const host = mopidyHostLocal ? mopidyHostLocal : window.location.hostname;
-  const port = mopidyPortLocal ? mopidyPortLocal : window.location.port;
-  const protocol = mopidySSLLocal ? mopidySSLLocal : window.location.protocol === 'https:' ? true : false;
-  console.log("[Mopidy]: Local searching for ", track);
-  const resultsSearch = await mopidyWS.library.search({'query': {'album': [track.album.name]}, 'uris': ['local:']})
-  if (resultsSearch.length > 0 && resultsSearch[0].tracks) {
-    const images = await mopidyWS.library.getImages({uris: resultsSearch[0].tracks.map(x => x.album.uri)});
-    console.log("[Mopidy]: Result ", Object.values(images));
-    if (images && Object.values(images) && Object.values(images).length > 0 && Object.values(images)[0].length > 0 && Object.values(images)[0][0].uri) {
-      return `http${protocol ? 's' : ''}://${host}:${port}${Object.values(images)[0][0].uri}`
+export const loadAlbumImage = async (track) => {
+  console.log("[Mopidy]: Searching images for ", track.uri);
+  const trackImages = await mopidyWS.library.getImages({'uris': [track.uri]})
+  if (Object.values(trackImages)[0].length > 0) {
+    return Object.values(trackImages)[0].find(x => x.__model__ == 'Image').uri
+  } else if (track && track.album) {
+    const res = await fetch(`https://ws.audioscrobbler.com/2.0/?format=json&method=album.getInfo&album=${track.album.name}&artist=${track.artists[0].name}&api_key=12bbc4850d7cb77e2842f0a2f7bcc2e3`)
+    const lastfm = await res.json()
+    console.log("[Lastfm]: Result information", lastfm);
+    if (lastfm && lastfm.album) {
+      const image = lastfm.album.image.find(x => x.size === 'extralarge')
+      if (image['#text']) {
+        return image['#text']
+      }
     }
   }
 }

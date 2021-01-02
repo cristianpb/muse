@@ -166,9 +166,8 @@
 <script>
   import { onMount } from 'svelte';
   import { flip } from 'svelte/animate';
-  import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState, imageProvider } from '../tools/stores';
-  import { convertSencondsToString, normalizeTime, getCurrentTlTrackList, setTrackTime, playTracklist, loadAlbumImageLocal } from '../tools/mopidyTools';
-  import { loadAlbumImage }  from '../tools/lastfm';
+  import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState } from '../tools/stores';
+  import { convertSencondsToString, normalizeTime, getCurrentTlTrackList, setTrackTime, playTracklist, loadAlbumImage } from '../tools/mopidyTools';
   import { clickOutside } from '../tools/clickOutside';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte';
   import {
@@ -192,11 +191,7 @@
 
   currentTrack.subscribe(async (myTrack) => {
     if (myTrack && myTrack.track) {
-      if ($imageProvider === 'local') {
-        $albumImage = await loadAlbumImageLocal(myTrack.track);
-      } else if ($imageProvider === 'lastfm') {
-        $albumImage = await loadAlbumImage(myTrack.track);
-      }
+      $albumImage = await loadAlbumImage(myTrack.track);
     }
   })
 
