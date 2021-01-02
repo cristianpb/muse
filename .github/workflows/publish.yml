@@ -1,5 +1,5 @@
 ---
-name: Build html & Publish to github pages
+name: Build package & publish
 
 on:
   push:
@@ -11,6 +11,7 @@ on:
 
 jobs:
   publish:
+    name: Build package
     runs-on: ubuntu-latest
 
     steps:
@@ -51,9 +52,15 @@ jobs:
         #    user: __token__
         #    password: ${{ secrets.test_pypi_password }}
         #    repository_url: https://test.pypi.org/legacy/
+      - name: Publish package 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        if: startsWith(github.event.ref, 'refs/tags')
+        with:
+          user: __token__
+          password: ${{ secrets.pypi_password }}
+          repository_url: https://upload.pypi.org/legacy/
       - name: 🐳 Build Docker image
-        run: |
-          make mopidy-start
+        run: make mopidy-start
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
         if: startsWith(github.event.ref, 'refs/tags')
@@ -72,15 +79,25 @@ jobs:
           push: true
           tags: cristianpb/mopidy-muse:latest
           target: muse
-      - name: Publish package 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@master
-        if: startsWith(github.event.ref, 'refs/tags')
+      - name: 🍱 Upload package artifact
+        uses: actions/upload-artifact@v2
         with:
-          user: __token__
-          password: ${{ secrets.pypi_password }}
-          repository_url: https://upload.pypi.org/legacy/
+          name: Mopidy-Muse.tar.gz
+          path: dist/Mopidy-Muse*.tar.gz
+
+  releasing:
+    name: Publish release
+    needs: publish
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.ref, 'refs/tags')
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: ⬇ Download artifact from build package job
+        uses: actions/download-artifact@v2
+        with:
+          name: Mopidy-Muse.tar.gz
       - name: 🔖Publish Release
-        if: startsWith(github.event.ref, 'refs/tags')
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -90,21 +107,17 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-      - run: cp dist/Mopidy-Muse*.tar.gz ./dist/Mopidy-Muse.tar.gz
-        if: startsWith(github.event.ref, 'refs/tags')
       - name: 🍱 Upload Release Asset
-        if: startsWith(github.event.ref, 'refs/tags')
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/Mopidy-Muse.tar.gz
+          asset_path: ./Mopidy-Muse.tar.gz
           asset_name: Mopidy-Muse.tar.gz
           asset_content_type: application/gzip
       - name: ⬆ Upgrade package version files
-        if: startsWith(github.event.ref, 'refs/tags')
         run: |
           git config --global user.name 'Github Bot'
           git config --global user.email 'bot@github.com'
