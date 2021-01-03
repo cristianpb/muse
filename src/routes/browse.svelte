@@ -40,15 +40,15 @@
       </div>
       <div class="dropdown-menu" id="dropdown-menu" role="menu">
         <div class="dropdown-content">
-          <a href="{null}" class="dropdown-item" on:click={playAllTracks(results.map(result => result.uri))}>
+          <a href="{null}" class="dropdown-item" on:click={() => _playAllTracks(results)}>
             <FontAwesomeIcon icon={faPlayCircle} class="icon is-small"  />&nbsp;&nbsp;
             Play now
           </a>
-          <a href="{null}" class="dropdown-item" on:click={shufflePlayAllTracks(null, results.map(result => result.uri))}>
+          <a href="{null}" class="dropdown-item" on:click={() => _shufflePlayAllTracks(results)}>
             <FontAwesomeIcon icon={faRandom} class="icon is-small"/>&nbsp;&nbsp;
             Play shuffle
           </a>
-          <a href="{null}" class="dropdown-item" on:click={addTracksQueue(null, results.map(result => result.uri))}>
+          <a href="{null}" class="dropdown-item" on:click={() => _addTracksQueue(results)}>
             <FontAwesomeIcon icon={faLevelDownAlt} class="icon is-small"/>&nbsp;&nbsp;
             Add to queue
           </a>
@@ -187,6 +187,41 @@
   const goToRoot = async () => {
     results = await $mopidy.library.browse({uri: null})
     browsePath = [];
+  }
+
+  const getRecursiveTracks = async (result) => {
+    if (result.type === 'track') {
+      return result.uri
+    } else if (result.type === 'directory' && result.uri.indexOf('file://') > -1) {
+      const tempResults = await $mopidy.library.browse({uri: result.uri});
+      const tempRecursive = await Promise.all(tempResults.map((tempResult) => {
+        return getRecursiveTracks(tempResult)
+      }))
+      return tempRecursive.flat(1)
+    }
+  }
+
+  const _playAllTracks = async (results) => {
+    const recursiveTracks = await Promise.all(results.map((result) => {
+      return getRecursiveTracks(result)
+    }))
+    playAllTracks(recursiveTracks.flat(1))
+    showOptions = false
+  }
+
+  const _shufflePlayAllTracks = async (results) => {
+    const recursiveTracks = await Promise.all(results.map((result) => {
+      return getRecursiveTracks(result)
+    }))
+    shufflePlayAllTracks(null, recursiveTracks.flat(1))
+    showOptions = false
+  }
+
+  const _addTracksQueue = async (results) => {
+    const recursiveTracks = await Promise.all(results.map((result) => {
+      return getRecursiveTracks(result)
+    }))
+    addTracksQueue(null, recursiveTracks.flat(1))
   }
   
 </script>
