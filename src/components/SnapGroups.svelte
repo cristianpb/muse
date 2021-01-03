@@ -1,70 +1,82 @@
-{#each $snapGroups as group, g}
-  <div class="list is-hoverable basket">
-    <div class="list-item"
-         on:drop|preventDefault={event => drop(event, g)}
-         ondragover="return false"
-         on:dragenter="{() => hovering = group.name}"
-         on:dragleave="{() => hovering = null}"
-         class:hovering="{hovering === group.name}"
-         >
-         <div class="columns is-mobile">
-           <div class="column">
-             <b>Group {group.name ? `${group.name} - ` : ''}{group.id}</b>
-           </div>
-           <div class="column">
-             {#if editLine === g}
-               <input class="input"
-                      type="text" 
-                      bind:value="{group.name}" 
-                      on:input={() => editGroupName(group.id, group.name)}
-                      placeholder="Group name">
+<div class="columns is-multiline">
+  <div class="column is-12">
+    <aside class="menu">
+      {#each $snapGroups as group, g}
+        <div class="menu-label"
+           on:drop|preventDefault={event => drop(event, g)}
+           ondragover="return false"
+           on:dragenter="{() => hovering = group.name}"
+           on:dragleave="{() => hovering = null}"
+           class:hovering="{hovering === group.name}"
+           >
+           <div class="columns is-mobile is-gapless">
+             <div class="column">
+               <b>Group {group.name ? `${group.name} - ` : ''}{group.id}</b>
+             </div>
+             {#if editLine === true}
+               <div class="column">
+                 <input class="input"
+                        type="text" 
+                        bind:value="{group.name}" 
+                        on:input={() => editGroupName(group.id, group.name)}
+                        placeholder="Group name">
+               </div>
              {/if}
            </div>
-           {#if editLine === g}
-             <div class="column is-narrow" on:click={() => editLine = null}>
-               <FontAwesomeIcon icon={faCheckCircle} class="icon"/>
-             </div>
-           {:else}
-             <div class="column is-narrow" on:click={() => editLine = g}>
-               <FontAwesomeIcon icon={faEdit} class="icon"/>
-             </div>
-           {/if}
-         </div>
-    </div>
-    {#each group.clients as client, i}
-      <div 
-        class="list-item" draggable={true} 
-        on:dragstart={event => dragstart(event, g, i)}
-        on:mouseenter={() => hoveringList = {group: g, client: i}}
-        on:mouseleave={() => hoveringList = {}}
-        class:is-active={hoveringList.group === g && hoveringList.client === i}
-        id = {client.id}>
-        <div class="columns is-mobile">
-          <div class="column">
-            {#if client.connected}
-              <FontAwesomeIcon icon={faSatellite} class="icon is-small"/>
-            {:else}
-              <FontAwesomeIcon icon={faUnlink} class="icon is-small"/>
-            {/if}
-            {client.name ? client.name : client.host}
-          </div>
-          {#if editLine === g}
-          <div class="column">
-              <input class="input"
-                     type="text" 
-                     bind:value="{group.clients[i].name}" 
-                     on:input={() => editClientName(group.clients[i].id, group.clients[i].name)}
-                     placeholder="Client name">
-          </div>
-          <div class="column is-narrow" on:click="{deleteClient(client.id)}">
-            <FontAwesomeIcon icon={faTrash} class="icon"/>
-          </div>
-          {/if}
         </div>
-      </div>
-    {/each}
+        <ul class="menu-list">
+          {#each group.clients as client, i}
+            <li
+              draggable={true} 
+              on:dragstart={event => dragstart(event, g, i)}
+              on:mouseenter={() => hoveringList = {group: g, client: i}}
+              on:mouseleave={() => hoveringList = {}}
+              class:is-active={hoveringList.group === g && hoveringList.client === i}
+              id = {client.id}
+              >
+              <div class="columns is-mobile is-gapless">
+                <div class="column">
+                  <a href={null}>
+                    {#if client.connected}
+                      <FontAwesomeIcon icon={faSatellite} class="icon is-small"/>
+                    {:else}
+                      <FontAwesomeIcon icon={faUnlink} class="icon is-small"/>
+                    {/if}
+                    {client.name ? client.name : client.host}
+                  </a>
+                </div>
+                {#if editLine === true}
+                  <div class="column">
+                    <input class="input"
+                           type="text" 
+                           bind:value="{group.clients[i].name}" 
+                           on:input={() => editClientName(group.clients[i].id, group.clients[i].name)}
+                           placeholder="Client name">
+                  </div>
+                  <div class="column is-narrow" on:click="{deleteClient(client.id)}">
+                    <button class="button">
+                      <FontAwesomeIcon icon={faTrash} class="icon"/>
+                    </button>
+                  </div>
+                {/if}
+              </div>
+            </li>
+          {/each}
+        </ul>
+      {/each}
+    </aside>
   </div>
-{/each}
+
+  <div class="column is-12">
+    <a class="button" href="{null}" on:click={() => editLine = !editLine}>
+      {#if editLine === true}
+        Finish edition
+      {:else}
+        Edit clients name
+      {/if}
+    </a>
+  </div>
+</div>
 
 {#if newGroup}
   <div 
@@ -128,6 +140,63 @@
 
 
 <style>
+  .input {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: none;
+    display: inline-flex;
+    font-size: 1rem;
+    height: 2.5em;
+    justify-content: flex-start;
+    line-height: 1.5;
+    padding-bottom: calc(0.5em - 1px);
+    padding-left: calc(0.75em - 1px);
+    padding-right: calc(0.75em - 1px);
+    padding-top: calc(0.5em - 1px);
+    position: relative;
+    vertical-align: top;
+  }
+
+  .input {
+    background-color: white;
+    border-color: #dbdbdb;
+    border-radius: 4px;
+    color: #363636;
+  }
+
+  .input::-moz-placeholder {
+    color: rgba(54, 54, 54, 0.3);
+  }
+
+  .input::-webkit-input-placeholder {
+    color: rgba(54, 54, 54, 0.3);
+  }
+
+  .input:-moz-placeholder {
+    color: rgba(54, 54, 54, 0.3);
+  }
+
+  .input:-ms-input-placeholder {
+    color: rgba(54, 54, 54, 0.3);
+  }
+
+  .input:hover {
+    border-color: #b5b5b5;
+  }
+
+  .input:focus {
+    border-color: #3273dc;
+    box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
+  }
+
+  .input {
+    box-shadow: inset 0 0.0625em 0.125em rgba(10, 10, 10, 0.05);
+    max-width: 100%;
+    width: 100%;
+  }
   .hovering {
     border: 1px solid orange;
   }
