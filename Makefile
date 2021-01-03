@@ -54,6 +54,7 @@ build-docker-mopidy:
 
 __sapper__/export/muse:
 	npm --no-git-tag-version --allow-same-version version ${APP_VERSION_SAFE}
+	sed -i -E "s/version = (.*)/version = ${APP_VERSION_CUT}/"  setup.cfg;
 	NODE_ENV=production npm run export
 
 build-html: __sapper__/export/muse
@@ -62,7 +63,6 @@ dist:
 	sudo mkdir -p ${APP_PATH}/dist ; sudo chmod g+rw ${APP_PATH}/dist/.; sudo chgrp 1000 ${APP_PATH}/dist/.;
 
 build-python: dist build-html
-	sed -i -E "s/version = (.*)/version = ${APP_VERSION_CUT}/"  setup.cfg;
 	docker-compose run --rm mopidy python3 setup.py sdist bdist_wheel
 
 mopidy-local-scan:
