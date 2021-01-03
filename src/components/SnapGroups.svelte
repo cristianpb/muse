@@ -1,88 +1,90 @@
-<div class="columns is-multiline">
-  <div class="column is-12">
-    <aside class="menu">
-      {#each $snapGroups as group, g}
-        <div class="menu-label"
-           on:drop|preventDefault={event => drop(event, g)}
-           ondragover="return false"
-           on:dragenter="{() => hovering = group.name}"
-           on:dragleave="{() => hovering = null}"
-           class:hovering="{hovering === group.name}"
-           >
-           <b>Group {group.name ? `${group.name} - ` : ''}{group.id}</b>
-           {#if editLine === true}
-             <input class="input"
-                    type="text" 
-                    bind:value="{group.name}" 
-                    on:input={() => editGroupName(group.id, group.name)}
-                    placeholder="Group name">
-           {/if}
-        </div>
-        <ul class="menu-list">
-          {#each group.clients as client, i}
-            <li
-              draggable={true} 
-              on:dragstart={event => dragstart(event, g, i)}
-              on:mouseenter={() => hoveringList = {group: g, client: i}}
-              on:mouseleave={() => hoveringList = {}}
-              class:hover={hoveringList.group === g && hoveringList.client === i}
-              id = {client.id}
-              >
-              <div class="columns is-mobile is-gapless">
-                <div class="column">
-                  <a href={null}>
-                    {#if client.connected}
-                      <FontAwesomeIcon icon={faSatellite} class="icon is-small"/>
-                    {:else}
-                      <FontAwesomeIcon icon={faUnlink} class="icon is-small"/>
-                    {/if}
-                    {client.name ? client.name : client.host}
-                  </a>
-                </div>
-                {#if editLine === true}
-                  <div class="column">
-                    <input class="input"
-                           type="text" 
-                           bind:value="{group.clients[i].name}" 
-                           on:input={() => editClientName(group.clients[i].id, group.clients[i].name)}
-                           placeholder="Client name">
-                  </div>
-                  <div class="column is-narrow" on:click="{deleteClient(client.id)}">
-                    <button class="button">
-                      <FontAwesomeIcon icon={faTrash} class="icon"/>
-                    </button>
-                  </div>
-                {/if}
-              </div>
-            </li>
-          {/each}
-        </ul>
-      {/each}
-      {#if newGroup}
-        <br>
-        <button class="button is-fullwidth"
-                on:drop|preventDefault={event => drop(event, null)}
-                ondragover="return false"
-                on:dragenter="{() => hovering = $snapGroups.length}"
-                on:dragleave="{() => hovering = null}"
-                class:hovering="{hovering === $snapGroups.length}"
+{#if $snapGroups.length > 0}
+  <div class="columns is-multiline">
+    <div class="column is-12">
+      <aside class="menu">
+        {#each $snapGroups as group, g}
+          <div class="menu-label"
+               on:drop|preventDefault={event => drop(event, g)}
+               ondragover="return false"
+               on:dragenter="{() => hovering = group.name}"
+               on:dragleave="{() => hovering = null}"
+               class:hovering="{hovering === group.name}"
+               >
+               <b>Group {group.name ? `${group.name} - ` : ''}{group.id}</b>
+               {#if editLine === true}
+                 <input class="input"
+                        type="text" 
+                        bind:value="{group.name}" 
+                        on:input={() => editGroupName(group.id, group.name)}
+                        placeholder="Group name">
+               {/if}
+          </div>
+          <ul class="menu-list">
+            {#each group.clients as client, i}
+              <li
+                draggable={true} 
+                on:dragstart={event => dragstart(event, g, i)}
+                on:mouseenter={() => hoveringList = {group: g, client: i}}
+                on:mouseleave={() => hoveringList = {}}
+                class:hover={hoveringList.group === g && hoveringList.client === i}
+                id = {client.id}
                 >
-                New group
-        </button>
-      {/if}
-    </aside>
-  </div>
+                <div class="columns is-mobile is-gapless">
+                  <div class="column">
+                    <a href={null}>
+                      {#if client.connected}
+                        <FontAwesomeIcon icon={faSatellite} class="icon is-small"/>
+                      {:else}
+                        <FontAwesomeIcon icon={faUnlink} class="icon is-small"/>
+                      {/if}
+                      {client.name ? client.name : client.host}
+                    </a>
+                  </div>
+                  {#if editLine === true}
+                    <div class="column">
+                      <input class="input"
+                             type="text" 
+                             bind:value="{group.clients[i].name}" 
+                             on:input={() => editClientName(group.clients[i].id, group.clients[i].name)}
+                             placeholder="Client name">
+                    </div>
+                    <div class="column is-narrow" on:click="{deleteClient(client.id)}">
+                      <button class="button">
+                        <FontAwesomeIcon icon={faTrash} class="icon"/>
+                      </button>
+                    </div>
+                  {/if}
+                </div>
+              </li>
+            {/each}
+          </ul>
+        {/each}
+        {#if newGroup}
+          <br>
+          <button class="button is-fullwidth"
+                  on:drop|preventDefault={event => drop(event, null)}
+                  ondragover="return false"
+                  on:dragenter="{() => hovering = $snapGroups.length}"
+                  on:dragleave="{() => hovering = null}"
+                  class:hovering="{hovering === $snapGroups.length}"
+                  >
+                  New group
+          </button>
+        {/if}
+      </aside>
+    </div>
 
-  <div class="column is-12">
-    <a class="button" href="{null}" on:click={() => editLine = !editLine}>
-      {#if editLine === true}
-        <FontAwesomeIcon icon={faCheckCircle} class="icon"/>&nbsp;&nbsp; Finish edition
-      {:else}
-        <FontAwesomeIcon icon={faEdit} class="icon"/>&nbsp;&nbsp; Edit clients name
-      {/if}
-    </a>
+    <div class="column is-12">
+      <a class="button" href="{null}" on:click={() => editLine = !editLine}>
+        {#if editLine === true}
+          <FontAwesomeIcon icon={faCheckCircle} class="icon"/>&nbsp;&nbsp; Finish edition
+        {:else}
+          <FontAwesomeIcon icon={faEdit} class="icon"/>&nbsp;&nbsp; Edit clients name
+        {/if}
+      </a>
+    </div>
   </div>
-</div>
+{/if}
 
 <script>
   import { snapGroups } from '../tools/stores';
