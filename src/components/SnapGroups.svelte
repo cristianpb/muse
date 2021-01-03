@@ -9,20 +9,14 @@
            on:dragleave="{() => hovering = null}"
            class:hovering="{hovering === group.name}"
            >
-           <div class="columns is-mobile is-gapless">
-             <div class="column">
-               <b>Group {group.name ? `${group.name} - ` : ''}{group.id}</b>
-             </div>
-             {#if editLine === true}
-               <div class="column">
-                 <input class="input"
-                        type="text" 
-                        bind:value="{group.name}" 
-                        on:input={() => editGroupName(group.id, group.name)}
-                        placeholder="Group name">
-               </div>
-             {/if}
-           </div>
+           <b>Group {group.name ? `${group.name} - ` : ''}{group.id}</b>
+           {#if editLine === true}
+             <input class="input"
+                    type="text" 
+                    bind:value="{group.name}" 
+                    on:input={() => editGroupName(group.id, group.name)}
+                    placeholder="Group name">
+           {/if}
         </div>
         <ul class="menu-list">
           {#each group.clients as client, i}
@@ -31,7 +25,7 @@
               on:dragstart={event => dragstart(event, g, i)}
               on:mouseenter={() => hoveringList = {group: g, client: i}}
               on:mouseleave={() => hoveringList = {}}
-              class:is-active={hoveringList.group === g && hoveringList.client === i}
+              class:hover={hoveringList.group === g && hoveringList.client === i}
               id = {client.id}
               >
               <div class="columns is-mobile is-gapless">
@@ -64,34 +58,31 @@
           {/each}
         </ul>
       {/each}
+      {#if newGroup}
+        <br>
+        <button class="button is-fullwidth"
+                on:drop|preventDefault={event => drop(event, null)}
+                ondragover="return false"
+                on:dragenter="{() => hovering = $snapGroups.length}"
+                on:dragleave="{() => hovering = null}"
+                class:hovering="{hovering === $snapGroups.length}"
+                >
+                New group
+        </button>
+      {/if}
     </aside>
   </div>
 
   <div class="column is-12">
     <a class="button" href="{null}" on:click={() => editLine = !editLine}>
       {#if editLine === true}
-        Finish edition
+        <FontAwesomeIcon icon={faCheckCircle} class="icon"/>&nbsp;&nbsp; Finish edition
       {:else}
-        Edit clients name
+        <FontAwesomeIcon icon={faEdit} class="icon"/>&nbsp;&nbsp; Edit clients name
       {/if}
     </a>
   </div>
 </div>
-
-{#if newGroup}
-  <div 
-    class="list is-hoverable basket"
-    on:drop|preventDefault={event => drop(event, null)}
-    ondragover="return false"
-    on:dragenter="{() => hovering = $snapGroups.length}"
-    on:dragleave="{() => hovering = null}"
-    class:hovering="{hovering === $snapGroups.length}"
-    >
-    <div class="list-item">
-      New Group 
-    </div>
-  </div>
-{/if}
 
 <script>
   import { snapGroups } from '../tools/stores';
@@ -204,8 +195,40 @@
     pointer-events: none; /* so that a child hover child is not a "dragleave" event */
   }
 
-  .basket {
-    min-height: 24px;
+  .menu {
+    font-size: 1rem;
   }
+
+  .menu-list {
+    line-height: 1.25;
+  }
+
+  .menu-list a {
+    border-radius: 2px;
+    color: #4a4a4a;
+    display: block;
+    padding: 0.5em 0.75em;
+  }
+
+  .menu-list a:hover {
+    background-color: whitesmoke;
+    color: #363636;
+  }
+
+  .menu-label {
+    color: #7a7a7a;
+    font-size: 0.75em;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .menu-label:not(:first-child) {
+    margin-top: 1em;
+  }
+
+  .menu-label:not(:last-child) {
+    margin-bottom: 1em;
+}
+
 </style>
 
