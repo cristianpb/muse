@@ -24,7 +24,7 @@
       </ul>
     </nav>
   </div>
-  {#if results.some(result => ['track'].indexOf(result.type) > -1)}
+  {#if results.some(result => ['track'].indexOf(result.type) > -1) || results.some(result => result.type === 'directory' && result.uri.indexOf('file://') > -1)}
   <div class="column is-narrow">
     <div class="dropdown is-right" class:is-active={showOptions} >
       <div class="dropdown-trigger" on:click={() => showOptions = !showOptions}>
