@@ -88,6 +88,7 @@ jobs:
           name: Mopidy-Muse.tar.gz
           path: package/*
       - name: ⬆ Upgrade package version files
+        if: startsWith(github.event.ref, 'refs/tags')
         run: |
           git config --global user.name 'Github Bot'
           git config --global user.email 'bot@github.com'
