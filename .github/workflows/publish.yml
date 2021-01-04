@@ -79,14 +79,11 @@ jobs:
           push: true
           tags: cristianpb/mopidy-muse:latest
           target: muse
-      - run: |
-          mkdir package
-          tar xvzf dist/Mopidy-Muse*.tar.gz -C package --strip-components=1
       - name: 🍱 Upload package artifact
         uses: actions/upload-artifact@v2
         with:
-          name: Mopidy-Muse.tar.gz
-          path: package/*
+          name: Mopidy-Muse.zip
+          path: dist/Mopidy-Muse*.tar.gz
       - name: ⬆ Upgrade package version files
         if: startsWith(github.event.ref, 'refs/tags')
         run: |
@@ -107,7 +104,7 @@ jobs:
       - name: ⬇ Download artifact from build package job
         uses: actions/download-artifact@v2
         with:
-          name: Mopidy-Muse.tar.gz
+          name: Mopidy-Muse.zip
       - name: 🔖Publish Release
         id: create_release
         uses: actions/create-release@v1
@@ -118,6 +115,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
+      - run: mv Mopidy-Muse*.tar.gz Mopidy-Muse.tar.gz
       - name: 🍱 Upload Release Asset
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
