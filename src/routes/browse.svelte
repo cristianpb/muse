@@ -24,7 +24,7 @@
       </ul>
     </nav>
   </div>
-  {#if results.some(result => ['track'].indexOf(result.type) > -1) || results.some(result => result.type === 'directory' && result.uri.indexOf('file://') > -1)}
+  {#if results.some(checkOverallDropdownNeeded)}
   <div class="column is-narrow">
     <div class="dropdown is-right" class:is-active={showOptions} >
       <div class="dropdown-trigger" on:click={() => showOptions = !showOptions}>
@@ -87,7 +87,7 @@
           <div class="column" on:click={() => promise = browserUri(result, idx, 'avance')}>
             {result.name}
           </div>
-          {#if ['album', 'track', 'artist', 'playlist'].indexOf(result.type) > -1}
+          {#if checkItemDropdownNeeded(result)}
           <div class="column is-narrow" on:click={() => handleDropdownActivation(idx)}>
             {#if options == idx}
               <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
@@ -174,6 +174,16 @@
     } else if (result.type === 'track') {
       handleDropdownActivation(idx)
     }
+  }
+
+  const checkOverallDropdownNeeded = (result) => {
+    return ['track'].indexOf(result.type) > -1
+      || (result.__model__ === 'Track')
+      || (result.type === 'directory' && result.uri.indexOf('file://') > -1)
+  }
+
+  const checkItemDropdownNeeded = (result) => {
+    return ['album', 'track', 'artist', 'playlist'].indexOf(result.type) > -1
   }
 
   const handleDropdownActivation = (idx) => {
