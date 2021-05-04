@@ -87,7 +87,7 @@
           <div class="column" on:click={() => promise = browserUri(result, idx, 'avance')}>
             {result.name}
           </div>
-          {#if ['album', 'track', 'artist'].indexOf(result.type) > -1}
+          {#if ['album', 'track', 'artist', 'playlist'].indexOf(result.type) > -1}
           <div class="column is-narrow" on:click={() => handleDropdownActivation(idx)}>
             {#if options == idx}
               <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
@@ -161,7 +161,7 @@
   }
 
   const browserUri = async (result, idx, location) => {
-    if (['directory', 'artist', 'album'].indexOf(result.type) > -1) {
+    if (['directory', 'artist', 'album', 'playlist'].indexOf(result.type) > -1) {
       options = null
       results = await $mopidy.library.browse({uri: result.uri});
       if (location === 'back') {
