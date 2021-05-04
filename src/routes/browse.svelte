@@ -163,7 +163,17 @@
   const browserUri = async (result, idx, location) => {
     if (['directory', 'artist', 'album', 'playlist'].indexOf(result.type) > -1) {
       options = null
-      results = await $mopidy.library.browse({uri: result.uri});
+
+      // First try to use browse; only if this does not return results, resort
+      // to lookup.
+      const browse_response = await $mopidy.library.browse({uri: result.uri})
+      if (browse_response.length == 0) {
+        const lookup_response = await $mopidy.library.lookup({uris: [result.uri]})
+        results = lookup_response[result.uri]
+      } else {
+        results = browse_response
+      }
+
       if (location === 'back') {
         const idxResult = browsePath.indexOf(result)
         const newPath = browsePath.slice(0, idxResult + 1)
@@ -171,7 +181,7 @@
       } else if (location === 'avance') {
         browsePath = [...browsePath, result];
       }
-    } else if (result.type === 'track') {
+    } else if (result.type === 'track' || result.__model__ === 'Track') {
       handleDropdownActivation(idx)
     }
   }
@@ -183,7 +193,8 @@
   }
 
   const checkItemDropdownNeeded = (result) => {
-    return ['album', 'track', 'artist', 'playlist'].indexOf(result.type) > -1
+    return (['album', 'track', 'artist', 'playlist'].indexOf(result.type) > -1)
+      || (result.__model__ === 'Track')
   }
 
   const handleDropdownActivation = (idx) => {
@@ -200,7 +211,7 @@
   }
 
   const getRecursiveTracks = async (result) => {
-    if (result.type === 'track') {
+    if (result.type === 'track' || result.__model__ === 'Track') {
       return result.uri
     } else if (result.type === 'directory' && result.uri.indexOf('file://') > -1) {
       const tempResults = await $mopidy.library.browse({uri: result.uri});
