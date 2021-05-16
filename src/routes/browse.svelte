@@ -24,7 +24,7 @@
       </ul>
     </nav>
   </div>
-  {#if results.some(result => ['track'].indexOf(result.type) > -1) || results.some(result => result.type === 'directory' && result.uri.indexOf('file://') > -1)}
+  {#if results.some(checkOverallDropdownNeeded)}
   <div class="column is-narrow">
     <div class="dropdown is-right" class:is-active={showOptions} >
       <div class="dropdown-trigger" on:click={() => showOptions = !showOptions}>
@@ -87,7 +87,7 @@
           <div class="column" on:click={() => promise = browserUri(result, idx, 'avance')}>
             {result.name}
           </div>
-          {#if ['album', 'track', 'artist'].indexOf(result.type) > -1}
+          {#if checkItemDropdownNeeded(result)}
           <div class="column is-narrow" on:click={() => handleDropdownActivation(idx)}>
             {#if options == idx}
               <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
@@ -161,9 +161,19 @@
   }
 
   const browserUri = async (result, idx, location) => {
-    if (['directory', 'artist', 'album'].indexOf(result.type) > -1) {
+    if (['directory', 'artist', 'album', 'playlist'].indexOf(result.type) > -1) {
       options = null
-      results = await $mopidy.library.browse({uri: result.uri});
+
+      // First try to use browse; only if this does not return results, resort
+      // to lookup.
+      const browse_response = await $mopidy.library.browse({uri: result.uri})
+      if (browse_response.length == 0) {
+        const lookup_response = await $mopidy.library.lookup({uris: [result.uri]})
+        results = lookup_response[result.uri]
+      } else {
+        results = browse_response
+      }
+
       if (location === 'back') {
         const idxResult = browsePath.indexOf(result)
         const newPath = browsePath.slice(0, idxResult + 1)
@@ -171,9 +181,20 @@
       } else if (location === 'avance') {
         browsePath = [...browsePath, result];
       }
-    } else if (result.type === 'track') {
+    } else if (result.type === 'track' || result.__model__ === 'Track') {
       handleDropdownActivation(idx)
     }
+  }
+
+  const checkOverallDropdownNeeded = (result) => {
+    return ['track'].indexOf(result.type) > -1
+      || (result.__model__ === 'Track')
+      || (result.type === 'directory' && result.uri.indexOf('file://') > -1)
+  }
+
+  const checkItemDropdownNeeded = (result) => {
+    return (['album', 'track', 'artist', 'playlist'].indexOf(result.type) > -1)
+      || (result.__model__ === 'Track')
   }
 
   const handleDropdownActivation = (idx) => {
@@ -190,7 +211,7 @@
   }
 
   const getRecursiveTracks = async (result) => {
-    if (result.type === 'track') {
+    if (result.type === 'track' || result.__model__ === 'Track') {
       return result.uri
     } else if (result.type === 'directory' && result.uri.indexOf('file://') > -1) {
       const tempResults = await $mopidy.library.browse({uri: result.uri});
