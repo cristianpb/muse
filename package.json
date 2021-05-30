@@ -18,7 +18,7 @@
     "mopidy": "^1.2.1",
     "polka": "next",
     "sirv": "^1.0.10",
-    "ws": "^7.4.2"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
