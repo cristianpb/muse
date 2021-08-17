@@ -59,9 +59,10 @@ jobs:
           user: __token__
           password: ${{ secrets.pypi_password }}
           repository_url: https://upload.pypi.org/legacy/
-      - name: 🐳 Build Docker image
-        run: make mopidy-start
-      - name: Set up Docker Buildx
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        if: startsWith(github.event.ref, 'refs/tags')
+      - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
         if: startsWith(github.event.ref, 'refs/tags')
       - name: Login to DockerHub
@@ -70,13 +71,14 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      - name: Push Docker image
+      - name: Build and push docker image
         uses: docker/build-push-action@v2
         if: startsWith(github.event.ref, 'refs/tags')
         with:
           context: .
           file: ./Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: cristianpb/mopidy-muse:latest
           target: muse
       - name: 🍱 Upload package artifact
