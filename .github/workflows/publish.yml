@@ -80,7 +80,7 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: cristianpb/mopidy-muse:latest
-          target: muse
+          target: prod
       - name: 🍱 Upload package artifact
         uses: actions/upload-artifact@v2
         with:
