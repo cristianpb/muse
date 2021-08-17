@@ -1,5 +1,5 @@
 ##########################################################
-FROM multiarch/ubuntu-debootstrap:amd64-focal-slim as base
+FROM multiarch/ubuntu-debootstrap:$TARGETARCH-focal-slim as base
 RUN  apt-get update
 RUN  apt-get install -y software-properties-common curl
 RUN  apt-add-repository universe
