@@ -1,4 +1,5 @@
-FROM ubuntu:bionic AS snapcast
+FROM ubuntu:bionic AS base
+FROM base AS snapcast
 
 RUN apt-get update \
  && apt-get -y install build-essential curl git libasound2-dev libboost-dev libopus-dev libvorbisidec-dev libvorbis-dev libflac-dev alsa-utils libavahi-client-dev avahi-daemon libsoxr-dev \
@@ -20,27 +21,27 @@ RUN cd /tmp \
  && cd .. \
  && rm snapcast boost_${BOOST_VERSION_UNDERSCORED} -fR
 
-FROM ubuntu:bionic as prod
+FROM base as base-arm64
 
-RUN if [ "$TARGETARCH" = "arm64" ] ; then \
-        apt-get update && \
+RUN apt-get update && \
         apt-get -y install curl libportaudio2 libvorbis0a libavahi-client3 libflac8 libvorbisenc2 libvorbisfile3 libopus0 libsoxr0 && \
-        apt-get clean && rm -fR /var/lib/apt/lists; \
-   fi ;
+        apt-get clean && rm -fR /var/lib/apt/lists
 
 COPY --from=snapcast /usr/local/bin/snapserver /usr/local/bin/
 COPY --from=snapcast /etc/snapserver.conf /etc/
 
-RUN if [ "$TARGETARCH" = "amd64" ] ; then \
-        rm -rf /usr/local/bin/snapserver && \
-        rm -rf /etc/snapserver.conf && \
-        apt-get update && \
-        apt-get install -y --no-install-recommends ca-certificates curl libasound2 mpv && \
-        curl -L -o /tmp/snapserver.deb "https://github.com/badaix/snapcast/releases/download/v${SNAPCAST_VERSION}/snapserver_${SNAPCAST_VERSION}-1_${TARGETARCH}.deb" && \
-        dpkg -i /tmp/snapserver.deb || apt-get install -f -y --no-install-recommends && \
-        apt-get clean && rm -fR /var/lib/apt/lists; \
-    fi ;
 
+FROM ubuntu:bionic as base-amd64
+ARG SNAPCAST_VERSION=0.25.0
+
+RUN apt-get update && \
+	    apt-get install -y --no-install-recommends ca-certificates curl libasound2 mpv && \
+	    curl -L -o /tmp/snapserver.deb "https://github.com/badaix/snapcast/releases/download/v${SNAPCAST_VERSION}/snapserver_${SNAPCAST_VERSION}-1_${TARGETARCH}.deb" && \
+	    dpkg -i /tmp/snapserver.deb || apt-get install -f -y --no-install-recommends && \
+	    apt-get clean && rm -fR /var/lib/apt/lists;
+
+ARG TARGETARCH
+FROM base-$TARGETARCH AS prod
 CMD ["snapserver"]
 
 ENV DEVICE_NAME=Snapcast
