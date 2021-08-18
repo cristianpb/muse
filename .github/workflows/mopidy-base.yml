@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - 'Dockerfile-base'
+      - 'Dockerfile-snapserver'
       - '.github/workflows/mopidy-base.yml'
 
 jobs:
