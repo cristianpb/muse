@@ -19,6 +19,9 @@ RUN cd /tmp \
  && cp server/snapserver /usr/local/bin/ \
  && cp server/etc/snapserver.conf /etc/ \
  && cd .. \
+ && cp snapcast/server/etc/index.html /etc/ \
+ && tar czvf snapweb.tar.gz -C snapcast/server/etc snapweb \
+ && cp snapweb.tar.gz /etc/ \
  && rm snapcast boost_${BOOST_VERSION_UNDERSCORED} -fR
 
 FROM base as base-arm64
@@ -29,10 +32,16 @@ RUN apt-get update && \
 
 COPY --from=snapcast /usr/local/bin/snapserver /usr/local/bin/
 COPY --from=snapcast /etc/snapserver.conf /etc/
+COPY --from=snapcast /etc/snapweb.tar.gz /etc/
 
+RUN mkdir -p /usr/share/snapserver/snapweb && tar -zxvf /etc/snapweb.tar.gz -C /usr/share/snapserver && \
+    rm -rf /etc/snapweb.tar.gz
 
-FROM ubuntu:bionic as base-amd64
+COPY --from=snapcast /etc/index.html /usr/share/snapserver/
+
+FROM base as base-amd64
 ARG SNAPCAST_VERSION=0.25.0
+ARG TARGETARCH
 
 RUN apt-get update && \
 	    apt-get install -y --no-install-recommends ca-certificates curl libasound2 mpv && \
@@ -40,7 +49,6 @@ RUN apt-get update && \
 	    dpkg -i /tmp/snapserver.deb || apt-get install -f -y --no-install-recommends && \
 	    apt-get clean && rm -fR /var/lib/apt/lists;
 
-ARG TARGETARCH
 FROM base-$TARGETARCH AS prod
 CMD ["snapserver"]
 

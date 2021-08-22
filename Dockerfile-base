@@ -17,3 +17,5 @@ RUN  apt-get install -y \
          apt-get purge --auto-remove && \
          apt-get clean
 RUN  pip3 install --no-cache-dir Mopidy-TuneIn Mopidy-Local
+
+# vim:filetype=dockerfile
