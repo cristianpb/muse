@@ -5,7 +5,7 @@ RUN apt-get update \
  && apt-get -y install build-essential curl git libasound2-dev libboost-dev libopus-dev libvorbisidec-dev libvorbis-dev libflac-dev alsa-utils libavahi-client-dev avahi-daemon libsoxr-dev \
  && apt-get clean && rm -fR /var/lib/apt/lists
 
-ARG SNAPCAST_VERSION=0.25.0
+ARG SNAPCAST_VERSION=0.26.0
 ARG BOOST_VERSION=1.76.0
 ARG BOOST_VERSION_UNDERSCORED=1_76_0
 
@@ -40,7 +40,7 @@ RUN mkdir -p /usr/share/snapserver/snapweb && tar -zxvf /etc/snapweb.tar.gz -C /
 COPY --from=snapcast /etc/index.html /usr/share/snapserver/
 
 FROM base as base-amd64
-ARG SNAPCAST_VERSION=0.25.0
+ARG SNAPCAST_VERSION=0.26.0
 ARG TARGETARCH
 
 RUN apt-get update && \
