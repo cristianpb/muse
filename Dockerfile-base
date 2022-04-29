@@ -4,7 +4,7 @@ RUN  apt-get update
 RUN  apt-get install -y software-properties-common curl
 RUN  apt-add-repository universe
 RUN  curl -s https://apt.mopidy.com/mopidy.gpg | apt-key add -
-RUN  curl -s -o /etc/apt/sources.list.d/mopidy.list https://apt.mopidy.com/buster.list
+RUN echo 'deb https://apt.mopidy.com/ buster main contrib non-free' > /etc/apt/sources.list.d/mopidy.list
 RUN  apt-get update --fix-missing
 RUN  apt-get install -y \
          mopidy \
