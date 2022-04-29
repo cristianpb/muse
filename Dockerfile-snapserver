@@ -1,13 +1,13 @@
-FROM ubuntu:bionic AS base
+FROM ubuntu:focal AS base
 FROM base AS snapcast
 
 RUN apt-get update \
- && apt-get -y install build-essential curl git libasound2-dev libboost-dev libopus-dev libvorbisidec-dev libvorbis-dev libflac-dev alsa-utils libavahi-client-dev avahi-daemon libsoxr-dev \
+ && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install build-essential curl git libasound2-dev libpulse-dev libvorbisidec-dev libvorbis-dev libopus-dev libflac-dev libsoxr-dev alsa-utils libavahi-client-dev avahi-daemon libexpat1-dev \
  && apt-get clean && rm -fR /var/lib/apt/lists
 
 ARG SNAPCAST_VERSION=0.26.0
-ARG BOOST_VERSION=1.76.0
-ARG BOOST_VERSION_UNDERSCORED=1_76_0
+ARG BOOST_VERSION=1.79.0
+ARG BOOST_VERSION_UNDERSCORED=1_79_0
 
 RUN cd /tmp \
  && curl -L -o boost_${BOOST_VERSION_UNDERSCORED}.tar.gz  https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_UNDERSCORED}.tar.gz \
