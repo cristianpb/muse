@@ -10,7 +10,7 @@ services:
       - /dev/bus/usb
     command: /bin/bash -c /usr/bin/snapclient -h snapserver -s 1
   snapserver:
-    image: jaedb/snapserver
+    image: cristianpb/snapserver
     container_name: ${APP}-snapserver
     ports:
       - 1704:1704
