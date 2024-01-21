@@ -1,5 +1,5 @@
 <div class="modal" class:is-active={$snapClientsEditVisibility}  >
-    <div class="modal-background" on:click={() => $snapClientsEditVisibility = !$snapClientsEditVisibility}></div>
+    <div class="modal-background" on:click={() => $snapClientsEditVisibility = !$snapClientsEditVisibility} on:keypress={() => $snapClientsEditVisibility = !$snapClientsEditVisibility}></div>
   <div class="modal-card">
     <header class="modal-card-head">
       <p class="modal-card-title">Edit Snapcast Clients</p>

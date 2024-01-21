@@ -17,7 +17,7 @@
       </div>
       <div class="column">
         <div class="dropdown is-right" class:is-active={showOptions} >
-          <div class="dropdown-trigger" on:click={() => showOptions = !showOptions}>
+          <div class="dropdown-trigger" on:click={() => showOptions = !showOptions} on:keypress={() => showOptions = !showOptions}>
           {#if showOptions}
             <a href="{null}" class="button">
               <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
@@ -97,12 +97,12 @@
          animate:flip
          >
          <div class="columns is-mobile">
-           <div class="column" on:click={handleDropdownActivation(index)}>
+           <div class="column" on:click={handleDropdownActivation(index)} on:keypress={handleDropdownActivation(index)}>
              {track.name}
            </div>
            <div class="column is-narrow">
              <div class="dropdown is-right is-up" class:is-active={dropdownActivate == index} >
-               <div class="dropdown-trigger" on:click={handleDropdownActivation(index)}>
+               <div class="dropdown-trigger" on:click={handleDropdownActivation(index)} on:keypress={handleDropdownActivation(index)}>
                {#if dropdownActivate == index}
                  <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
                {:else}

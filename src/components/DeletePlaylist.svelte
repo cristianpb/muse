@@ -1,5 +1,5 @@
 <div class="modal" class:is-active={deletePlaylistConfirmation}  >
-  <div class="modal-background"  on:click={() => deletePlaylistConfirmation = !deletePlaylistConfirmation}></div>
+  <div class="modal-background"  on:click={() => deletePlaylistConfirmation = !deletePlaylistConfirmation} on:keypress={() => deletePlaylistConfirmation = !deletePlaylistConfirmation}></div>
   <div class="modal-card">
     <div class="modal-card-body has-text-centered">
       <p class="title">

@@ -48,7 +48,7 @@
                              on:input={() => editClientName(group.clients[i].id, group.clients[i].name)}
                              placeholder="Client name">
                     </div>
-                    <div class="column is-narrow" on:click="{deleteClient(client.id)}">
+                    <div class="column is-narrow" on:click="{deleteClient(client.id)}" on:keypress="{deleteClient(client.id)}">
                       <button class="button">
                         <FontAwesomeIcon icon={faTrash} class="icon"/>
                       </button>

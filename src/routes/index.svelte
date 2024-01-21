@@ -70,7 +70,7 @@
        class:is-active={hovering === index}
        >
       <div class="columns is-mobile">
-        <div class="column"  on:click={handleDropdownActivation(tlTrack.tlid)}>
+        <div class="column"  on:click={handleDropdownActivation(tlTrack.tlid)} on:keypress={handleDropdownActivation(tlTrack.tlid)}>
           {tlTrack.track.name}
           {#if index === $currentTrack.index}
               &nbsp;<FontAwesomeIcon icon={faCog} spin={$currentState == 'playing' ? true : false} class="icon is-small"/>
@@ -78,7 +78,7 @@
         </div>
         <div class="column is-narrow">
           <div class="dropdown is-right is-up" class:is-active={dropdownActivate == tlTrack.tlid} >
-            <div class="dropdown-trigger" on:click={handleDropdownActivation(tlTrack.tlid)}>
+            <div class="dropdown-trigger" on:click={handleDropdownActivation(tlTrack.tlid)} on:keypress={handleDropdownActivation(tlTrack.tlid)}>
             {#if dropdownActivate == tlTrack.tlid}
               <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
             {:else}

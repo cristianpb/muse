@@ -27,7 +27,7 @@
   {#if results.some(checkOverallDropdownNeeded)}
   <div class="column is-narrow">
     <div class="dropdown is-right" class:is-active={showOptions} >
-      <div class="dropdown-trigger" on:click={() => showOptions = !showOptions}>
+      <div class="dropdown-trigger" on:click={() => showOptions = !showOptions} on:keypress={() => showOptions = !showOptions}>
       {#if showOptions}
         <a href="{null}" class="button">
           <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
@@ -84,11 +84,11 @@
     {#each results as result, idx}
       <a href={null} class="list-item" >
         <div class="columns is-mobile">
-          <div class="column" on:click={() => promise = browserUri(result, idx, 'avance')}>
+          <div class="column" on:click={() => promise = browserUri(result, idx, 'avance')} on:keypress={() => promise = browserUri(result, idx, 'avance')}>
             {result.name}
           </div>
           {#if checkItemDropdownNeeded(result)}
-          <div class="column is-narrow" on:click={() => handleDropdownActivation(idx)}>
+          <div class="column is-narrow" on:click={() => handleDropdownActivation(idx)} on:keypress={() => handleDropdownActivation(idx)}>
             {#if options == idx}
               <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
             {:else}

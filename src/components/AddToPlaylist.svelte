@@ -1,5 +1,5 @@
 <div class="modal" class:is-active={showAddToPlaylistModal}  >
-  <div class="modal-background"  on:click={() => showAddToPlaylistModal = !showAddToPlaylistModal}></div>
+  <div class="modal-background"  on:click={() => showAddToPlaylistModal = !showAddToPlaylistModal} on:keypress={() => showAddToPlaylistModal = !showAddToPlaylistModal}></div>
   <div class="modal-card">
     <header class="modal-card-head">
       <p class="modal-card-title">Add to playlist</p>

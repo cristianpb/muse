@@ -10,10 +10,11 @@ module.exports = {
     node: true
   },
   extends: [
-    'eslint:recommended'
+    //'eslint:recommended'
+    'plugin:svelte/recommended'
   ],
   plugins: [
-    'svelte3'
+    'svelte'
   ],
   ignorePatterns: [
     '__sapper__/',
@@ -23,7 +24,7 @@ module.exports = {
   overrides: [
     {
       files: ['**/*.svelte'],
-      processor: 'svelte3/svelte3'
+      processor: 'svelte/svelte'
     }
   ],
   rules: {
