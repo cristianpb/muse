@@ -37,7 +37,6 @@ COPY pyproject.toml ./
 ADD ./mopidy_muse ./mopidy_muse
 ADD ./__sapper__/export/muse ./mopidy_muse/static
 
-RUN ls *
 RUN pip3 install --no-clean .
 
 EXPOSE 6680

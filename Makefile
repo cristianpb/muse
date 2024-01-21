@@ -47,7 +47,7 @@ mopidy-start:
 	echo -e "mopidy started in $$((30 - timeout)) seconds"; exit $$ret
 
 mopidy-stop:
-	docker-compose down --remove-orphan
+	docker-compose down --remove-orphans
 
 build-docker-mopidy:
 	docker build -f Dockerfile-base -t cristianpb/mopidy-base:${PACKAGE_VERSION}  --target base .

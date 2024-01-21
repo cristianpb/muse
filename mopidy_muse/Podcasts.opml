@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+    <head>
+        <title>feedolin</title>
+    </head>
+    <body>
+
+        <outline text="Podcast" title="Podcast">
+            <outline type="rss" text="bbc news" title="bbc news" xmlUrl="https://podcasts.files.bbci.co.uk/b006qjxt.rss" htmlUrl=""/>
+        </outline>
+
+    </body>
+</opml>

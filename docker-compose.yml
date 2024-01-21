@@ -35,6 +35,7 @@ services:
     volumes:
       - ./__sapper__/export/muse:/${APP}/mopidy_muse/static
       - ./mopidy_muse/mopidy.conf:/root/.config/mopidy/mopidy.conf
+      - ./mopidy_muse/Podcasts.opml:/etc/mopidy/podcast/Podcasts.opml
       - ${HOST_MUSIC_DIRECTORY}:/var/lib/mopidy/music
       - ${HOST_PLAYLIST_DIRECTORY}:/var/lib/mopidy/playlists
       - ${HOST_SNAPCAST_TEMP}:/tmp
