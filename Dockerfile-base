@@ -1,10 +1,10 @@
 ##########################################################
-FROM multiarch/ubuntu-debootstrap:$TARGETARCH-focal-slim as base
+FROM multiarch/ubuntu-debootstrap:$TARGETARCH-jammy-slim as base
 RUN  apt-get update
 RUN  apt-get install -y software-properties-common curl
 RUN  apt-add-repository universe
 RUN  curl -s https://apt.mopidy.com/mopidy.gpg | apt-key add -
-RUN echo 'deb https://apt.mopidy.com/ buster main contrib non-free' > /etc/apt/sources.list.d/mopidy.list
+RUN echo 'deb https://apt.mopidy.com/ bullseye main contrib non-free' > /etc/apt/sources.list.d/mopidy.list
 RUN  apt-get update --fix-missing
 RUN  apt-get install -y \
          mopidy \
