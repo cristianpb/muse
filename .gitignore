@@ -8,6 +8,6 @@ yarn-error.log
 dist
 build
 data
-global.css
 artifacts
+global.css
 /.svelte-kit
