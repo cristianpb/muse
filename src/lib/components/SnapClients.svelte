@@ -31,7 +31,7 @@
           </div>
         </div>
         {#if client.connected}
-          <div class="column is-narrow" on:click={muteClient(client.id, client.muted)} on:keypress={muteClient(client.id, client.muted)}>
+          <div class="column is-narrow" role="button" tabindex="0" on:click={muteClient(client.id, client.muted)} on:keypress={muteClient(client.id, client.muted)}>
             <a class="navbar-item" href="{null}">
               {#if client.muted}
                 <FontAwesomeIcon icon={faVolumeMute} class="icon"/>

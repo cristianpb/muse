@@ -36,7 +36,7 @@
             </div>
             <div class="column is-narrow">
               <div class="dropdown is-right is-up" class:is-active={options == i} >
-                <div class="dropdown-trigger" on:click={() => handleDropdownActivation(i)} on:keypress={() => handleDropdownActivation(i)}>
+                <div class="dropdown-trigger"  role="button" tabindex="0" on:click={() => handleDropdownActivation(i)} on:keypress={() => handleDropdownActivation(i)}>
                 {#if options == i}
                   <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
                 {:else}

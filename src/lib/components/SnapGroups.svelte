@@ -4,6 +4,7 @@
       <aside class="menu">
         {#each $snapGroups as group, g}
           <div class="menu-label"
+               role="button" tabindex="0"
                on:drop|preventDefault={event => drop(event, g)}
                ondragover="return false"
                on:dragenter="{() => hovering = group.name}"
@@ -48,7 +49,7 @@
                              on:input={() => editClientName(group.clients[i].id, group.clients[i].name)}
                              placeholder="Client name">
                     </div>
-                    <div class="column is-narrow" on:click="{deleteClient(client.id)}" on:keypress="{deleteClient(client.id)}">
+                    <div class="column is-narrow" role="button" tabindex="0" on:click="{deleteClient(client.id)}" on:keypress="{deleteClient(client.id)}">
                       <button class="button">
                         <FontAwesomeIcon icon={faTrash} class="icon"/>
                       </button>

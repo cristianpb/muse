@@ -26,7 +26,7 @@
         {:then}
           <div class="tags">
             {#each uris as uri}
-              <span class="tag" class:is-primary="{selectedUris[uri]}" on:click="{() => selectedUris[uri] = !selectedUris[uri]}" on:keypress="{() => selectedUris[uri] = !selectedUris[uri]}">
+              <span class="tag" role="button" tabindex="0" class:is-primary="{selectedUris[uri]}" on:click="{() => selectedUris[uri] = !selectedUris[uri]}" on:keypress="{() => selectedUris[uri] = !selectedUris[uri]}">
                 {#if uri in uriIcons}
                   <FontAwesomeIcon icon={uriIcons[uri]} class="icon is-small"/> &nbsp; {uri}
                 {:else}
@@ -45,7 +45,7 @@
       {#if resultTracks.length > 0}
       <div class="column is-narrow">
         <div class="dropdown is-right"  class:is-active={showOptions}>
-          <div class="dropdown-trigger" on:click={() => showOptions = !showOptions} on:keypress={() => showOptions = !showOptions}>
+          <div class="dropdown-trigger" role="button" tabindex="0" on:click={() => showOptions = !showOptions} on:keypress={() => showOptions = !showOptions}>
             {#if showOptions}
               <a href="{null}" class="button">
                 <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
@@ -99,7 +99,7 @@
          on:dragenter={() => hovering = idx}
          class:is-active={hovering === idx}
          >
-        <div class="columns is-mobile" on:click={handleDropdownActivation(idx)} on:keypress={handleDropdownActivation(idx)}>
+        <div class="columns is-mobile" role="button" tabindex="0" on:click={handleDropdownActivation(idx)} on:keypress={handleDropdownActivation(idx)}>
           <div class="column">
             {#if track.artists}
               {track.artists.map(x => x.name).join(', ')} - {track.name}

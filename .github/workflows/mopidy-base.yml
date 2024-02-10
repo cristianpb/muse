@@ -4,9 +4,9 @@ name: Mopidy base image
 on:
   push:
     paths:
-      - 'Dockerfile-base'
-      - 'Dockerfile-snapserver'
-      - '.github/workflows/mopidy-base.yml'
+      - "Dockerfile-base"
+      - "Dockerfile-snapserver"
+      - ".github/workflows/mopidy-base.yml"
 
 jobs:
   docker-mopidy:

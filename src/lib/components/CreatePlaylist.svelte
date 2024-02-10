@@ -1,5 +1,5 @@
 <div class="modal" class:is-active={showCreatePlaylistModal}  >
-  <div class="modal-background"  on:click={() => showCreatePlaylistModal = !showCreatePlaylistModal} on:keypress={() => showCreatePlaylistModal = !showCreatePlaylistModal}></div>
+  <div class="modal-background" role="button" tabindex="0" on:click={() => showCreatePlaylistModal = !showCreatePlaylistModal} on:keypress={() => showCreatePlaylistModal = !showCreatePlaylistModal}></div>
   <div class="modal-card">
     <header class="modal-card-head">
       <p class="modal-card-title">Create playlist</p>

@@ -6,16 +6,16 @@ A mopidy player with snapcast support
 
 ## Features
 
-* Support for snapcast volume control
-* Responsive design based in bulma framework
-* Modify tracklists using drag and drop motions
-* Create and modify playlists
-* Reactive search for tracklists in different sources
-* No user tracking (No Google Analytics)
-* Created using state of the art web technologies:
-  * Svelte framework for small package size
-  * Sapper for multiple pages and server side rendering
-  * Github Actions CI/CD workflow for build and publish
+- Support for snapcast volume control
+- Responsive design based in bulma framework
+- Modify tracklists using drag and drop motions
+- Create and modify playlists
+- Reactive search for tracklists in different sources
+- No user tracking (No Google Analytics)
+- Created using state of the art web technologies:
+  - Svelte framework for small package size
+  - Sapper for multiple pages and server side rendering
+  - Github Actions CI/CD workflow for build and publish
 
 Checkout a detailled description at [this blog post](https://cristianpb.github.io/blog/mopidy-muse)
 
@@ -25,7 +25,7 @@ Checkout a detailled description at [this blog post](https://cristianpb.github.i
 
 ## Installation
 
-### Python 
+### Python
 
 Install by running:
 
@@ -63,5 +63,5 @@ make mopidy-docker
 
 ## Project resources
 
-* [Source code](https://github.com/cristianpb/muse)
-* [Issue tracker](https://github.com/cristianpb/muse/issues)
+- [Source code](https://github.com/cristianpb/muse)
+- [Issue tracker](https://github.com/cristianpb/muse/issues)
