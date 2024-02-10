@@ -33,7 +33,7 @@ services:
     ports:
       - 6680:6680
     volumes:
-      - ./__sapper__/export/muse:/${APP}/mopidy_muse/static
+      - ./build/:/${APP}/mopidy_muse/static
       - ./mopidy_muse/mopidy.conf:/root/.config/mopidy/mopidy.conf
       - ./mopidy_muse/Podcasts.opml:/etc/mopidy/podcast/Podcasts.opml
       - ${HOST_MUSIC_DIRECTORY}:/var/lib/mopidy/music

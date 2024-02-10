@@ -15,7 +15,7 @@
     {:else}
       <div class="card-image has-text-centered">
         <figure class="image is-1by1">
-          <img src="{process.env.NODE_ENV === 'development' ? '' : '/muse'}/icon.svg" alt="Placeholder" width="240" height="240">
+          <img src="{base}/icon.svg" alt="Placeholder" width="240" height="240">
         </figure>
       </div>
     {/if}
@@ -125,7 +125,7 @@
 <div class="columns">
   <div class="column has-text-centered">
     <a href="https://github.com/cristianpb/muse">
-      Version - __VERSION__
+      Version - {PUBLIC_VERSION}
     </a>
   </div>
 </div>
@@ -166,10 +166,10 @@
 <script>
   import { onMount } from 'svelte';
   import { flip } from 'svelte/animate';
-  import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState } from '../tools/stores';
-  import { convertSencondsToString, normalizeTime, getCurrentTlTrackList, setTrackTime, playTracklist, loadAlbumImage } from '../tools/mopidyTools';
-  import { clickOutside } from '../tools/clickOutside';
-  import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte';
+  import { mopidy, currentTrack, currentPlaytime, totalPlaytime, albumImage, currentState } from '../lib/tools/stores';
+  import { convertSencondsToString, normalizeTime, getCurrentTlTrackList, setTrackTime, playTracklist, loadAlbumImage } from '../lib/tools/mopidyTools';
+  import { clickOutside } from '../lib/tools/clickOutside';
+  import FontAwesomeIcon from '../lib/components/FontAwesomeIcon.svelte';
   import {
     faAngleDown,
     faAngleUp,
@@ -177,6 +177,8 @@
     faMinus,
     faCog
   } from '@fortawesome/free-solid-svg-icons';
+  import { base } from '$app/paths';
+  import { PUBLIC_VERSION } from '$env/static/public';
 
   let tlTracklists = [];
   let hovering = false;

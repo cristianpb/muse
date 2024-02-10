@@ -10,3 +10,4 @@ build
 data
 global.css
 artifacts
+/.svelte-kit

@@ -130,10 +130,10 @@
 
 <script>
   import { onMount } from 'svelte';
-  import { mopidy } from '../tools/stores';
-  import { clickOutside } from '../tools/clickOutside';
-  import { connectWS, playTrackSingle, addTrackNext, addTrackQueue, addTracksQueue, shufflePlayAllTracks, playAllTracks } from '../tools/mopidyTools';
-  import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte';
+  import { mopidy } from '../../lib/tools/stores';
+  import { clickOutside } from '../../lib/tools/clickOutside';
+  import { connectWS, playTrackSingle, addTrackNext, addTrackQueue, addTracksQueue, shufflePlayAllTracks, playAllTracks } from '../../lib/tools/mopidyTools';
+  import FontAwesomeIcon from '../../lib/components/FontAwesomeIcon.svelte';
   import {
     faSpinner,
     faAngleDown,

@@ -15,8 +15,9 @@ export HOST_MUSIC_DIRECTORY=${APP_PATH}/data/music
 export HOST_PLAYLIST_DIRECTORY=${APP_PATH}/data/playlists
 export HOST_SNAPCAST_TEMP=/tmp/snapcast-mopidy
 
-export MOPIDY_HOST=localhost
-export MOPIDY_PORT=6680
+export PUBLIC_MOPIDY_HOST=localhost
+export PUBLIC_MOPIDY_PORT=6680
+export PUBLIC_VERSION=${APP_VERSION_CUT}
 
 dummy		    := $(shell touch artifacts)
 include ./artifacts
@@ -52,26 +53,24 @@ mopidy-stop:
 build-docker-mopidy:
 	docker build -f Dockerfile-base -t cristianpb/mopidy-base:${PACKAGE_VERSION}  --target base .
 
-__sapper__/export/muse:
+build:
 	npm --no-git-tag-version --allow-same-version version ${APP_VERSION_SAFE}
 	sed -i -E "s/version = (.*)/version = ${APP_VERSION_CUT}/"  setup.cfg;
-	NODE_ENV=production npm run export
-
-build-html: __sapper__/export/muse
+	NODE_ENV=production npm run build
 
 dist:
 	sudo mkdir -p ${APP_PATH}/dist ; sudo chmod g+rw ${APP_PATH}/dist/.; sudo chgrp 1000 ${APP_PATH}/dist/.;
 
-build-python: dist build-html
+build-python: dist build
 	docker-compose run --rm mopidy python3 setup.py sdist bdist_wheel
 
 mopidy-local-scan:
 	docker exec -it ${APP} mopidy local scan
 
 clean:
-	rm -rf __sapper__/export dist
+	rm -rf build dist
 
-sapper-dev:
+dev:
 	npm run dev
 
 start: mopidy-start snapserver-start snapclient-start

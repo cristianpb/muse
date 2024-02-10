@@ -141,12 +141,12 @@
 </div>
 
 <script>
-  import { connectWS } from '../tools/mopidyTools';
-  import { mopidyHost, mopidyPort, mopidySSL, snapcastHost, snapcastPort, snapcastSSL } from '../tools/stores';
-  import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
+  import { connectWS } from '../../lib/tools/mopidyTools';
+  import { mopidyHost, mopidyPort, mopidySSL, snapcastHost, snapcastPort, snapcastSSL } from '../../lib/tools/stores';
+  import FontAwesomeIcon from '../../lib/components/FontAwesomeIcon.svelte'
   import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-  import { connectSnapcast } from '../tools/snapcast';
-  import SnapGroups from '../components/SnapGroups.svelte';
+  import { connectSnapcast } from '../../lib/tools/snapcast';
+  import SnapGroups from '../../lib/components/SnapGroups.svelte';
   let promise;
   let promiseMopidy;
 

@@ -77,12 +77,12 @@
 
 <script>
 
-  import { playlists } from '../../tools/stores';
-  import { getPlaylists, getPlaylistTracks, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
-  import { clickOutside } from '../../tools/clickOutside';
+  import { playlists } from '../../lib/tools/stores';
+  import { getPlaylists, getPlaylistTracks, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../lib/tools/mopidyTools';
+  import { clickOutside } from '../../lib/tools/clickOutside';
   import { onMount } from 'svelte';
-  import CreatePlalist from '../../components/CreatePlaylist.svelte';
-  import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte';
+  import CreatePlalist from '../../lib/components/CreatePlaylist.svelte';
+  import FontAwesomeIcon from '../../lib/components/FontAwesomeIcon.svelte';
   import {
     faAngleDown,
     faAngleUp,

@@ -147,11 +147,11 @@
 <script>
   import { stores } from "@sapper/app";
   import { onMount } from 'svelte';
-  import { mopidy, playlists } from '../../tools/stores';
-  import { clickOutside } from '../../tools/clickOutside';
+  import { mopidy, playlists } from '../../lib/tools/stores';
+  import { clickOutside } from '../../lib/tools/clickOutside';
   import { flip } from 'svelte/animate';
   import DeletePlaylist from '../../components/DeletePlaylist.svelte';
-  import { getPlaylists, getPlaylistTracks, playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../tools/mopidyTools';
+  import { getPlaylists, getPlaylistTracks, playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../lib/tools/mopidyTools';
   import FontAwesomeIcon from '../../components/FontAwesomeIcon.svelte'
   import {
     faArrowLeft,

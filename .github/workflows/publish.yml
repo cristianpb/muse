@@ -34,14 +34,14 @@ jobs:
           npm run lint
           npm run validate
       - name: 🏗 Build html
-        run: make build-html
+        run: make build
       - name: 🚀 Deploy to GitHub pages
         if: startsWith(github.event.ref, 'refs/tags') || github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           publish_branch: gh-pages
-          publish_dir: ./__sapper__/export/muse
+          publish_dir: ./build
           force_orphan: true
       - name: 🐍 Build Python package
         run: make build-python

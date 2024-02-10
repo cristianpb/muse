@@ -1,5 +1,6 @@
 <script>
-  export let segment;
+	import { page } from '$app/stores';
+  import { base } from '$app/paths';
   let burgerState = false;
 </script>
 
@@ -35,24 +36,24 @@
   <div class="navbar-brand">
     <a 
       class="navbar-item" 
-      class:is-active={segment === undefined}
-      aria-current='{segment === undefined ? "page" : undefined}' 
-      href='.'> Now playing </a>
+      class:is-active={$page.url.pathname === "/"}
+      aria-current='{$page.url.pathname === "/" ? "page" : undefined}' 
+      href='/'> Now playing </a>
     <a 
       class="navbar-item" 
-      class:is-active={segment === "search"}
-      aria-current='{segment === "search" ? "page" : undefined}'
-      href='search'>Search</a>
+      class:is-active={$page.url.pathname === "/search/"}
+      aria-current='{$page.url.pathname === "/search/" ? "page" : undefined}'
+      href='{base}/search'>Search</a>
     <a 
       class="navbar-item" 
-      class:is-active={segment === "browse"}
-      aria-current='{segment === "browse" ? "page" : undefined}'
-      href='browse'>Browse</a>
+      class:is-active={$page.url.pathname === "/browse/"}
+      aria-current='{$page.url.pathname === "/browse/" ? "page" : undefined}'
+      href='{base}/browse'>Browse</a>
     <a 
       class="navbar-item" 
-      class:is-active={segment === "playlists"}
-      aria-current='{segment === "playlists" ? "page" : undefined}'
-      href='playlists'>Playlists</a>
+      class:is-active={$page.url.pathname === "/playlists/"}
+      aria-current='{$page.url.pathname === "/playlists/" ? "page" : undefined}'
+      href='{base}/playlists'>Playlists</a>
 
     <a role="button"
        class:is-active={burgerState}
@@ -70,17 +71,17 @@
     <div class="navbar-start">
       <a 
         class="navbar-item" 
-        class:is-active={segment === "settings"}
-        aria-current='{segment === "settings" ? "page" : undefined}' 
-        href='settings'>Settings</a>
+        class:is-active={$page.url.pathname === "/settings/"}
+        aria-current='{$page.url.pathname === "/settings/" ? "page" : undefined}' 
+        href='{base}/settings'>Settings</a>
     </div>
     <a class="navbar-item  is-hidden-touch" href="https://github.com/cristianpb/muse">
       <figure class="image is-1by1">
-        <img src="{process.env.NODE_ENV === 'development' ? '' : '/muse'}/icon.svg" alt="Muse logo" width="20" height="20">
+        <img src="/icon.svg" alt="Muse logo" width="20" height="20">
       </figure>
     </a>
     <a class="navbar-item is-hidden-desktop" href="https://github.com/cristianpb/muse">
-      <img src="{process.env.NODE_ENV === 'development' ? '' : '/muse'}/icon.svg" alt="Muse logo" width="18" height="18">
+      <img src="/icon.svg" alt="Muse logo" width="18" height="18">
       Muse - __VERSION__
     </a>
 

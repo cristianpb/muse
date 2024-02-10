@@ -156,12 +156,12 @@
 
 <script>
   import { flip } from 'svelte/animate';
-  import { connectWS, playTrackSingle, addTrackNext, shufflePlayAllTracks, addTracksQueue } from '../tools/mopidyTools';
-  import AddToPlaylist from '../components/AddToPlaylist.svelte';
-  import { mopidy } from '../tools/stores';
-  import { clickOutside } from '../tools/clickOutside';
+  import { connectWS, playTrackSingle, addTrackNext, shufflePlayAllTracks, addTracksQueue } from '../../lib/tools/mopidyTools';
+  import AddToPlaylist from '../../lib/components/AddToPlaylist.svelte';
+  import { mopidy } from '../../lib/tools/stores';
+  import { clickOutside } from '../../lib/tools/clickOutside';
   import { onMount } from 'svelte';
-  import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
+  import FontAwesomeIcon from '../../lib/components/FontAwesomeIcon.svelte'
   import {
     faSearch,
     faPlayCircle,

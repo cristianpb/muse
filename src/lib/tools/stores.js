@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { PUBLIC_MOPIDY_HOST, PUBLIC_MOPIDY_PORT } from '$env/static/public';
 
 export const mopidy = writable(null);
 
@@ -34,9 +35,9 @@ export const albumImage = writable('');
 
 export const playlists = writable([]);
 
-export const mopidyHost = writable('__MOPIDY_HOST__');
+export const mopidyHost = writable(PUBLIC_MOPIDY_HOST ? PUBLIC_MOPIDY_HOST : '');
 
-export const mopidyPort = writable('__MOPIDY_PORT__');
+export const mopidyPort = writable(PUBLIC_MOPIDY_PORT ? PUBLIC_MOPIDY_PORT : '');
 
 export const mopidySSL = writable('');
 
