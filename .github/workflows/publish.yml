@@ -56,9 +56,9 @@ jobs:
         with:
           images: cristianpb/mopidy-muse
           tags: |
-            type=semver,pattern={{version}},value=v0.27.0
-            type=semver,pattern={{major}}.{{minor}},value=v0.27.0
-            type=semver,pattern={{major}},value=v0.27.0
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         if: startsWith(github.event.ref, 'refs/tags')
@@ -113,6 +113,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ./Mopidy-Muse.tar.gz
-          name: Release ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
