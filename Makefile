@@ -15,8 +15,6 @@ export HOST_MUSIC_DIRECTORY=${APP_PATH}/data/music
 export HOST_PLAYLIST_DIRECTORY=${APP_PATH}/data/playlists
 export HOST_SNAPCAST_TEMP=/tmp/snapcast-mopidy
 
-export PUBLIC_MOPIDY_HOST=localhost
-export PUBLIC_MOPIDY_PORT=6680
 export PUBLIC_VERSION=${APP_VERSION_CUT}
 
 dummy		    := $(shell touch artifacts)
