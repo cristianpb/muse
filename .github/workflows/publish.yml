@@ -15,18 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "18.x"
-      - name: Cache dependencies
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - name: Install node requirements
         run: npm ci
       - name: 🚨 Check lint
@@ -52,26 +44,26 @@ jobs:
         #    password: ${{ secrets.test_pypi_password }}
         #    repository_url: https://test.pypi.org/legacy/
       - name: Publish package 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@release/v1
         if: startsWith(github.event.ref, 'refs/tags')
         with:
           user: __token__
           password: ${{ secrets.pypi_password }}
           repository_url: https://upload.pypi.org/legacy/
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v3
         if: startsWith(github.event.ref, 'refs/tags')
       - name: 🐳 Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
         if: startsWith(github.event.ref, 'refs/tags')
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         if: startsWith(github.event.ref, 'refs/tags')
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Build and push docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         if: startsWith(github.event.ref, 'refs/tags')
         with:
           context: .
@@ -81,7 +73,7 @@ jobs:
           tags: cristianpb/mopidy-muse:latest
           target: prod
       - name: 🍱 Upload package artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Mopidy-Muse.zip
           path: dist/Mopidy-Muse*.tar.gz
@@ -101,9 +93,9 @@ jobs:
     if: startsWith(github.event.ref, 'refs/tags')
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: ⬇ Download artifact from build package job
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: Mopidy-Muse.zip
       - name: 🔖Publish Release
