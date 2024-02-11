@@ -35,7 +35,7 @@ COPY MANIFEST.in ./
 COPY README.md ./
 COPY pyproject.toml ./
 ADD ./mopidy_muse ./mopidy_muse
-ADD ./__sapper__/export/muse ./mopidy_muse/static
+ADD ./build ./mopidy_muse/static
 
 RUN pip3 install --no-clean .
 
