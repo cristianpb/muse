@@ -52,9 +52,10 @@ build-docker-mopidy:
 	docker build -f Dockerfile-base -t cristianpb/mopidy-base:${PACKAGE_VERSION}  --target base .
 
 build:
-	npm --no-git-tag-version --allow-same-version version ${APP_VERSION_SAFE}
-	sed -i -E "s/version = (.*)/version = ${APP_VERSION_CUT}/"  setup.cfg;
-	NODE_ENV=production npm run build
+	@npm --no-git-tag-version --allow-same-version version ${APP_VERSION_SAFE}
+	@sed -i -E "s/version = (.*)/version = ${APP_VERSION_CUT}/"  setup.cfg;
+	@echo "Version ${APP_VERSION_CUT}"
+	@NODE_ENV=production npm run build
 
 dist:
 	sudo mkdir -p ${APP_PATH}/dist ; sudo chmod g+rw ${APP_PATH}/dist/.; sudo chgrp 1000 ${APP_PATH}/dist/.;

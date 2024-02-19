@@ -38,7 +38,7 @@
       class="navbar-item" 
       class:is-active={$page.url.pathname === "/"}
       aria-current='{$page.url.pathname === "/" ? "page" : undefined}' 
-      href='/'> Now playing </a>
+      href='{base}/'> Now playing </a>
     <a 
       class="navbar-item" 
       class:is-active={$page.url.pathname === "/search/"}
@@ -77,11 +77,11 @@
     </div>
     <a class="navbar-item  is-hidden-touch" href="https://github.com/cristianpb/muse">
       <figure class="image is-1by1">
-        <img src="/icon.svg" alt="Muse logo" width="20" height="20">
+        <img src="{base}/icon.svg" alt="Muse logo" width="20" height="20">
       </figure>
     </a>
     <a class="navbar-item is-hidden-desktop" href="https://github.com/cristianpb/muse">
-      <img src="/icon.svg" alt="Muse logo" width="18" height="18">
+      <img src="{base}/icon.svg" alt="Muse logo" width="18" height="18">
       Muse - __VERSION__
     </a>
 

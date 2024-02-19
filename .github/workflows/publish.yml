@@ -26,6 +26,8 @@ jobs:
           npm run lint
       - name: 🏗 Build html
         run: make build
+        env:
+          BASE_PATH: /muse
       - name: 🚀 Deploy to GitHub pages
         if: startsWith(github.event.ref, 'refs/tags') || github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v3
