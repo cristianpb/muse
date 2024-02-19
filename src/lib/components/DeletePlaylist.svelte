@@ -15,7 +15,7 @@
 
 <script>
   import { mopidy } from '../tools/stores';
-  import { goto } from '@sapper/app';
+  import { goto } from '$app/navigation';
 
   export let deletePlaylistConfirmation;
   export let selectedPlaylist;

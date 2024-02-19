@@ -3,7 +3,7 @@
     <h1 class="title">Playlists</h1>
   </div>
   <div class="column is-narrow">
-    <a class="button" href="{null}" on:click={() => showCreatePlaylistModal = !showCreatePlaylistModal} >
+    <a href="{null}" class="button"  on:click={() => showCreatePlaylistModal = !showCreatePlaylistModal} >
       <FontAwesomeIcon icon={faPlus} class="icon"/>
     </a>
   </div>
@@ -22,7 +22,7 @@
       {#each $playlists as playlist, i}
         <div class="list-item">
           <div class="columns is-mobile">
-            <a class="column" href="playlists/{playlist.slug}">
+            <a class="column" href="{base}/playlists/{playlist.slug}">
               {playlist.name}
             </a>
             <div class="column is-narrow">
@@ -92,6 +92,7 @@
     faPlus,
     faSpinner
   } from '@fortawesome/free-solid-svg-icons';
+  import { base } from '$app/paths';
 
   let promise;
   let options;
