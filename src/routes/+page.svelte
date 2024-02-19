@@ -9,7 +9,7 @@
     {#if $albumImage}
       <div class="card-image has-text-centered">
         <figure class="image">
-          <img src="{base}/{$albumImage}" width="240" height="240" alt="Album">
+          <img src="{$albumImage}" width="240" height="240" alt="Album">
         </figure>
       </div>
     {:else}
