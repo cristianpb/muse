@@ -18,7 +18,7 @@ const loadTracks = async (slug) => {
 /** @type {import('./$types').PageLoad} */
 export async function load({ params }) {
   const res = await loadTracks(params.slug);
-  if (params.slug === "Small") {
+  if ("tracks" in res.playlistsTracks) {
     return {
       playlistsTracks: res.playlistsTracks,
       selectedPlaylist: res.selectedPlaylist,
