@@ -52,9 +52,10 @@ jobs:
           user: __token__
           password: ${{ secrets.pypi_password }}
           repository_url: https://upload.pypi.org/legacy/
-      - name: Docker meta
+      - name: 🐳 Docker metadata
         id: meta
         uses: docker/metadata-action@v4
+        if: startsWith(github.event.ref, 'refs/tags')
         with:
           images: cristianpb/mopidy-muse
           tags: |
@@ -64,7 +65,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         if: startsWith(github.event.ref, 'refs/tags')
-      - name: 🐳 Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         if: startsWith(github.event.ref, 'refs/tags')
       - name: Login to DockerHub
