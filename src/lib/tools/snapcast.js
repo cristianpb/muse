@@ -11,12 +11,11 @@ let groupsLocal;
 let snapcastHostLocal;
 let snapcastPortLocal;
 let snapcastSSLLocal;
+let config;
+let connecting = false;
 
 snapGroups.subscribe((value) => {
   groupsLocal = value;
-});
-snapcast.subscribe((value) => {
-  snapcastWS = value;
 });
 snapcastHost.subscribe((value) => {
   snapcastHostLocal = value;
@@ -28,50 +27,86 @@ snapcastSSL.subscribe((value) => {
   snapcastSSLLocal = value;
 });
 
-export function connectSnapcast(reconnect) {
-  return new Promise(function (resolve, reject) {
-    if (snapcastWS && !reconnect) {
+const connectingFunction = (host, port, ssl) => {
+  return new Promise((resolve, reject) => {
+    snapcastWS = new WebSocket(
+      `ws${ssl === "true" ? "s" : ""}://${host}:${port}/jsonrpc`,
+    );
+
+    /* Error Event Handler */
+    snapcastWS.onerror = (e) => {
+      console.log("[Snapcast]: error:", e);
+      connecting = false;
+      reject(new Error("error connecting to snapcast"));
+    };
+
+    snapcastWS.onopen = () => {
+      console.log("[Snapcast]: Connected");
+      let message = {
+        jsonrpc: "2.0",
+        id: 8,
+        method: "Server.GetStatus",
+      };
+      snapcastWS.send(JSON.stringify(message));
       snapcast.set(snapcastWS);
+      connecting = false;
       resolve("Connected");
-    } else {
-      const host = snapcastHostLocal
-        ? snapcastHostLocal
-        : window.location.hostname;
-      const port = snapcastPortLocal ? snapcastPortLocal : window.location.port;
-      const protocol = snapcastSSLLocal
-        ? snapcastSSLLocal
-        : window.location.protocol === "https:"
-          ? "true"
-          : "false";
-      snapcastWS = new WebSocket(
-        `ws${protocol === "true" ? "s" : ""}://${host}:${port}/jsonrpc`,
-      );
+    };
 
-      /* Error Event Handler */
-      snapcastWS.onerror = (e) => {
-        // need to get both the statusCode and the reason phrase
-        console.log("[Snapcast]: error:", e);
-        reject(new Error("error connecting to snapcast"));
-      };
-
-      snapcastWS.onopen = () => {
-        console.log("[Snapcast]: Connected");
-        let message = {
-          jsonrpc: "2.0",
-          id: 8,
-          method: "Server.GetStatus",
-        };
-        snapcastWS.send(JSON.stringify(message));
-        snapcast.set(snapcastWS);
-        resolve("Connected");
-      };
-
-      snapcastWS.onmessage = (message) => {
-        handleMessage(message);
-      };
-    }
+    snapcastWS.onmessage = (message) => {
+      handleMessage(message);
+    };
   });
-}
+};
+
+const get_config = async () => {
+  const res = await fetch("/muse/config");
+  if (res.status === 200) {
+    config = await res.json();
+  }
+};
+
+export const connectSnapcast = async (reconnect) => {
+  if (connecting) {
+    while (connecting) {
+      console.log("[Snapcast]: already connecting");
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    return "[Snapcast]: finish waiting connection";
+  } else {
+    if (snapcastWS === undefined || reconnect) {
+      connecting = true;
+      await get_config();
+      const host =
+        config && config.snapcast && config.snapcast.host
+          ? config.snapcast.host
+          : snapcastHostLocal
+            ? snapcastHostLocal
+            : document.defaultView.location.hostname;
+      const port =
+        config && config.snapcast && config.snapcast.port
+          ? config.snapcast.port
+          : snapcastPortLocal
+            ? snapcastPortLocal
+            : 1780;
+      const ssl =
+        config && config.snapcast && config.snapcast.ssl
+          ? Boolean(config.snapcast.ssl).toString()
+          : snapcastSSLLocal
+            ? snapcastSSLLocal
+            : document.defaultView.location.protocol === "https:"
+              ? "true"
+              : "false";
+      snapcastHost.set(host);
+      snapcastPort.set(port);
+      snapcastSSL.set(ssl);
+      const message = await connectingFunction(host, port, ssl);
+      return `[Snapcast]: ${message}`;
+    } else {
+      return "[Snapcast]: already connected";
+    }
+  }
+};
 
 const updateServer = (groupsRaw) => {
   snapGroups.set(
