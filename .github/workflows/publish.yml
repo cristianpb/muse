@@ -44,14 +44,14 @@ jobs:
         #  with:
         #    user: __token__
         #    password: ${{ secrets.test_pypi_password }}
-        #    repository_url: https://test.pypi.org/legacy/
+        #    repository-url: https://test.pypi.org/legacy/
       - name: Publish package 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         if: startsWith(github.event.ref, 'refs/tags')
         with:
           user: __token__
           password: ${{ secrets.pypi_password }}
-          repository_url: https://upload.pypi.org/legacy/
+          repository-url: https://upload.pypi.org/legacy/
       - name: 🐳 Docker metadata
         id: meta
         uses: docker/metadata-action@v4
