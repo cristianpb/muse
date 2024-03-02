@@ -26,10 +26,8 @@ let currentPlaytimeLocal;
 let totalPlaytimeLocal;
 let interval;
 let connecting = false;
+let config;
 
-mopidy.subscribe((value) => {
-  mopidyWS = value;
-});
 mopidyHost.subscribe((value) => {
   mopidyHostLocal = value;
 });
@@ -64,23 +62,13 @@ export function convertPercentToSeconds(percent, total) {
   return ~~((total * percent) / 100);
 }
 
-let promiseConnecting;
-
-const connectingFunction = () => {
+const connectingFunction = (host, port, ssl) => {
   return new Promise((resolve, reject) => {
-    connecting = true;
-    const host = mopidyHostLocal ? mopidyHostLocal : window.location.hostname;
-    const port = mopidyPortLocal ? mopidyPortLocal : window.location.port;
-    const protocol = mopidySSLLocal
-      ? mopidySSLLocal
-      : window.location.protocol === "https:"
-        ? "true"
-        : "false";
     mopidyWS = new Mopidy({
-      webSocketUrl: `ws${protocol === "true" ? "s" : ""}://${host}:${port}/mopidy/ws/`,
+      webSocketUrl: `ws${ssl === "true" ? "s" : ""}://${host}:${port}/mopidy/ws/`,
     });
     mopidyWS.on("state:online", async () => {
-      console.log("[Mopidy]: Connected", mopidyWS);
+      console.log("[Mopidy]: Connected");
 
       const currentTrackTL = await upgradeCurrentTrack();
       currentPlaytimeLocal = await mopidyWS.playback.getTimePosition();
@@ -120,7 +108,6 @@ const connectingFunction = () => {
       connecting = false;
       mopidy.set(mopidyWS);
       resolve("Connected");
-      //resolve(mopidyWS);
     });
 
     mopidyWS.on("state", (x) => console.log("[Mopidy]:", x));
@@ -202,31 +189,55 @@ const connectingFunction = () => {
   });
 };
 
-export function connectWS(reconnect) {
-  // return new Promise(function(resolve, reject) {
-  if (mopidyWS && !reconnect) {
-    if (connecting) {
-      console.log("connecting", promiseConnecting);
-      // resolve('Connecting')
-      return promiseConnecting;
-      // console.log('[Mopidy]: Waiting for connection');
-      //setTimeout(() => {
-      //  console.log('[Mopidy]: Already connected');
-      //  resolve(mopidyWS)
-      //}, 1000)
-    } else {
-      // resolve('Connected')
-      console.log("already connected");
-      return promiseConnecting;
-      // resolve('Connected')
-      //resolve(mopidyWS)
-    }
-  } else {
-    promiseConnecting = connectingFunction();
-    return promiseConnecting;
+const get_config = async () => {
+  const res = await fetch("/muse/config");
+  if (res.status === 200) {
+    config = await res.json();
   }
-  // });
-}
+};
+
+export const connectWS = async (reconnect) => {
+  if (connecting) {
+    while (connecting) {
+      console.log("[Mopidy]: already connecting");
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    return "[Mopidy]: finish waiting connection";
+  } else {
+    if (mopidyWS === undefined || reconnect) {
+      connecting = true;
+      console.log("[Mopidy]: try to connect");
+      await get_config();
+      const host =
+        config && config.mopidy && config.mopidy.host
+          ? config.mopidy.host
+          : mopidyHostLocal
+            ? mopidyHostLocal
+            : document.defaultView.location.hostname;
+      const port =
+        config && config.mopidy && config.mopidy.port
+          ? config.mopidy.port
+          : mopidyPortLocal
+            ? mopidyPortLocal
+            : document.defaultView.location.port;
+      const ssl =
+        config && config.mopidy && config.mopidy.ssl
+          ? Boolean(config.mopidy.ssl).toString()
+          : mopidySSLLocal
+            ? mopidySSLLocal
+            : document.defaultView.location.protocol === "https:"
+              ? "true"
+              : "false";
+      mopidyHost.set(host);
+      mopidyPort.set(port);
+      mopidySSL.set(ssl);
+      await connectingFunction(host, port, ssl);
+      return "[Mopidy]: first connection connected";
+    } else {
+      return "[Mopidy]: already connected";
+    }
+  }
+};
 
 export const upgradeCurrentTrack = async () => {
   const currentTrackTL = await mopidyWS.playback.getCurrentTlTrack();
@@ -242,10 +253,40 @@ export const upgradeCurrentTrack = async () => {
   }
 };
 
+export const loadUris = async () => {
+  await connectWS();
+  return await mopidyWS.library.browse({ uri: null });
+};
+
+export const loadUrisResults = async (selectedUris, hideUris) => {
+  await connectWS();
+  const urisResult = await mopidyWS.getUriSchemes();
+  if (urisResult) {
+    const uris = urisResult.filter((x) => hideUris.indexOf(x) === -1);
+    uris.forEach((uri) => (selectedUris[uri] = true));
+    return uris;
+  }
+};
+
+export const searchFunction = async (selectedUris, searchTerm) => {
+  const urisRequest = Object.entries(selectedUris)
+    .filter((x) => x[1])
+    .map((x) => `${x[0]}:`);
+  const res = await mopidyWS.library.search({
+    query: { any: [searchTerm] },
+    uris: [`${urisRequest}`],
+  });
+  if (res && res.length > 0) {
+    let { tracks } = res.pop();
+    if (tracks) {
+      return tracks;
+    }
+  }
+  return [];
+};
+
 export async function getPlaylists() {
-  // mopidyWS = await connectWS()
-  const message = await connectWS();
-  console.log("getting playlists", message);
+  await connectWS();
   const playlistsRaw = await mopidyWS.playlists.asList();
   playlistsLocal = playlistsRaw.map((playlistRaw) => {
     playlistRaw.slug = playlistRaw.name;
@@ -273,9 +314,7 @@ export async function getCurrentTrackList() {
 }
 
 export async function getCurrentTlTrackList() {
-  // mopidyWS = await connectWS()
-  const message = await connectWS();
-  console.log("get curren tracklist", message);
+  await connectWS();
   const currentTrackList = await mopidyWS.tracklist.getTlTracks();
   if (currentTrackList) {
     return currentTrackList;
@@ -370,11 +409,13 @@ export const loadAlbumImage = async (track) => {
   console.log("[Mopidy]: Searching images for ", track.uri);
   const trackImages = await mopidyWS.library.getImages({ uris: [track.uri] });
   if (Object.values(trackImages)[0].length > 0) {
-    return Object.values(trackImages)[0].find((x) => x.__model__ == "Image")
-      .uri;
+    const image = Object.values(trackImages)[0].find(
+      (x) => x.__model__ == "Image",
+    ).uri;
+    return image;
   } else if (track && track.album) {
     const res = await fetch(
-      `https://ws.audioscrobbler.com/2.0/?format=json&method=album.getInfo&album=${track.album.name}&artist=${track.artists[0].name}&api_key=12bbc4850d7cb77e2842f0a2f7bcc2e3`,
+      `https://ws.audioscrobbler.com/2.0/?format=json&method=album.getInfo&album=${track.album.name.replace(/[^\w\s]/gi, "")}&artist=${track.artists[0].name.replace(/[^\w\s]/gi, "")}&api_key=12bbc4850d7cb77e2842f0a2f7bcc2e3&&autocorrect=1`,
     );
     const lastfm = await res.json();
     console.log("[Lastfm]: Result information", lastfm);

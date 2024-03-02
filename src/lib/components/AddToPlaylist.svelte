@@ -64,7 +64,7 @@
 <script>
   import { onMount } from 'svelte';
   import { mopidy, playlists } from '../tools/stores';
-  import { connectWS, getPlaylists, getPlaylistTracks } from '../tools/mopidyTools';
+  import { getPlaylists, getPlaylistTracks } from '../tools/mopidyTools';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faPlus,
@@ -79,9 +79,6 @@
   let savePlaylistPromise
 
   onMount(async () => {
-    // $mopidy = await connectWS()
-    const message = await connectWS()
-    console.log("in playlist", message);
     $playlists = await getPlaylists()
   })
 

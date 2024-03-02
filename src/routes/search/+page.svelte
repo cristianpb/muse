@@ -38,7 +38,7 @@
         {/await}
       </div>
       <div class="column is-narrow">
-        <button on:click={searchFunction} class="button">
+        <button on:click={launchSearch} class="button">
           <FontAwesomeIcon icon={faSearch} class="icon"/>
         </button>
       </div>
@@ -156,9 +156,8 @@
 
 <script>
   import { flip } from 'svelte/animate';
-  import { connectWS, playTrackSingle, addTrackNext, shufflePlayAllTracks, addTracksQueue } from '../../lib/tools/mopidyTools';
+  import { playTrackSingle, addTrackNext, shufflePlayAllTracks, addTracksQueue, loadUrisResults, searchFunction } from '../../lib/tools/mopidyTools';
   import AddToPlaylist from '../../lib/components/AddToPlaylist.svelte';
-  import { mopidy } from '../../lib/tools/stores';
   import { clickOutside } from '../../lib/tools/clickOutside';
   import { onMount } from 'svelte';
   import FontAwesomeIcon from '../../lib/components/FontAwesomeIcon.svelte'
@@ -200,34 +199,17 @@
   let mopidyConnectionStatus;
 
   onMount(async () => {
-    promiseLoading = loadUris()
+    uris = await loadUrisResults(selectedUris, hideUris)
   })
 
-  const loadUris = async () => {
-    mopidyConnectionStatus = await connectWS()
-    console.log('in search', mopidyConnectionStatus);
-    const urisResult = await $mopidy.getUriSchemes()
-    if (urisResult) {
-      uris = urisResult.filter(x => hideUris.indexOf(x) === -1)
-      uris.forEach(uri => selectedUris[uri] = true)
-    }
-  }
-
-  const searchFunction = async () => {
-    resultTracks = []
-    const urisRequest = Object.entries(selectedUris).filter(x => x[1]).map(x => `${x[0]}:`)
-    const res = await $mopidy.library.search({'query': {'any': [searchTerm]}, 'uris': [`${urisRequest}`]})
-    if (res && res.length > 0) {
-      let { tracks } = res.pop()
-      if (tracks) resultTracks =  tracks
-      return true
-    }
-  }
-
-  function handleSearch(event) {
+  const handleSearch = (event) => {
     if (event.which === 13) {
-      promise = searchFunction()
+      launchSearch()
     }
+  }
+
+  const launchSearch = async () => {
+      resultTracks = await searchFunction(selectedUris, searchTerm)
   }
 
   const openAddListModal = (track) => {

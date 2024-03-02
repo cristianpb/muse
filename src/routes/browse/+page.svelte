@@ -132,7 +132,7 @@
   import { onMount } from 'svelte';
   import { mopidy } from '../../lib/tools/stores';
   import { clickOutside } from '../../lib/tools/clickOutside';
-  import { connectWS, playTrackSingle, addTrackNext, addTrackQueue, addTracksQueue, shufflePlayAllTracks, playAllTracks } from '../../lib/tools/mopidyTools';
+  import { loadUris, playTrackSingle, addTrackNext, addTrackQueue, addTracksQueue, shufflePlayAllTracks, playAllTracks } from '../../lib/tools/mopidyTools';
   import FontAwesomeIcon from '../../lib/components/FontAwesomeIcon.svelte';
   import {
     faSpinner,
@@ -152,13 +152,8 @@
   let mopidyConnectionStatus;
 
   onMount(async () => {
-    promise = loadUris()
+    results = await loadUris()
   })
-
-  const loadUris = async () => {
-    mopidyConnectionStatus = await connectWS()
-    results = await $mopidy.library.browse({uri: null})
-  }
 
   const browserUri = async (result, idx, location) => {
     if (['directory', 'artist', 'album', 'playlist'].indexOf(result.type) > -1) {

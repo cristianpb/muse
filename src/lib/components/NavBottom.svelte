@@ -305,7 +305,6 @@
 </nav>
 
 <script>
-  import { onMount } from 'svelte';
   import { slide } from 'svelte/transition';
   import FontAwesomeIcon from './FontAwesomeIcon.svelte'
   import {
@@ -322,34 +321,13 @@
     faRedo,
     faRecycle
   } from '@fortawesome/free-solid-svg-icons';
-  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility, currentTrack, currentPlaytime, totalPlaytime, currentState, currentVolume, currentMute, mopidy, currentRandom, currentConsume, currentRepeat, currentSingle, mopidyHost, mopidyPort, mopidySSL, snapcastHost, snapcastPort, snapcastSSL } from '../tools/stores';
-  import { convertSencondsToString, normalizeTime, setTrackTime, connectWS } from '../tools/mopidyTools';
-  import { connectSnapcast, changeHandler, muteClient } from '../tools/snapcast';
+  import { snapGroups, snapClientsVisibility, snapClientsEditVisibility, currentTrack, currentPlaytime, totalPlaytime, currentState, currentVolume, currentMute, mopidy, currentRandom, currentConsume, currentRepeat, currentSingle } from '../tools/stores';
+  import { convertSencondsToString, normalizeTime, setTrackTime } from '../tools/mopidyTools';
+  import { changeHandler, muteClient } from '../tools/snapcast';
 
-  let config;
   let burgerState = false;
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
-  onMount(async () => {
-    const res = await fetch('/muse/config')
-    if (res.status === 200) {
-      config = await res.json()
-    }
-    $mopidyHost = config && config.mopidy && config.mopidy.host ? config.mopidy.host : $mopidyHost ? $mopidyHost : window.location.hostname;
-    $mopidyPort = config && config.mopidy && config.mopidy.port ? config.mopidy.port : $mopidyPort ? $mopidyPort : window.location.port;
-    $mopidySSL = config && config.mopidy && config.mopidy.ssl ? Boolean(config.mopidy.ssl).toString() : $mopidySSL ? $mopidySSL : window.location.protocol === 'https:' ? 'true' : 'false';
-    $snapcastHost = config && config.snapcast && config.snapcast.host ? config.snapcast.host : $snapcastHost ? $snapcastHost : window.location.hostname;
-    $snapcastPort = config && config.snapcast && config.snapcast.port ? config.snapcast.port : $snapcastPort ? $snapcastPort : 1780;
-    $snapcastSSL = config && config.snapcast && config.snapcast.ssl ? Boolean(config.snapcast.ssl).toString() : $snapcastSSL ? $snapcastSSL : window.location.protocol === 'https:' ? 'true' : 'false';
-    // $mopidy = await connectWS()
-    const message = await connectWS()
-    console.log("in navbottom", message);
-    try {
-      await connectSnapcast()
-    } catch(e) {
-      console.log('[Snapcast]: catch error:', e);
-    }
-  })
 
   const togglePlayPause = (state) => {
     if (state === 'playing') {

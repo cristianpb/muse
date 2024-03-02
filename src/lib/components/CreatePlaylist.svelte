@@ -36,9 +36,8 @@
 </div>
 
 <script>
-  import { onMount } from 'svelte';
   import { mopidy, playlists } from '../tools/stores';
-  import { connectWS, getPlaylists } from '../tools/mopidyTools';
+  import { getPlaylists } from '../tools/mopidyTools';
   import FontAwesomeIcon from '../components/FontAwesomeIcon.svelte'
   import {
     faCheck,
@@ -50,10 +49,6 @@
   let createPlaylistPromise;
 
   export let showCreatePlaylistModal;
-
-  onMount(() => {
-    connectWS()
-  })
 
   const createPlaylist = async () => {
     const res = await $mopidy.playlists.create({name: playlistName})

@@ -1,4 +1,4 @@
-// import { mopidy, playlists } from '../../../lib/tools/stores';
+// import { playlists } from '../../../lib/tools/stores';
 import { error } from "@sveltejs/kit";
 import {
   getPlaylists,
@@ -8,11 +8,18 @@ import {
 const loadTracks = async (slug) => {
   const playlists = await getPlaylists();
   const selectedPlaylist = playlists.find((playlist) => playlist.name === slug);
-  const playlistsTracks = await getPlaylistTracks(selectedPlaylist.uri);
-  return {
-    playlistsTracks,
-    selectedPlaylist,
-  };
+  if (selectedPlaylist) {
+    const playlistsTracks = await getPlaylistTracks(selectedPlaylist.uri);
+    return {
+      playlistsTracks,
+      selectedPlaylist,
+    };
+  } else {
+    return {
+      playlistsTracks: [],
+      selectedPlaylist: "",
+    };
+  }
 };
 
 /** @type {import('./$types').PageLoad} */
