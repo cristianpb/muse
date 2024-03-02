@@ -113,6 +113,11 @@ const connectingFunction = (host, port, ssl) => {
     mopidyWS.on("state", (x) => console.log("[Mopidy]:", x));
     mopidyWS.on("event", (x) => console.log("[Mopidy]:", x));
 
+    mopidyWS.on("state:offline", (_) => {
+      connecting = false;
+      reject(new Error("error connecting to mopidy"));
+    });
+
     mopidyWS.on("event:trackPlaybackEnded", (event) => {
       let { time_position } = event;
       clearInterval(interval);
@@ -184,7 +189,8 @@ const connectingFunction = (host, port, ssl) => {
 
     mopidyWS.on("error", (err) => {
       console.log("[Mopidy]: error:", err);
-      reject(err);
+      connecting = false;
+      reject(new Error("error connecting to mopidy"));
     });
   });
 };
@@ -198,8 +204,11 @@ const get_config = async () => {
 
 export const connectWS = async (reconnect) => {
   if (connecting) {
-    while (connecting) {
+    const maxTimeout = 5;
+    let n = 0;
+    while (connecting && n < maxTimeout) {
       console.log("[Mopidy]: already connecting");
+      n += 1;
       await new Promise((r) => setTimeout(r, 200));
     }
     return "[Mopidy]: finish waiting connection";
@@ -285,7 +294,7 @@ export const searchFunction = async (selectedUris, searchTerm) => {
   return [];
 };
 
-export async function getPlaylists() {
+export const getPlaylists = async () => {
   await connectWS();
   const playlistsRaw = await mopidyWS.playlists.asList();
   playlistsLocal = playlistsRaw.map((playlistRaw) => {
@@ -293,7 +302,7 @@ export async function getPlaylists() {
     return playlistRaw;
   });
   return playlistsLocal;
-}
+};
 
 export async function getPlaylistTracks(uri) {
   const playlistsTracks = await mopidyWS.playlists.lookup([uri]);

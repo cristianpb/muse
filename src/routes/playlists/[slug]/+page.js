@@ -6,15 +6,21 @@ import {
 } from "../../../lib/tools/mopidyTools";
 
 const loadTracks = async (slug) => {
-  const playlists = await getPlaylists();
-  const selectedPlaylist = playlists.find((playlist) => playlist.name === slug);
-  if (selectedPlaylist) {
-    const playlistsTracks = await getPlaylistTracks(selectedPlaylist.uri);
-    return {
-      playlistsTracks,
-      selectedPlaylist,
-    };
-  } else {
+  try {
+    const playlists = await getPlaylists();
+    if (playlists !== undefined && playlists.length > 0) {
+      const selectedPlaylist = playlists.find(
+        (playlist) => playlist.name === slug,
+      );
+      if (selectedPlaylist) {
+        const playlistsTracks = await getPlaylistTracks(selectedPlaylist.uri);
+        return {
+          playlistsTracks,
+          selectedPlaylist,
+        };
+      }
+    }
+  } catch (e) {
     return {
       playlistsTracks: [],
       selectedPlaylist: "",
