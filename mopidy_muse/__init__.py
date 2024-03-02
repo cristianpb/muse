@@ -12,7 +12,19 @@ __version__ = pkg_resources.get_distribution("Mopidy-Muse").version
 
 logger = logging.getLogger(__name__)
 
-class MuseRequestHandler(tornado.web.RequestHandler):
+class SPARouterHandler(tornado.web.StaticFileHandler):
+    def initialize(self, path):
+        self.path = str(path)
+        self.absolute_path = path
+        self.dirname = path.parent
+        self.filename = path.name
+
+        super().initialize(self.dirname)
+
+    def get(self, path=None, include_body=True):
+        return super().get(self.path, include_body)
+
+class ConfigRouterHandler(tornado.web.RequestHandler):
 
     def initialize(self, config):
         muse_config = dict(config["muse"])
@@ -34,8 +46,12 @@ class MuseRequestHandler(tornado.web.RequestHandler):
         self.set_header('Content-Type', 'application/json')
 
 def muse_factory(config, core):
+    path = pathlib.Path(__file__).parent / "static"
+
     return [
-            ('/config', MuseRequestHandler, {'config':config})
+            ('/config', ConfigRouterHandler, {'config':config}),
+            (r"/((.*)(?:css|js|json|map|svg|png|jpg|ico)$)", tornado.web.StaticFileHandler, {"path": path}),
+            (r"/(.*)", SPARouterHandler, {"path": path / "index.html"})
     ]
 
 class Extension(ext.Extension):
@@ -58,13 +74,6 @@ class Extension(ext.Extension):
         return schema
 
     def setup(self, registry):
-        registry.add(
-            "http:static",
-            {
-                "name": self.ext_name,
-                "path": str(pathlib.Path(__file__).parent / "static"),
-            },
-        )
         registry.add('http:app', {
             'name': self.ext_name,
             'factory': muse_factory,
