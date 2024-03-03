@@ -94,7 +94,7 @@ jobs:
         run: |
           git config --global user.name 'Github Bot'
           git config --global user.email 'bot@github.com'
-          git add package.json package-lock.json setup.cfg
+          git add package.json package-lock.json pyproject.toml
           git commit -m "⬆ Upgrade package version files"
           git push origin HEAD:master
 
