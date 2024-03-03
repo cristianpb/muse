@@ -7,6 +7,7 @@ export PACKAGE_VERSION := $(shell node -p -e "require('./package.json').version"
 # findstring should check for regex
 export APP_VERSION_SAFE = $(if $(findstring v0,$(APP_VERSION)),$(APP_VERSION),$(PACKAGE_VERSION)-$(APP_VERSION))
 export APP_VERSION_CUT=$(subst v,,$(APP_VERSION_SAFE))
+export APP_VERSION_PEP440 := $(shell echo ${APP_VERSION_CUT} | sed -e 's/-.*//')
 export USE_TTY := $(shell test -t 1 && USE_TTY="-t")
 
 export DOCKER_USERNAME=cristianpb
@@ -53,7 +54,7 @@ build-docker-mopidy:
 
 build:
 	@npm --no-git-tag-version --allow-same-version version ${APP_VERSION_SAFE}
-	@sed -i -E "s/version = (.*)/version = ${APP_VERSION_CUT}/"  setup.cfg;
+	@sed -i -E "s/version = \"(.*)\"/version = \"${APP_VERSION_PEP440}\"/"  pyproject.toml;
 	@echo "Version ${APP_VERSION_CUT}"
 	@NODE_ENV=production npm run build
 
@@ -61,7 +62,7 @@ dist:
 	sudo mkdir -p ${APP_PATH}/dist ; sudo chmod g+rw ${APP_PATH}/dist/.; sudo chgrp 1000 ${APP_PATH}/dist/.;
 
 build-python: dist build
-	docker-compose run --rm mopidy python3 setup.py sdist bdist_wheel
+	docker-compose run --rm mopidy /bin/bash -c 'pip install -q build && python3 -m build'
 
 mopidy-local-scan:
 	docker exec -it ${APP} mopidy local scan
