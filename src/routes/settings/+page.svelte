@@ -12,6 +12,7 @@
                id="snapcastHost"
                type="text" 
                bind:value="{$snapcastHost}" 
+               on:keydown={handleInputSnapcast} 
                placeholder="Hostname">
       </div>
     </div>
@@ -25,6 +26,7 @@
                id="snapcastPort"
                type="text" 
                bind:value="{$snapcastPort}" 
+               on:keydown={handleInputSnapcast} 
                placeholder="Port">
       </div>
     </div>
@@ -83,6 +85,7 @@
                id="mopidyHost"
                type="text" 
                bind:value="{$mopidyHost}" 
+               on:keydown={handleInputMopidy} 
                placeholder="Hostname">
       </div>
     </div>
@@ -96,6 +99,7 @@
                id="mopidyPort"
                type="text" 
                bind:value="{$mopidyPort}" 
+               on:keydown={handleInputMopidy} 
                placeholder="Port">
       </div>
     </div>
@@ -149,6 +153,19 @@
   import SnapGroups from '../../lib/components/SnapGroups.svelte';
   let promise;
   let promiseMopidy;
+
+  const handleInputMopidy = (event) => {
+    if (event.which === 13) {
+      promiseMopidy = connectWS(true)
+    }
+  }
+
+  const handleInputSnapcast = (event) => {
+    if (event.which === 13) {
+      promise = connectSnapcast(true)
+    }
+  }
+
 
 </script>
 
