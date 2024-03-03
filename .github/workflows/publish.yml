@@ -13,6 +13,8 @@ jobs:
   publish:
     name: Build package
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
 
     steps:
       - uses: actions/checkout@v4
@@ -41,8 +43,7 @@ jobs:
       - name: Publish package 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.test_pypi_password }}
+          skip-existing: true
           repository-url: https://test.pypi.org/legacy/
       - name: Publish package 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
