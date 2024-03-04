@@ -14,7 +14,7 @@ A mopidy player with snapcast support
 - No user tracking (No Google Analytics)
 - Created using state of the art web technologies:
   - Svelte framework for small package size
-  - Sapper for multiple pages and server side rendering
+  - Svelte kit for multiple pages and server side rendering
   - Github Actions CI/CD workflow for build and publish
 
 Checkout a detailled description at [this blog post](https://cristianpb.github.io/blog/mopidy-muse)
