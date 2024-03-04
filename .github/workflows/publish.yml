@@ -85,6 +85,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           target: prod
+          build-args: |
+            app_path=/muse
       - name: 🍱 Upload package artifact
         uses: actions/upload-artifact@v4
         with:

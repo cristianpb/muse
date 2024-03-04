@@ -3,7 +3,7 @@ FROM cristianpb/mopidy-base as muse
 ARG app_path
 
 # Base dir /app
-WORKDIR /$app_path
+WORKDIR $app_path
 
 COPY mopidy_muse/mopidy.conf /root/.config/mopidy.conf
 COPY LICENSE ./
@@ -23,7 +23,7 @@ CMD ["mopidy"]
 FROM cristianpb/mopidy-base as prod
 
 # Base dir /app
-WORKDIR /muse
+WORKDIR $app_path
 
 COPY mopidy_muse/mopidy.conf /root/.config/mopidy.conf
 COPY LICENSE ./
