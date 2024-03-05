@@ -49,9 +49,6 @@ mopidy-start:
 mopidy-stop:
 	docker-compose down --remove-orphans
 
-build-docker-mopidy:
-	docker build -f Dockerfile-base -t cristianpb/mopidy-base:${PACKAGE_VERSION}  --target base .
-
 build:
 	@npm --no-git-tag-version --allow-same-version version ${APP_VERSION_SAFE}
 	@sed -i -E "s/version = \"(.*)\"/version = \"${APP_VERSION_PEP440}\"/"  pyproject.toml;
