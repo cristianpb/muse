@@ -1,58 +1,12 @@
-FROM ubuntu:focal AS base
-FROM base AS snapcast
+FROM alpine
 
-RUN apt-get update \
- && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install build-essential curl git libasound2-dev libpulse-dev libvorbisidec-dev libvorbis-dev libopus-dev libflac-dev libsoxr-dev alsa-utils libavahi-client-dev avahi-daemon libexpat1-dev \
- && apt-get clean && rm -fR /var/lib/apt/lists
+ARG SNAPCAST_VERSION=0.27.0-r4
 
-ARG SNAPCAST_VERSION=0.27.0
-ARG BOOST_VERSION=1.79.0
-ARG BOOST_VERSION_UNDERSCORED=1_79_0
+RUN apk add --no-cache \
+    snapcast=${SNAPCAST_VERSION}
 
-RUN cd /tmp \
- && curl -L -o boost_${BOOST_VERSION_UNDERSCORED}.tar.gz  https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_UNDERSCORED}.tar.gz \
- && tar xzf boost_${BOOST_VERSION_UNDERSCORED}.tar.gz \
- && git clone --single-branch --branch v${SNAPCAST_VERSION} https://github.com/badaix/snapcast.git \
- && cd snapcast \
- && git submodule update --init --recursive \
- && ADD_CFLAGS="-I/tmp/boost_${BOOST_VERSION_UNDERSCORED}" make -C server \
- && cp server/snapserver /usr/local/bin/ \
- && cp server/etc/snapserver.conf /etc/ \
- && cd .. \
- && cp snapcast/server/etc/index.html /etc/ \
- && tar czvf snapweb.tar.gz -C snapcast/server/etc snapweb \
- && cp snapweb.tar.gz /etc/ \
- && rm snapcast boost_${BOOST_VERSION_UNDERSCORED} -fR
-
-FROM base as base-arm64
-
-RUN apt-get update && \
-        apt-get -y install curl libportaudio2 libvorbis0a libavahi-client3 libflac8 libvorbisenc2 libvorbisfile3 libopus0 libsoxr0 && \
-        apt-get clean && rm -fR /var/lib/apt/lists
-
-COPY --from=snapcast /usr/local/bin/snapserver /usr/local/bin/
-COPY --from=snapcast /etc/snapserver.conf /etc/
-COPY --from=snapcast /etc/snapweb.tar.gz /etc/
-
-RUN mkdir -p /usr/share/snapserver/snapweb && tar -zxvf /etc/snapweb.tar.gz -C /usr/share/snapserver && \
-    rm -rf /etc/snapweb.tar.gz
-
-COPY --from=snapcast /etc/index.html /usr/share/snapserver/
-
-FROM base as base-amd64
-ARG SNAPCAST_VERSION=0.27.0
-ARG TARGETARCH
-
-RUN apt-get update && \
-	    apt-get install -y --no-install-recommends ca-certificates curl libasound2 mpv && \
-	    curl -L -o /tmp/snapserver.deb "https://github.com/badaix/snapcast/releases/download/v${SNAPCAST_VERSION}/snapserver_${SNAPCAST_VERSION}-1_${TARGETARCH}.deb" && \
-	    dpkg -i /tmp/snapserver.deb || apt-get install -f -y --no-install-recommends && \
-	    apt-get clean && rm -fR /var/lib/apt/lists;
-
-FROM base-$TARGETARCH AS prod
-CMD ["snapserver"]
-
-ENV DEVICE_NAME=Snapcast
 EXPOSE 1704/tcp 1705/tcp 1780/tcp
+
+ENTRYPOINT ["snapserver"]
 
 # vim:filetype=dockerfile
