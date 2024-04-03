@@ -19,7 +19,6 @@
   main {
     position: relative;
     max-width: 56em;
-    background-color: white;
     padding: 2em;
     padding-bottom: 100px; 
     margin: 0 auto;

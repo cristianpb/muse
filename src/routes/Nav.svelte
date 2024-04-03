@@ -41,18 +41,18 @@
       href='{base}/'> Now playing </a>
     <a 
       class="navbar-item" 
-      class:is-active={$page.url.pathname === "/search/"}
-      aria-current='{$page.url.pathname === "/search/" ? "page" : undefined}'
+      class:is-active={$page.url.pathname === "/search"}
+      aria-current='{$page.url.pathname === "/search" ? "page" : undefined}'
       href='{base}/search'>Search</a>
     <a 
       class="navbar-item" 
-      class:is-active={$page.url.pathname === "/browse/"}
-      aria-current='{$page.url.pathname === "/browse/" ? "page" : undefined}'
+      class:is-active={$page.url.pathname === "/browse"}
+      aria-current='{$page.url.pathname === "/browse" ? "page" : undefined}'
       href='{base}/browse'>Browse</a>
     <a 
       class="navbar-item" 
-      class:is-active={$page.url.pathname === "/playlists/"}
-      aria-current='{$page.url.pathname === "/playlists/" ? "page" : undefined}'
+      class:is-active={$page.url.pathname === "/playlists"}
+      aria-current='{$page.url.pathname === "/playlists" ? "page" : undefined}'
       href='{base}/playlists'>Playlists</a>
 
     <a role="button"
@@ -71,8 +71,8 @@
     <div class="navbar-start">
       <a 
         class="navbar-item" 
-        class:is-active={$page.url.pathname === "/settings/"}
-        aria-current='{$page.url.pathname === "/settings/" ? "page" : undefined}' 
+        class:is-active={$page.url.pathname === "/settings"}
+        aria-current='{$page.url.pathname === "/settings" ? "page" : undefined}' 
         href='{base}/settings'>Settings</a>
     </div>
     <a class="navbar-item  is-hidden-touch" href="https://github.com/cristianpb/muse">
