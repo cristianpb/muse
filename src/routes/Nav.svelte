@@ -1,6 +1,7 @@
 <script>
 	import { page } from '$app/stores';
   import { base } from '$app/paths';
+  import { PUBLIC_VERSION } from '$env/static/public';
   let burgerState = false;
 </script>
 
@@ -82,7 +83,7 @@
     </a>
     <a class="navbar-item is-hidden-desktop" href="https://github.com/cristianpb/muse">
       <img src="{base}/icon.svg" alt="Muse logo" width="18" height="18">
-      Muse - __VERSION__
+      Muse - {PUBLIC_VERSION}
     </a>
 
   </div>
