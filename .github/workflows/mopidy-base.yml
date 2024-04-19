@@ -20,9 +20,9 @@ jobs:
         with:
           images: cristianpb/snapserver
           tags: |
-            type=semver,pattern={{version}},value=v0.27.0
-            type=semver,pattern={{major}}.{{minor}},value=v0.27.0
-            type=semver,pattern={{major}},value=v0.27.0
+            type=semver,pattern={{version}},value=v0.28.0
+            type=semver,pattern={{major}}.{{minor}},value=v0.28.0
+            type=semver,pattern={{major}},value=v0.28.0
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx

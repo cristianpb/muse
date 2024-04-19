@@ -1,6 +1,6 @@
 FROM alpine
 
-ARG SNAPCAST_VERSION=0.27.0-r4
+ARG SNAPCAST_VERSION=0.28.0-r1
 
 RUN apk add --no-cache \
     snapcast=${SNAPCAST_VERSION}
