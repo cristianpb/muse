@@ -22,19 +22,19 @@ dummy		    := $(shell touch artifacts)
 include ./artifacts
 
 snapclient-start:
-	docker-compose up -d snapclient
+	docker compose up -d snapclient
 
 snapclient-stop:
-	docker-compose stop snapclient
+	docker compose stop snapclient
 
 snapserver-start:
-	docker-compose up -d snapserver
+	docker compose up -d snapserver
 
 snapserver-stop:
-	docker-compose stop snapserver
+	docker compose stop snapserver
 
 mopidy-start:
-	docker-compose up --build -d mopidy
+	docker compose up --build -d mopidy
 	@timeout=30 ; ret=1 ;\
 		until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do\
 			(docker exec -i ${USE_TTY} ${APP} curl -s --fail -X GET http://localhost:${MOPIDY_PORT}/muse/config > /dev/null) ;\
@@ -47,7 +47,7 @@ mopidy-start:
 	echo -e "mopidy started in $$((30 - timeout)) seconds"; exit $$ret
 
 mopidy-stop:
-	docker-compose down --remove-orphans
+	docker compose down --remove-orphans
 
 build:
 	@npm --no-git-tag-version --allow-same-version version ${APP_VERSION_SAFE}
@@ -59,7 +59,7 @@ dist:
 	sudo mkdir -p ${APP_PATH}/dist ; sudo chmod g+rw ${APP_PATH}/dist/.; sudo chgrp 1000 ${APP_PATH}/dist/.;
 
 build-python: dist build
-	docker-compose run --rm mopidy /bin/sh -c 'pip install --break-system-packages -q build && python3 -m build'
+	docker compose run --rm mopidy /bin/sh -c 'pip install --break-system-packages -q build && python3 -m build'
 
 mopidy-local-scan:
 	docker exec -it ${APP} mopidy local scan
@@ -71,7 +71,7 @@ dev:
 	npm run dev
 
 start: mopidy-start snapserver-start snapclient-start
-	@sleep 2 && docker-compose logs
+	@sleep 2 && docker compose logs
 
 stop: mopidy-stop snapserver-stop snapclient-stop
 	@echo all components stopped
