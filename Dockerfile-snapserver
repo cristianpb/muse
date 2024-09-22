@@ -1,9 +1,17 @@
 FROM alpine
 
-ARG SNAPCAST_VERSION=0.29.0-r0
-
-RUN apk add --no-cache \
-    snapcast=${SNAPCAST_VERSION}
+RUN set -ex \
+  echo "**** setup apk testing mirror ****" \
+  && echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+  && cat /etc/apk/repositories \
+  && echo "**** install runtime packages ****" \
+  && apk add --no-cache -U --upgrade \
+    alsa-utils \
+    snapcast \
+    snapweb@testing \
+  && echo "**** cleanup ****" \
+  && rm -rf \
+    /tmp/*
 
 EXPOSE 1704/tcp 1705/tcp 1780/tcp
 
