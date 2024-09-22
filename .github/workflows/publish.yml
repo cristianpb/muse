@@ -42,8 +42,8 @@ jobs:
         run: make build-python
       - name: Publish package 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        if: startsWith(github.event.ref, 'refs/tags')
         with:
-          skip-existing: true
           repository-url: https://test.pypi.org/legacy/
       - name: Publish package 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
