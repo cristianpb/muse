@@ -49,8 +49,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         if: startsWith(github.event.ref, 'refs/tags')
         with:
-          user: __token__
-          password: ${{ secrets.pypi_password }}
           repository-url: https://upload.pypi.org/legacy/
       - name: 🐳 Docker metadata
         id: meta
