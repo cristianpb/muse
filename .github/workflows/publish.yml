@@ -125,7 +125,7 @@ jobs:
           name: Mopidy-Muse.zip
       - run: mv Mopidy-Muse*.tar.gz Mopidy-Muse.tar.gz
       - name: 🔖Publish Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: ./Mopidy-Muse.tar.gz
           name: Release ${{ github.ref_name }}
