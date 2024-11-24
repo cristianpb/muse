@@ -251,15 +251,16 @@ export const connectWS = async (reconnect) => {
 export const upgradeCurrentTrack = async () => {
   const currentTrackTL = await mopidyWS.playback.getCurrentTlTrack();
   if (currentTrackTL) {
-    const currentTrackRaw = await mopidyWS.library.lookup([
-      [currentTrackTL.track.uri],
-    ]);
-    const currentIndex = await mopidyWS.tracklist.index();
-    currentTrackTL.track = Object.values(currentTrackRaw)[0][0];
-    currentTrackTL.index = currentIndex;
+    currentTrackTL.track = await getTrackInfo(currentTrackTL.track.uri);
+    currentTrackTL.index = await mopidyWS.tracklist.index();
     currentTrack.set(currentTrackTL);
     return currentTrackTL;
   }
+};
+
+export const getTrackInfo = async (uri) => {
+  const resLookup = await mopidyWS.library.lookup([[uri]]);
+  return Object.values(resLookup)[0][0];
 };
 
 export const loadUris = async () => {

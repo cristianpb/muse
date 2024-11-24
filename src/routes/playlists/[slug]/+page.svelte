@@ -1,7 +1,24 @@
 <DeletePlaylist deletePlaylistConfirmation={deletePlaylistConfirmation} selectedPlaylist={data.selectedPlaylist} />
 <div class="columns">
   <div class="column">
+    {#if albumImage}
+      <div class="card-image has-text-centered">
+        <figure class="image">
+          <img src="{albumImage}" width="240" height="240" alt="Album">
+        </figure>
+      </div>
+    {:else}
+      <div class="card-image has-text-centered">
+        <figure class="image is-1by1">
+          <img src="{base}/icon.svg" alt="Placeholder" width="240" height="240">
+        </figure>
+      </div>
+    {/if}
+  </div>
+  <div class="column">
     <h1 class="title">{data.slug.replace('-',' ')}</h1>
+    <p>{data.playlistsTracks.tracks.length} songs</p>
+    <p>Last modified: {getFormatedTime(data.playlistsTracks.last_modified)}</p>
   </div>
   <div class="column is-narrow" >
     <div class="columns is-mobile">
@@ -145,12 +162,13 @@
 </div>
 
 <script>
+  import { onMount } from 'svelte';
   import { mopidy } from '../../../lib/tools/stores';
   import { clickOutside } from '../../../lib/tools/clickOutside';
   import { flip } from 'svelte/animate';
   import { base } from '$app/paths';
   import DeletePlaylist from '../../../lib/components/DeletePlaylist.svelte';
-  import { playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists } from '../../../lib/tools/mopidyTools';
+  import { playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists, loadAlbumImage, getTrackInfo } from '../../../lib/tools/mopidyTools';
   import FontAwesomeIcon from '../../../lib/components/FontAwesomeIcon.svelte'
   import {
     faArrowLeft,
@@ -179,8 +197,21 @@
   let dropdownActivate;
   const getKey = item => (key ? item[key] : item);
   let promise
+  let albumImage;
 
-  //onMount(() => promise = loadTracks())
+  onMount(() => {
+    asyncloadAlbumImage(data.playlistsTracks.tracks)
+  })
+
+  const asyncloadAlbumImage = async (tracks) => {
+    let idx = 0
+    // try to get album from 5 tracks
+    while ((idx < 5) & !(albumImage)) {
+      const trackInfo = await getTrackInfo(tracks[idx].uri)
+      albumImage = await loadAlbumImage(trackInfo)
+      idx += 1
+    }
+  }
 
   function drop(event, i) {
 		event.dataTransfer.dropEffect = 'move';
@@ -223,6 +254,16 @@
     } else {
       dropdownActivate = index
     }
+  }
+
+  const getFormatedTime = (unixTime) => {
+    const date = new Date(unixTime);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = "20" + `${date.getYear()}`.substring(1);
+    const hours = date.getHours();
+    const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}`.substring(-2) : `${date.getMinutes()}`.substring(-2)
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
   }
 
 </script>
