@@ -48,8 +48,6 @@ jobs:
       - name: Publish package 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         if: startsWith(github.event.ref, 'refs/tags')
-        with:
-          repository-url: https://upload.pypi.org/legacy/
       - name: 🐳 Docker metadata
         id: meta
         uses: docker/metadata-action@v4
