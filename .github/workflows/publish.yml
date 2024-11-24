@@ -15,6 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
+      deployments: write
+      contents: write
+      statuses: write
+      actions: write
 
     steps:
       - uses: actions/checkout@v4
