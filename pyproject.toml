@@ -28,7 +28,7 @@ dependencies = [
     "Pykka >= 2.0.1",
     "setuptools"
 ]
-version = "0.0.33+7-g136be2f"
+version = "0.0.39"
 
 [project.optional-dependencies]
 pdf = ["ReportLab>=1.2", "RXP"]
