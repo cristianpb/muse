@@ -40,14 +40,14 @@ jobs:
           force_orphan: true
       - name: 🐍 Build Python package
         run: make build-python
-      - name: Publish package 📦 to Test PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        if: startsWith(github.event.ref, 'refs/tags')
-        with:
-          repository-url: https://test.pypi.org/legacy/
-      - name: Publish package 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        if: startsWith(github.event.ref, 'refs/tags')
+        #- name: Publish package 📦 to Test PyPI
+        #  uses: pypa/gh-action-pypi-publish@release/v1
+        #  if: startsWith(github.event.ref, 'refs/tags')
+        #  with:
+        #    repository-url: https://test.pypi.org/legacy/
+        #- name: Publish package 📦 to PyPI
+        #  uses: pypa/gh-action-pypi-publish@release/v1
+        #  if: startsWith(github.event.ref, 'refs/tags')
       - name: 🐳 Docker metadata
         id: meta
         uses: docker/metadata-action@v4
