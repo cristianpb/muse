@@ -1,40 +1,27 @@
 // import { playlists } from '../../../lib/tools/stores';
 import { error } from "@sveltejs/kit";
-import {
-  getPlaylists,
-  getPlaylistTracks,
-} from "../../../lib/tools/mopidyTools";
+import { getPlaylists } from "../../../lib/tools/mopidyTools";
 
-const loadTracks = async (slug) => {
+const selectPlaylist = async (slug) => {
   try {
     const playlists = await getPlaylists();
     if (playlists !== undefined && playlists.length > 0) {
       const selectedPlaylist = playlists.find(
         (playlist) => playlist.name === slug,
       );
-      if (selectedPlaylist) {
-        const playlistsTracks = await getPlaylistTracks(selectedPlaylist.uri);
-        return {
-          playlistsTracks,
-          selectedPlaylist,
-        };
-      }
+      return selectedPlaylist;
     }
   } catch (e) {
-    return {
-      playlistsTracks: [],
-      selectedPlaylist: "",
-    };
+    return "";
   }
 };
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ params }) {
-  const res = await loadTracks(params.slug);
-  if ("tracks" in res.playlistsTracks) {
+  const selectedPlaylist = await selectPlaylist(params.slug);
+  if (selectedPlaylist != "") {
     return {
-      playlistsTracks: res.playlistsTracks,
-      selectedPlaylist: res.selectedPlaylist,
+      selectedPlaylist,
       slug: params.slug,
     };
   }

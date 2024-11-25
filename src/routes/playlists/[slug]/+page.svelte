@@ -17,8 +17,8 @@
   </div>
   <div class="column">
     <h1 class="title">{data.slug.replace('-',' ')}</h1>
-    <p>{data.playlistsTracks.tracks.length} songs</p>
-    <p>Last modified: {getFormatedTime(data.playlistsTracks.last_modified)}</p>
+    <p>{playlistsTracks.tracks.length} songs</p>
+    <p>Last modified: {getFormatedTime(playlistsTracks.last_modified)}</p>
   </div>
   <div class="column is-narrow" >
     <div class="columns is-mobile">
@@ -101,8 +101,8 @@
       Loading songs ..
     </p>
   {:then _}
-  {#if data.playlistsTracks.tracks}
-    {#each data.playlistsTracks.tracks as track, index (getKey(track)) }
+  {#if playlistsTracks.tracks}
+    {#each playlistsTracks.tracks as track, index (getKey(track)) }
       <a class="list-item" 
          href="{null}" 
          draggable={true} 
@@ -168,7 +168,7 @@
   import { flip } from 'svelte/animate';
   import { base } from '$app/paths';
   import DeletePlaylist from '../../../lib/components/DeletePlaylist.svelte';
-  import { playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists, loadAlbumImage, getTrackInfo } from '../../../lib/tools/mopidyTools';
+  import { playTrackSingle, addTrackNext, addTrackQueue, playPlaylist, shufflePlaylist, addToQueuePlaylists, loadAlbumImage, getTrackInfo, getPlaylistTracks } from '../../../lib/tools/mopidyTools';
   import FontAwesomeIcon from '../../../lib/components/FontAwesomeIcon.svelte'
   import {
     faArrowLeft,
@@ -189,7 +189,7 @@
 
   let deletePlaylistConfirmation = false;
   let showOptions = false;
-  //let playlistsTracks = [];
+  let playlistsTracks = {tracks: [], last_modified: undefined};
   //let selectedPlaylist;
   let savePlaylistPromise;
   let hovering = false;
@@ -200,8 +200,14 @@
   let albumImage;
 
   onMount(() => {
-    asyncloadAlbumImage(data.playlistsTracks.tracks)
+    asyncLoadTracks(data.selectedPlaylist.uri)
   })
+
+
+  const asyncLoadTracks = async (playlistUri) => {
+    playlistsTracks = await getPlaylistTracks(playlistUri);
+    await asyncloadAlbumImage(playlistsTracks.tracks)
+  }
 
   const asyncloadAlbumImage = async (tracks) => {
     let idx = 0
@@ -216,9 +222,9 @@
   function drop(event, i) {
 		event.dataTransfer.dropEffect = 'move';
     let target = event.dataTransfer.getData("text/plain");
-    let newPlaylist = data.playlistsTracks.tracks
+    let newPlaylist = playlistsTracks.tracks
     newPlaylist[i] = newPlaylist.splice(target, 1, newPlaylist[i])[0];
-    data.playlistsTracks.tracks = newPlaylist
+    playlistsTracks.tracks = newPlaylist
     hovering = null
   }
 
@@ -230,7 +236,7 @@
   }
 
   async function savePlaylist() {
-    const res = await $mopidy.playlists.save({playlist: data.playlistsTracks})
+    const res = await $mopidy.playlists.save({playlist: playlistsTracks})
     if (res) {
       return true
     } else {
@@ -243,9 +249,9 @@
   }
 
   function removeTrack(uri) {
-    let newPlaylist = data.playlistsTracks.tracks
+    let newPlaylist = playlistsTracks.tracks
     newPlaylist = newPlaylist.filter(x => x.uri != uri);
-    data.playlistsTracks.tracks = newPlaylist
+    playlistsTracks.tracks = newPlaylist
   }
 
   const handleDropdownActivation = (index) => {
