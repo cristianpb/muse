@@ -59,7 +59,7 @@ dist:
 	sudo mkdir -p ${APP_PATH}/dist ; sudo chmod g+rw ${APP_PATH}/dist/.; sudo chgrp 1000 ${APP_PATH}/dist/.;
 
 build-python: dist build
-	docker compose run --rm mopidy /bin/sh -c 'pip install --break-system-packages -q build && python3 -m build'
+	docker compose run --rm mopidy /bin/sh -c 'pip install --break-system-packages -q build && python3 -m build && ls -ahlt dist'
 
 mopidy-local-scan:
 	docker exec -it ${APP} mopidy local scan
