@@ -115,11 +115,18 @@
          >
          <div class="columns is-mobile">
            <div class="column" role="button" tabindex="0" on:click={handleDropdownActivation(index)} on:keypress={handleDropdownActivation(index)}>
-             {track.name}
+             {#if track.artists}
+               {track.artists.map(x => x.name).join(", ")} - {track.name}
+             {:else}
+               {track.name}
+             {/if}
            </div>
            <div class="column is-narrow">
              <div class="dropdown is-right is-up" class:is-active={dropdownActivate == index} >
                <div class="dropdown-trigger" role="button" tabindex="0" on:click={handleDropdownActivation(index)} on:keypress={handleDropdownActivation(index)}>
+               {#if track.artists}
+                 <span class="is-hidden-touch">{formatLength(track.length / 1000)}</span>
+               {/if}
                {#if dropdownActivate == index}
                  <FontAwesomeIcon icon={faAngleUp} class="icon" aria-haspopup="true" aria-controls="dropdown-menu"/>
                {:else}
@@ -207,6 +214,7 @@
   const asyncLoadTracks = async (playlistUri) => {
     playlistsTracks = await getPlaylistTracks(playlistUri);
     await asyncloadAlbumImage(playlistsTracks.tracks)
+    await addTracksInfo(playlistsTracks.tracks)
   }
 
   const asyncloadAlbumImage = async (tracks) => {
@@ -217,6 +225,13 @@
       albumImage = await loadAlbumImage(trackInfo)
       idx += 1
     }
+  }
+
+  const addTracksInfo = async (tracks) => {
+    const tracksInfo = await Promise.all(tracks.map((track) => {
+      return getTrackInfo(track.uri)
+    }))
+    playlistsTracks.tracks = tracksInfo
   }
 
   function drop(event, i) {
@@ -270,6 +285,11 @@
     const hours = date.getHours();
     const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}`.substring(-2) : `${date.getMinutes()}`.substring(-2)
     return `${day}-${month}-${year} ${hours}:${minutes}`;
+  }
+
+  const formatLength = (length) => {
+    const seconds = Math.round(length%60) < 10 ? `0${Math.round(length%60)}` : `${Math.round(length%60)}`
+    return `${Math.floor(length / 60)}:${seconds}`
   }
 
 </script>
