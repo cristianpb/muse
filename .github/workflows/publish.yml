@@ -137,7 +137,7 @@ jobs:
         if: startsWith(github.event.ref, 'refs/tags')
         uses: softprops/action-gh-release@v2
         with:
-          files: ./Mopidy-Muse.tar.gz
+          files: Mopidy-Muse/*
           name: Release ${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
