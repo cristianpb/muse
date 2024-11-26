@@ -1,0 +1,45 @@
+{
+  "background_color": "#ffffff",
+  "theme_color": "#333333",
+  "name": "Mopidy-Muse",
+  "short_name": "Mopidy-Muse",
+  "display": "minimal-ui",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "apple-touch-icon-120x120.png",
+      "sizes": "120x120",
+      "type": "image/png"
+    },
+    {
+      "src": "apple-touch-icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "apple-touch-icon-60x60.png",
+      "sizes": "60x60",
+      "type": "image/png"
+    },
+    {
+      "src": "apple-touch-icon-76x76.png",
+      "sizes": "76x76",
+      "type": "image/png"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "561x561",
+      "type": "image/png"
+    }
+  ]
+}
