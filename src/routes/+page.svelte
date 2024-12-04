@@ -187,7 +187,7 @@
 
   $: currentPlaytimePercent = normalizeTime($currentPlaytime, $totalPlaytime)
 
-  onMount(async () => {
+  onMount(() => {
     promise = loadCurrentTracklist()
   })
 

@@ -100,7 +100,7 @@
       <FontAwesomeIcon icon={faSpinner} class="icon is-24" spin={true}/>
       Loading songs ..
     </p>
-  {:then _}
+  {:then}
   {#if playlistsTracks.tracks}
     {#each playlistsTracks.tracks as track, index (getKey(track)) }
       <a class="list-item" 
@@ -207,14 +207,13 @@
   let albumImage;
 
   onMount(() => {
-    asyncLoadTracks(data.selectedPlaylist.uri)
+    promise = asyncLoadTracks(data.selectedPlaylist.uri)
   })
 
 
   const asyncLoadTracks = async (playlistUri) => {
     playlistsTracks = await getPlaylistTracks(playlistUri);
     await asyncloadAlbumImage(playlistsTracks.tracks)
-    await addTracksInfo(playlistsTracks.tracks)
   }
 
   const asyncloadAlbumImage = async (tracks) => {
@@ -225,13 +224,6 @@
       albumImage = await loadAlbumImage(trackInfo)
       idx += 1
     }
-  }
-
-  const addTracksInfo = async (tracks) => {
-    const tracksInfo = await Promise.all(tracks.map((track) => {
-      return getTrackInfo(track.uri)
-    }))
-    playlistsTracks.tracks = tracksInfo
   }
 
   function drop(event, i) {
